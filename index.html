@@ -1,78 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Softgoway Technologies - Premium IT Solutions & Digital Transformation" />
-    <meta name="theme-color" content="#0a0a0f" />
-    <title>Softgoway Technologies | IT Solutions & Innovation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      /* CRITICAL: Prevent Flash of Unstyled Content (FOUC) */
-      /* Set default background BEFORE any CSS loads */
-      :root {
-        --bg-light: #fafafa;
-        --bg-dark: #0a0a0f;
-        --text-light: #0a0a0f;
-        --text-dark: #fafafa;
-      }
-      
-      html {
-        background-color: var(--bg-light);
-        color: var(--text-light);
-      }
-      
-      html.dark {
-        background-color: var(--bg-dark) !important;
-        color: var(--text-dark) !important;
-      }
-      
-      body {
-        background-color: inherit;
-        color: inherit;
-        margin: 0;
-      }
-      
-      /* Smooth theme transition when class changes */
-      html.transitioning,
-      html.transitioning * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
-      }
-    </style>
-    <script>
-      // CRITICAL: Apply theme IMMEDIATELY before DOM renders to prevent flash
-      (function() {
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Softgoway Technologies - Premium IT Solutions & Digital Transformation" />
+  <!-- Will be updated by script based on theme -->
+  <meta name="theme-color" content="#f9fafb" />
+  <title>Softgoway Technologies | IT Solutions & Innovation</title>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet" />
+
+<!-- CRITICAL: minimal, variable-based baseline to avoid FOUC -->
+<style>
+    :root {
+      /* match @theme inline light values from global.css */
+      --color-background: #f9fafb;
+      --color-foreground: #020617;
+    }
+
+    html {
+      background-color: var(--color-background);
+      color: var(--color-foreground);
+    }
+
+    body {
+      background-color: inherit;
+      color: inherit;
+      margin: 0;
+    }
+
+    /* Optional smooth theme transition */
+    html.transitioning,
+    html.transitioning * {
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease !important;
+    }
+  </style>
+<!-- CRITICAL: apply theme before React mounts, but only via class -->
+  <script>
+      (function () {
         try {
           var theme = localStorage.getItem('theme');
           var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var isDark = theme === 'dark' || (theme === 'system' && systemDark) || (!theme && systemDark);
-          
-          if (isDark) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.backgroundColor = '#0a0a0f';
-            document.documentElement.style.color = '#fafafa';
-          } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.style.backgroundColor = '#fafafa';
-            document.documentElement.style.color = '#0a0a0f';
-          }
-          
-          // Update theme-color meta tag
-          var meta = document.querySelector('meta[name="theme-color"]');
-          if (meta) {
-            meta.setAttribute('content', isDark ? '#0a0a0f' : '#fafafa');
-          }
-        } catch (e) {
-          console.error('Theme initialization error:', e);
+
+        var isDark =
+          theme === 'dark' ||
+          (theme === 'system' && systemDark) ||
+          (!theme && systemDark);
+
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-      })();
-    </script>
+
+        // Update theme-color meta tag for browser chrome
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+                  meta.setAttribute('content', isDark ? '#020617' : '#f9fafb');
+                }
+              } catch (e) {
+                console.error('Theme initialization error:', e);
+              }
+            })();
+          </script>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

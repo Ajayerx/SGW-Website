@@ -1,4 +1,10 @@
-import { motion, useInView, AnimatePresence, useScroll, useTransform } from 'framer-motion'
+import {
+  motion,
+  useInView,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -11,7 +17,8 @@ const testimonials = [
   {
     name: 'Sarah Johnson',
     role: 'CEO, TechVentures Inc.',
-    content: "Softgoway transformed our entire digital infrastructure. Their team's expertise and dedication exceeded our expectations. We saw a 40% increase in operational efficiency within the first quarter.",
+    content:
+      'Softgoway helped us consolidate fragmented tools into a single platform our teams actually enjoy using. Within one quarter, our ops team was closing 40% more work with the same headcount.',
     avatar: 'SJ',
     rating: 5,
     gradient: 'from-blue-500 to-cyan-500',
@@ -19,7 +26,8 @@ const testimonials = [
   {
     name: 'Michael Chen',
     role: 'CTO, InnovateLabs',
-    content: 'Working with Softgoway was a game-changer for our startup. They delivered a scalable platform that handles millions of users flawlessly. Their technical prowess is unmatched.',
+    content:
+      'We needed a partner who could move quickly without sacrificing code quality. Softgoway shipped a scalable architecture that comfortably serves millions of requests per day and is still easy to extend.',
     avatar: 'MC',
     rating: 5,
     gradient: 'from-purple-500 to-pink-500',
@@ -27,7 +35,8 @@ const testimonials = [
   {
     name: 'Emily Rodriguez',
     role: 'Director of IT, GlobalCorp',
-    content: 'The team at Softgoway brought fresh perspectives and cutting-edge solutions to our legacy systems. Their cloud migration strategy saved us significant costs while improving performance.',
+    content:
+      'Our legacy stack was holding us back. Softgoway led a phased cloud migration that reduced our infrastructure spend and cut deployment times from hours to minutes.',
     avatar: 'ER',
     rating: 5,
     gradient: 'from-green-500 to-emerald-500',
@@ -35,7 +44,8 @@ const testimonials = [
   {
     name: 'David Park',
     role: 'Founder, NextGen Solutions',
-    content: 'From concept to launch, Softgoway delivered exceptional quality. Their AI-powered features gave us a competitive edge in the market. Highly recommend their services.',
+    content:
+      'From early prototypes to launch, the team felt like an extension of our own. The AI‑powered features we shipped together have become a key differentiator in our sales conversations.',
     avatar: 'DP',
     rating: 5,
     gradient: 'from-orange-500 to-red-500',
@@ -43,7 +53,8 @@ const testimonials = [
   {
     name: 'Lisa Thompson',
     role: 'VP Engineering, DataDriven Co.',
-    content: "Softgoway's data engineering team built a robust analytics pipeline that revolutionized our decision-making process. Their attention to detail and scalability focus is impressive.",
+    content:
+      'Softgoway’s data engineering work gave us a trustworthy analytics layer. Product, sales, and leadership are finally looking at the same numbers when making decisions.',
     avatar: 'LT',
     rating: 5,
     gradient: 'from-indigo-500 to-purple-500',
@@ -52,7 +63,7 @@ const testimonials = [
 
 export function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
   const [current, setCurrent] = useState(0)
   const [autoplay, setAutoplay] = useState(true)
@@ -70,7 +81,7 @@ export function Testimonials() {
     const interval = setInterval(() => {
       setDirection(1)
       setCurrent((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
+    }, 6000)
     return () => clearInterval(interval)
   }, [autoplay])
 
@@ -89,17 +100,15 @@ export function Testimonials() {
     return () => ctx.revert()
   }, [])
 
-  const next = () => {
+  const handleManualChange = (nextIndex: number) => {
+    if (nextIndex === current) return
     setAutoplay(false)
-    setDirection(1)
-    setCurrent((prev) => (prev + 1) % testimonials.length)
+    setDirection(nextIndex > current ? 1 : -1)
+    setCurrent((nextIndex + testimonials.length) % testimonials.length)
   }
 
-  const prev = () => {
-    setAutoplay(false)
-    setDirection(-1)
-    setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length)
-  }
+  const next = () => handleManualChange(current + 1)
+  const prev = () => handleManualChange(current - 1)
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -120,7 +129,11 @@ export function Testimonials() {
   }
 
   return (
-    <section ref={sectionRef} id="testimonials" className="relative py-24 lg:py-32 overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="testimonials"
+      className="relative py-24 lg:py-32 overflow-hidden"
+    >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -150,15 +163,16 @@ export function Testimonials() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)] mb-6 text-balance"
             >
-              What Our Clients <span className="gradient-text">Say</span>
+              What our clients <span className="gradient-text">say</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty"
+              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed"
             >
-              {"Don't just take our word for it. Here's what our clients have to say about their experience working with Softgoway Technologies."}
+              A few words from founders and engineering leaders we’ve partnered
+              with on complex, high‑stakes projects.
             </motion.p>
           </div>
         </AnimatedSection>
@@ -177,7 +191,7 @@ export function Testimonials() {
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 className="absolute inset-0"
               >
-                <div className="relative h-full glass rounded-3xl p-8 lg:p-12 border border-border/50">
+                <article className="relative h-full glass rounded-3xl p-8 lg:p-12 border border-border/50">
                   {/* Quote icon */}
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
@@ -190,16 +204,18 @@ export function Testimonials() {
 
                   {/* Rating */}
                   <div className="flex gap-1 mb-6 pt-4">
-                    {[...Array(testimonials[current].rating)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.1 * i }}
-                      >
-                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      </motion.div>
-                    ))}
+                    {Array.from({ length: testimonials[current].rating }).map(
+                      (_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.08 * i }}
+                        >
+                          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                        </motion.div>
+                      )
+                    )}
                   </div>
 
                   <blockquote className="text-lg lg:text-xl text-foreground leading-relaxed mb-8">
@@ -218,12 +234,12 @@ export function Testimonials() {
                       <div className="font-semibold font-[var(--font-heading)] text-lg">
                         {testimonials[current].name}
                       </div>
-                      <div className="text-muted-foreground">
+                      <div className="text-muted-foreground text-sm">
                         {testimonials[current].role}
                       </div>
                     </div>
                   </div>
-                </div>
+                </article>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -231,10 +247,12 @@ export function Testimonials() {
           {/* Navigation */}
           <div className="flex items-center justify-center gap-6 mt-8">
             <motion.button
+              type="button"
               onClick={prev}
               className="p-4 rounded-full bg-card/80 backdrop-blur-sm border border-border hover:border-primary/30 transition-all shadow-lg"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-6 h-6" />
             </motion.button>
@@ -244,24 +262,25 @@ export function Testimonials() {
               {testimonials.map((_, index) => (
                 <motion.button
                   key={index}
-                  onClick={() => {
-                    setAutoplay(false)
-                    setDirection(index > current ? 1 : -1)
-                    setCurrent(index)
-                  }}
-                  className={`relative h-3 rounded-full transition-all duration-300 ${
-                    index === current ? 'w-10 bg-gradient-to-r from-primary to-accent' : 'w-3 bg-border hover:bg-muted-foreground'
-                  }`}
+                  type="button"
+                  onClick={() => handleManualChange(index)}
+                  className={`relative h-3 rounded-full transition-all duration-300 ${index === current
+                    ? 'w-10 bg-gradient-to-r from-primary to-accent'
+                    : 'w-3 bg-border hover:bg-muted-foreground'
+                    }`}
                   whileHover={{ scale: 1.2 }}
+                  aria-label={`Go to testimonial ${index + 1}`}
                 />
               ))}
             </div>
 
             <motion.button
+              type="button"
               onClick={next}
               className="p-4 rounded-full bg-card/80 backdrop-blur-sm border border-border hover:border-primary/30 transition-all shadow-lg"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              aria-label="Next testimonial"
             >
               <ChevronRight className="w-6 h-6" />
             </motion.button>

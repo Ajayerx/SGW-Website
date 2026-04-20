@@ -2,7 +2,6 @@ import { useRef, useState, useCallback } from 'react'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-
 interface GlowButtonProps {
   children: React.ReactNode
   className?: string
@@ -12,7 +11,6 @@ interface GlowButtonProps {
   href?: string
   magnetic?: boolean
 }
-
 
 export function GlowButton({
   children,
@@ -26,16 +24,9 @@ export function GlowButton({
   const buttonRef = useRef<HTMLButtonElement>(null)
   const anchorRef = useRef<HTMLAnchorElement>(null)
   const [isHovered, setIsHovered] = useState(false)
-  // FIX #7: Track whether shimmer is mid-animation so we never reset it early.
-  // Previously the shimmer x was driven directly by isHovered state:
-  //   animate={{ x: isHovered ? '100%' : '-100%' }}
-  // When mouse left mid-sweep, x snapped back to '-100%' instantly — visible flicker.
-  // Now we use a separate isShimmering flag. On mouse enter we start the sweep.
-  // On mouse leave we let it complete naturally via onAnimationComplete before resetting.
   const [isShimmering, setIsShimmering] = useState(false)
   const [shimmerKey, setShimmerKey] = useState(0)
 
-  // Magnetic effect — split into two refs to avoid the unsafe `as any` cast
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 
@@ -43,24 +34,25 @@ export function GlowButton({
   const xSpring = useSpring(x, springConfig)
   const ySpring = useSpring(y, springConfig)
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!magnetic) return
-    const el = buttonRef.current ?? anchorRef.current
-    if (!el) return
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!magnetic) return
+      const el = buttonRef.current ?? anchorRef.current
+      if (!el) return
 
-    const rect = el.getBoundingClientRect()
-    const centerX = rect.left + rect.width / 2
-    const centerY = rect.top + rect.height / 2
+      const rect = el.getBoundingClientRect()
+      const centerX = rect.left + rect.width / 2
+      const centerY = rect.top + rect.height / 2
 
-    x.set((e.clientX - centerX) * 0.2)
-    y.set((e.clientY - centerY) * 0.2)
-  }, [magnetic, x, y])
+      x.set((e.clientX - centerX) * 0.2)
+      y.set((e.clientY - centerY) * 0.2)
+    },
+    [magnetic, x, y],
+  )
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true)
-    // Increment key to force a fresh shimmer animation on every hover entry,
-    // even if the previous one didn't finish completing.
-    setShimmerKey(k => k + 1)
+    setShimmerKey((k) => k + 1)
     setIsShimmering(true)
   }, [])
 
@@ -68,12 +60,8 @@ export function GlowButton({
     setIsHovered(false)
     x.set(0)
     y.set(0)
-    // Do NOT stop shimmer here — let onAnimationComplete handle the reset.
-    // This way a mid-sweep shimmer always finishes its travel before disappearing.
   }, [x, y])
 
-  // Called by Framer Motion when the shimmer sweep finishes travelling to '100%'.
-  // Only then do we reset — guaranteeing the animation always completes fully.
   const handleShimmerComplete = useCallback(() => {
     setIsShimmering(false)
   }, [])
@@ -85,9 +73,13 @@ export function GlowButton({
   }
 
   const variantClasses = {
-    primary: 'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20',
-    secondary: 'bg-secondary text-secondary-foreground border border-border hover:border-primary/30',
-    ghost: 'bg-transparent text-foreground hover:bg-secondary',
+    primary:
+      'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20',
+    secondary:
+      // light text in dark mode
+      'bg-secondary text-secondary-foreground dark:text-white border border-border hover:border-primary/40 dark:hover:border-accent/50',
+    ghost:
+      'bg-transparent text-foreground hover:bg-secondary/70 dark:hover:bg-secondary/60 border border-transparent',
   }
 
   const motionProps = {
@@ -96,9 +88,10 @@ export function GlowButton({
     onMouseLeave: handleMouseLeave,
     className: cn(
       'relative group inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-colors duration-300 overflow-hidden cursor-pointer',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       sizeClasses[size],
       variantClasses[variant],
-      className
+      className,
     ),
     style: { x: xSpring, y: ySpring },
     whileHover: { scale: 1.02 },
@@ -107,21 +100,25 @@ export function GlowButton({
 
   const innerContent = (
     <>
-      {/* Animated border gradient for secondary variant */}
       {variant === 'secondary' && (
         <motion.div
           className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           style={{
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-neon-cyan), var(--color-primary))',
+            background:
+              'linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-neon-cyan), var(--color-primary))',
             backgroundSize: '300% 300%',
             padding: '1px',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
             WebkitMaskComposite: 'xor',
             maskComposite: 'exclude',
           }}
-          animate={isHovered ? {
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-          } : {}}
+          animate={
+            isHovered
+              ? {
+                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+              }
+              : {}
+          }
           transition={{
             duration: 3,
             repeat: Infinity,
@@ -130,13 +127,12 @@ export function GlowButton({
         />
       )}
 
-      {/* Glow effect for primary variant */}
       {variant === 'primary' && (
         <>
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-xl blur-xl"
             animate={{
-              opacity: isHovered ? 0.8 : 0,
+              opacity: isHovered ? 0.9 : 0,
               scale: isHovered ? 1.2 : 1,
             }}
             transition={{ duration: 0.3 }}
@@ -145,26 +141,19 @@ export function GlowButton({
         </>
       )}
 
-      {/* Ghost variant hover fill */}
       {variant === 'ghost' && (
         <motion.div
-          className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10"
+          className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/8 to-accent/8"
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         />
       )}
 
-      {/* FIX #7: Shimmer sweep — key prop forces a fresh animation instance on
-          each hover entry. isShimmering gates rendering so the element is removed
-          from the DOM once the sweep completes, keeping the DOM clean.
-          animate always drives x from '-100%' → '100%' in one direction only.
-          Mouse leave no longer interrupts it — onAnimationComplete resets state
-          only after the full sweep has finished travelling across the button. */}
       <AnimatePresence>
         {isShimmering && (
           <motion.div
             key={shimmerKey}
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-xl pointer-events-none"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-xl pointer-events-none dark:via-white/25"
             initial={{ x: '-100%' }}
             animate={{ x: '100%' }}
             exit={{ opacity: 0 }}
@@ -174,20 +163,19 @@ export function GlowButton({
         )}
       </AnimatePresence>
 
-      {/* Ripple on click */}
       <motion.div
-        className="absolute inset-0 bg-white/20 rounded-xl"
+        className="absolute inset-0 rounded-xl bg-white/20 dark:bg-white/10"
         initial={{ scale: 0, opacity: 0.5 }}
         whileTap={{ scale: 2, opacity: 0 }}
         transition={{ duration: 0.4 }}
       />
 
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
+      <span className="relative z-10 flex items-center gap-2">
+        {children}
+      </span>
     </>
   )
 
-  // FIX: Split href vs button into two explicit render paths with correctly
-  // typed refs — removes the unsafe `as any` cast from the original code.
   if (href) {
     return (
       <motion.a ref={anchorRef} href={href} {...motionProps}>
@@ -203,14 +191,11 @@ export function GlowButton({
   )
 }
 
-
-// Magnetic wrapper for any element — unchanged, no bugs
 interface MagneticWrapProps {
   children: React.ReactNode
   strength?: number
   className?: string
 }
-
 
 export function MagneticWrap({ children, strength = 0.3, className }: MagneticWrapProps) {
   const ref = useRef<HTMLDivElement>(null)

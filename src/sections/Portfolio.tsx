@@ -10,70 +10,109 @@ gsap.registerPlugin(ScrollTrigger)
 
 const projects = [
   {
-    title: 'FinTech Dashboard',
-    description: 'Real-time financial analytics platform with advanced data visualization and AI-powered insights.',
+    title: 'FinTech Control Center',
+    description:
+      'A real-time analytics console for finance teams to monitor risk, liquidity, and key KPIs across multiple systems.',
     tags: ['React', 'Node.js', 'PostgreSQL', 'AWS'],
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop',
     gradient: 'from-blue-500 to-cyan-500',
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
-    title: 'Healthcare Platform',
-    description: 'HIPAA-compliant telehealth solution connecting patients with healthcare providers globally.',
+    title: 'Global Telehealth Platform',
+    description:
+      'HIPAA-ready telehealth workflows with virtual consultations, prescriptions, and integrated scheduling.',
     tags: ['Next.js', 'GraphQL', 'MongoDB', 'WebRTC'],
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop',
     gradient: 'from-green-500 to-emerald-500',
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
-    title: 'E-commerce Suite',
-    description: 'Scalable multi-vendor marketplace with real-time inventory and intelligent recommendations.',
+    title: 'Multi‑vendor Commerce Suite',
+    description:
+      'A marketplace engine with configurable catalogues, real-time inventory, and personalised recommendations.',
     tags: ['Vue.js', 'Python', 'Redis', 'Kubernetes'],
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop',
     gradient: 'from-orange-500 to-red-500',
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
     title: 'AI Content Studio',
-    description: 'Machine learning-powered content creation platform for marketing teams and agencies.',
+    description:
+      'A content operations hub where marketing teams brief, generate, and review AI‑assisted assets in one place.',
     tags: ['React', 'Python', 'TensorFlow', 'GCP'],
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop',
     gradient: 'from-purple-500 to-pink-500',
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
-    title: 'Logistics Hub',
-    description: 'End-to-end supply chain management system with real-time tracking and route optimization.',
+    title: 'Logistics Command Hub',
+    description:
+      'An operations layer for fleet tracking, route optimisation, and exception handling across regions.',
     tags: ['Angular', 'Go', 'PostgreSQL', 'Azure'],
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop',
     gradient: 'from-amber-500 to-orange-500',
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
-    title: 'EdTech Platform',
-    description: 'Interactive learning management system with adaptive curriculum and progress analytics.',
+    title: 'Adaptive Learning Platform',
+    description:
+      'An LMS with adaptive paths, progress analytics, and content authoring tools for education providers.',
     tags: ['React', 'Node.js', 'MongoDB', 'AWS'],
-    image: 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&auto=format&fit=crop',
+    image:
+      'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&auto=format&fit=crop',
     gradient: 'from-indigo-500 to-purple-500',
+    liveUrl: '#',
+    repoUrl: '#',
   },
 ]
 
-function ProjectCard({ project, index, progress }: { project: (typeof projects)[0]; index: number; progress: number }) {
+function ProjectCard({
+  project,
+  index,
+  progress,
+}: {
+  project: (typeof projects)[number]
+  index: number
+  progress: number
+}) {
   const [isHovered, setIsHovered] = useState(false)
-  
-  // Calculate card-specific progress for staggered animations
+
   const cardStart = index / projects.length
   const cardEnd = (index + 1) / projects.length
-  const cardProgress = Math.max(0, Math.min(1, (progress - cardStart) / (cardEnd - cardStart)))
-  
-  // Scale and opacity based on progress
-  const scale = 0.8 + cardProgress * 0.2
-  const opacity = 0.5 + cardProgress * 0.5
+  const cardProgress = Math.max(
+    0,
+    Math.min(1, (progress - cardStart) / (cardEnd - cardStart))
+  )
+
+  const scale = 0.85 + cardProgress * 0.15
+  const opacity = 0.45 + cardProgress * 0.55
+
+  const handleOpen = (url?: string) => {
+    if (!url || url === '#') return
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   return (
-    <motion.div
+    <motion.article
       className="flex-none w-[380px] lg:w-[450px] h-[520px] lg:h-[580px] portfolio-card"
       style={{
         transform: `scale(${scale})`,
-        opacity: opacity,
+        opacity,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      aria-label={project.title}
     >
       <motion.div
         className="group relative h-full rounded-3xl bg-card/90 backdrop-blur-sm border border-border overflow-hidden card-lift"
@@ -87,10 +126,16 @@ function ProjectCard({ project, index, progress }: { project: (typeof projects)[
             alt={project.title}
             className="w-full h-full object-cover"
             crossOrigin="anonymous"
-            animate={{ scale: isHovered ? 1.1 : 1 }}
+            animate={{ scale: isHovered ? 1.08 : 1 }}
             transition={{ duration: 0.6 }}
           />
-          <div className={cn('absolute inset-0 bg-gradient-to-t', project.gradient, 'opacity-50')} />
+          <div
+            className={cn(
+              'absolute inset-0 bg-gradient-to-t',
+              project.gradient,
+              'opacity-50'
+            )}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
           {/* Overlay buttons */}
@@ -101,16 +146,30 @@ function ProjectCard({ project, index, progress }: { project: (typeof projects)[
             transition={{ duration: 0.3 }}
           >
             <motion.button
+              type="button"
+              disabled={!project.liveUrl || project.liveUrl === '#'}
+              onClick={() => handleOpen(project.liveUrl)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-4 rounded-full bg-white/90 text-black shadow-lg backdrop-blur-sm glow-primary"
+              className={cn(
+                'p-4 rounded-full bg-white/90 text-black shadow-lg backdrop-blur-sm glow-primary',
+                (!project.liveUrl || project.liveUrl === '#') &&
+                'cursor-not-allowed opacity-60'
+              )}
             >
               <ExternalLink className="w-5 h-5" />
             </motion.button>
             <motion.button
+              type="button"
+              disabled={!project.repoUrl || project.repoUrl === '#'}
+              onClick={() => handleOpen(project.repoUrl)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-4 rounded-full bg-white/90 text-black shadow-lg backdrop-blur-sm glow-accent"
+              className={cn(
+                'p-4 rounded-full bg-white/90 text-black shadow-lg backdrop-blur-sm glow-accent',
+                (!project.repoUrl || project.repoUrl === '#') &&
+                'cursor-not-allowed opacity-60'
+              )}
             >
               <Github className="w-5 h-5" />
             </motion.button>
@@ -119,14 +178,14 @@ function ProjectCard({ project, index, progress }: { project: (typeof projects)[
           {/* Floating badge */}
           <motion.div
             className={cn(
-              'absolute top-4 left-4 px-4 py-2 rounded-full text-sm font-semibold text-white bg-gradient-to-r shadow-lg',
+              'absolute top-4 left-4 px-4 py-2 rounded-full text-[11px] font-semibold text-white bg-gradient-to-r shadow-lg',
               project.gradient
             )}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            Featured Project
+            Featured case study
           </motion.div>
         </div>
 
@@ -156,14 +215,15 @@ function ProjectCard({ project, index, progress }: { project: (typeof projects)[
         {/* Glow effect */}
         <motion.div
           className={cn(
-            'absolute -inset-1 opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none rounded-3xl blur-2xl',
+            'pointer-events-none absolute -inset-1 rounded-3xl blur-2xl',
             'bg-gradient-to-r',
             project.gradient
           )}
           animate={{ opacity: isHovered ? 0.3 : 0 }}
+          transition={{ duration: 0.4 }}
         />
       </motion.div>
-    </motion.div>
+    </motion.article>
   )
 }
 
@@ -171,7 +231,7 @@ export function Portfolio() {
   const sectionRef = useRef<HTMLElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const headerRef = useRef(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
   const [scrollProgress, setScrollProgress] = useState(0)
 
@@ -182,26 +242,26 @@ export function Portfolio() {
 
   const backgroundX = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
 
-  // Horizontal scroll with GSAP ScrollTrigger
   useLayoutEffect(() => {
     const section = sectionRef.current
     const trigger = triggerRef.current
     const scrollContainer = scrollContainerRef.current
-    
+
     if (!section || !trigger || !scrollContainer) return
 
     const cards = scrollContainer.querySelectorAll('.portfolio-card')
-    const totalWidth = scrollContainer.scrollWidth - window.innerWidth + 200
+
+    const getTotalWidth = () =>
+      scrollContainer.scrollWidth - window.innerWidth + 200
 
     const ctx = gsap.context(() => {
-      // Main horizontal scroll animation
       const horizontalScroll = gsap.to(scrollContainer, {
-        x: () => -totalWidth,
+        x: () => -getTotalWidth(),
         ease: 'none',
         scrollTrigger: {
-          trigger: trigger,
+          trigger,
           start: 'top top',
-          end: () => `+=${totalWidth}`,
+          end: () => `+=${getTotalWidth()}`,
           pin: true,
           scrub: 1,
           invalidateOnRefresh: true,
@@ -212,8 +272,7 @@ export function Portfolio() {
         },
       })
 
-      // Individual card animations
-      cards.forEach((card, index) => {
+      cards.forEach((card) => {
         gsap.fromTo(
           card,
           {
@@ -237,12 +296,11 @@ export function Portfolio() {
         )
       })
 
-      // Background animation
       gsap.to('.portfolio-bg', {
         xPercent: -20,
         ease: 'none',
         scrollTrigger: {
-          trigger: trigger,
+          trigger,
           start: 'top bottom',
           end: 'bottom top',
           scrub: 1,
@@ -259,11 +317,13 @@ export function Portfolio() {
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ x: backgroundX }}
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[1400px] h-[600px] bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-full blur-[200px] portfolio-bg"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[1400px] h-[600px]
+                     bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10
+                     rounded-full blur-[200px] portfolio-bg"
         />
       </div>
 
-      {/* Header section - outside pinned area */}
+      {/* Header (before pinned area) */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 lg:pt-32 pb-12">
         <AnimatedSection className="text-center">
           <div ref={headerRef}>
@@ -273,7 +333,7 @@ export function Portfolio() {
               transition={{ duration: 0.6 }}
               className="inline-block px-5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full mb-6 border border-primary/20"
             >
-              Our Work
+              Our work
             </motion.span>
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
@@ -281,42 +341,50 @@ export function Portfolio() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)] mb-6 text-balance"
             >
-              Featured <span className="gradient-text-animated">Projects</span>
+              Featured <span className="gradient-text-animated">projects</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty"
+              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed"
             >
-              Explore our portfolio of successful projects that have helped businesses
-              transform their operations and achieve remarkable growth.
+              A selection of platforms, internal tools, and products we’ve helped
+              design, build, and scale for teams across finance, healthcare,
+              education, and more.
             </motion.p>
           </div>
         </AnimatedSection>
       </div>
 
-      {/* Horizontal Scroll Trigger Area */}
+      {/* Horizontal Scroll Area */}
       <div ref={triggerRef} className="relative min-h-screen">
-        {/* Progress indicator */}
+        {/* Progress indicator (desktop) */}
         <div className="fixed top-1/2 right-8 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-2">
-          {projects.map((_, index) => (
-            <motion.div
-              key={index}
-              className={cn(
-                'w-2 h-2 rounded-full transition-all duration-300',
-                scrollProgress >= index / projects.length && scrollProgress <= (index + 1) / projects.length
-                  ? 'w-2 h-8 bg-gradient-to-b from-primary to-accent'
-                  : 'bg-border'
-              )}
-            />
-          ))}
+          {projects.map((_, index) => {
+            const start = index / projects.length
+            const end = (index + 1) / projects.length
+            const active =
+              scrollProgress >= start - 0.02 && scrollProgress < end + 0.02
+
+            return (
+              <motion.div
+                key={index}
+                className={cn(
+                  'w-2 h-2 rounded-full transition-all duration-300',
+                  active
+                    ? 'w-2 h-8 bg-gradient-to-b from-primary to-accent'
+                    : 'bg-border'
+                )}
+              />
+            )
+          })}
         </div>
 
         {/* Scroll hint */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: scrollProgress < 0.1 ? 1 : 0 }}
+          animate={{ opacity: scrollProgress < 0.12 ? 1 : 0 }}
           className="absolute top-8 left-1/2 -translate-x-1/2 text-muted-foreground text-sm flex items-center gap-2"
         >
           <span>Scroll to explore</span>
@@ -336,17 +404,17 @@ export function Portfolio() {
             style={{ perspective: '1000px' }}
           >
             {projects.map((project, index) => (
-              <ProjectCard 
-                key={project.title} 
-                project={project} 
+              <ProjectCard
+                key={project.title}
+                project={project}
                 index={index}
                 progress={scrollProgress}
               />
             ))}
-            
-            {/* End card - CTA */}
+
+            {/* End CTA card */}
             <motion.div className="flex-none w-[380px] lg:w-[450px] h-[520px] lg:h-[580px] flex items-center justify-center portfolio-card">
-              <div className="text-center glass-card rounded-3xl p-12 border-gradient">
+              <div className="text-center glass-card rounded-3xl p-10 lg:p-12 border-gradient">
                 <motion.div
                   className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg glow-primary"
                   animate={{ rotate: [0, 5, -5, 0] }}
@@ -355,18 +423,24 @@ export function Portfolio() {
                   <span className="text-3xl font-bold text-white">+</span>
                 </motion.div>
                 <h3 className="text-2xl font-bold font-[var(--font-heading)] mb-4">
-                  Have a Project in Mind?
+                  Have a project in mind?
                 </h3>
-                <p className="text-muted-foreground mb-8">
-                  {"Let's discuss how we can bring your vision to life."}
+                <p className="text-muted-foreground mb-8 text-sm lg:text-base leading-relaxed">
+                  Share a brief, and we’ll walk you through how we’d approach it—no
+                  obligation, just a practical next step.
                 </p>
                 <motion.button
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById('contact')
+                      ?.scrollIntoView({ behavior: 'smooth' })
+                  }
                   className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold shadow-lg btn-glow"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Start a Conversation
+                  Start a conversation
                 </motion.button>
               </div>
             </motion.div>
@@ -374,7 +448,7 @@ export function Portfolio() {
         </div>
       </div>
 
-      {/* Bottom spacer for scroll continuation */}
+      {/* Bottom spacer */}
       <div className="h-24" />
     </section>
   )

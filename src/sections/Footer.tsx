@@ -1,29 +1,36 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { Github, Linkedin, Twitter, Instagram, ArrowUp, Heart } from 'lucide-react'
+import {
+  Github,
+  Linkedin,
+  Twitter,
+  Instagram,
+  ArrowUp,
+  Heart,
+} from 'lucide-react'
 import { Section3D } from '@/components/Section3D'
 
 const footerLinks = {
   services: [
-    { name: 'Custom Software', href: '#services' },
-    { name: 'Cloud Solutions', href: '#services' },
-    { name: 'Mobile Development', href: '#services' },
-    { name: 'AI & Machine Learning', href: '#services' },
-    { name: 'IT Consulting', href: '#services' },
+    { name: 'Product & Platform Engineering', href: '#services' },
+    { name: 'Modern Web Applications', href: '#services' },
+    { name: 'Mobile App Development', href: '#services' },
+    { name: 'Cloud & DevOps Enablement', href: '#services' },
+    { name: 'Architecture & Advisory', href: '#services' },
   ],
   company: [
-    { name: 'About Us', href: '#about' },
-    { name: 'Our Process', href: '#process' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'Technologies', href: '#technologies' },
-    { name: 'Careers', href: '#' },
+    { name: 'About', href: '#about' },
+    { name: 'How We Work', href: '#process' },
+    { name: 'Work', href: '#portfolio' },
+    { name: 'Tech Stack', href: '#technologies' },
+    { name: 'Contact', href: '#contact' },
   ],
   resources: [
-    { name: 'Blog', href: '#' },
     { name: 'Case Studies', href: '#portfolio' },
-    { name: 'Documentation', href: '#' },
+    { name: 'FAQs', href: '#contact' },
     { name: 'Support', href: '#contact' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Blog', href: '#' },
+    { name: 'Status', href: '#' },
   ],
 }
 
@@ -35,7 +42,7 @@ const socialLinks = [
 ]
 
 export function Footer() {
-  const footerRef = useRef(null)
+  const footerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(footerRef, { once: true, margin: '-100px' })
 
   const scrollToTop = () => {
@@ -43,11 +50,15 @@ export function Footer() {
   }
 
   const scrollToSection = (href: string) => {
+    if (!href.startsWith('#')) return
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <footer ref={footerRef} className="relative bg-card/80 backdrop-blur-sm border-t border-border overflow-hidden">
+    <footer
+      ref={footerRef}
+      className="relative bg-card/80 backdrop-blur-sm border-t border-border overflow-hidden"
+    >
       {/* 3D Background */}
       <Section3D variant="footer" />
 
@@ -66,9 +77,9 @@ export function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
           >
-            <motion.a
-              href="#hero"
-              onClick={(e) => { e.preventDefault(); scrollToTop() }}
+            <motion.button
+              type="button"
+              onClick={scrollToTop}
               className="inline-flex items-center gap-3 mb-6"
               whileHover={{ scale: 1.02 }}
             >
@@ -81,11 +92,12 @@ export function Footer() {
               <span className="text-2xl font-bold font-[var(--font-heading)] gradient-text">
                 Softgoway
               </span>
-            </motion.a>
+            </motion.button>
             <p className="text-muted-foreground max-w-sm mb-8 leading-relaxed">
-              Empowering businesses with innovative technology solutions that drive growth
-              and operational excellence. Your vision, our expertise.
+              A product‑focused engineering studio helping teams design, build, and
+              scale the software that runs their business.
             </p>
+
             {/* Social links */}
             <div className="flex gap-3">
               {socialLinks.map((social, index) => (
@@ -112,13 +124,16 @@ export function Footer() {
             { title: 'Company', links: footerLinks.company },
             { title: 'Resources', links: footerLinks.resources },
           ].map((section, sectionIndex) => (
-            <motion.div
+            <motion.nav
               key={section.title}
+              aria-label={section.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.1 * (sectionIndex + 1) }}
             >
-              <h4 className="font-semibold font-[var(--font-heading)] text-lg mb-5">{section.title}</h4>
+              <h4 className="font-semibold font-[var(--font-heading)] text-lg mb-5">
+                {section.title}
+              </h4>
               <ul className="space-y-3">
                 {section.links.map((link, linkIndex) => (
                   <motion.li
@@ -127,18 +142,18 @@ export function Footer() {
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.3, delay: 0.3 + linkIndex * 0.05 }}
                   >
-                    <a
-                      href={link.href}
-                      onClick={(e) => { e.preventDefault(); scrollToSection(link.href) }}
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection(link.href)}
                       className="text-muted-foreground hover:text-primary transition-colors relative group"
                     >
                       {link.name}
                       <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300" />
-                    </a>
+                    </button>
                   </motion.li>
                 ))}
               </ul>
-            </motion.div>
+            </motion.nav>
           ))}
         </div>
 
@@ -150,7 +165,7 @@ export function Footer() {
           className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-6"
         >
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            {"© " + new Date().getFullYear() + " Softgoway Technologies Pvt. Ltd. Made with"}
+            {`© ${new Date().getFullYear()} Softgoway Technologies Pvt. Ltd. Built with`}
             <motion.span
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 1, repeat: Infinity }}
@@ -161,15 +176,22 @@ export function Footer() {
           </p>
 
           <div className="flex items-center gap-6">
-            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors relative group">
+            <a
+              href="#"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors relative group"
+            >
               Privacy Policy
               <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
             </a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors relative group">
+            <a
+              href="#"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors relative group"
+            >
               Terms of Service
               <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
             </a>
             <motion.button
+              type="button"
               onClick={scrollToTop}
               className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent text-white shadow-lg shadow-primary/20"
               whileHover={{ scale: 1.1, y: -3 }}

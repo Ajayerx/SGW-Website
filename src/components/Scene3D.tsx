@@ -4,23 +4,16 @@ import { Float, MeshDistortMaterial, Sphere, Stars, Trail } from '@react-three/d
 import * as THREE from 'three'
 import { useTheme } from '@/hooks/useTheme'
 
-
 // ─────────────────────────────────────────────
-// SHARED GEOMETRIES — created once at module level,
-// never recreated on re-render or remount
+// SHARED GEOMETRIES — created once
 // ─────────────────────────────────────────────
 const sphereGeo64 = new THREE.SphereGeometry(1, 64, 64)
 const sphereGeo32 = new THREE.SphereGeometry(1, 32, 32)
 const sphereGeo16 = new THREE.SphereGeometry(0.15, 16, 16)
 const torusGeo = new THREE.TorusGeometry(1, 0.25, 16, 100)
 
-
 // ─────────────────────────────────────────────
-// VISIBILITY PAUSE — stops rAF loop when Hero
-// section is off-screen (e.g. user scrolled past)
-// FIX: use useThree() to get scene + camera
-// instead of gl.scene / gl.camera which don't
-// exist on THREE.WebGLRenderer
+// ScenePauser – pause rAF when hero off-screen
 // ─────────────────────────────────────────────
 function ScenePauser({
   containerRef,
@@ -43,7 +36,7 @@ function ScenePauser({
           gl.setAnimationLoop(null)
         }
       },
-      { threshold: 0.05 }
+      { threshold: 0.05 },
     )
 
     observer.observe(el)
@@ -52,7 +45,6 @@ function ScenePauser({
 
   return null
 }
-
 
 // ─────────────────────────────────────────────
 // FloatingSphere
@@ -80,12 +72,7 @@ function FloatingSphere({
 
   return (
     <Float speed={speed * 1.5} rotationIntensity={0.4} floatIntensity={0.6}>
-      <mesh
-        ref={meshRef}
-        geometry={sphereGeo64}
-        position={position}
-        scale={scale}
-      >
+      <mesh ref={meshRef} geometry={sphereGeo64} position={position} scale={scale}>
         <MeshDistortMaterial
           color={color}
           distort={distort}
@@ -99,22 +86,17 @@ function FloatingSphere({
   )
 }
 
-
 // ─────────────────────────────────────────────
 // ParticleField
-// FIX: bufferAttribute now uses args={[array, itemSize]}
-// instead of spreading a pre-built BufferAttribute instance.
-// R3F v9 requires args to construct Three objects internally.
-// The old spread pattern broke the reconciler type contract.
-// sizes array is kept — it's used by pointsMaterial size attribute
-// for varied particle sizes (unlike AboutParticles which had no use for speeds).
 // ─────────────────────────────────────────────
 function ParticleField({
   count = 800,
   color,
+  opacity = 0.7,
 }: {
   count?: number
   color: string
+    opacity?: number
 }) {
   const { positions, sizes } = useMemo(() => {
     const positions = new Float32Array(count * 3)
@@ -139,21 +121,14 @@ function ParticleField({
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        {/* FIX: args={[typedArray, itemSize]} — R3F v9 pattern */}
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-size"
-          args={[sizes, 1]}
-        />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.06}
         color={color}
         transparent
-        opacity={0.7}
+        opacity={opacity}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
         depthWrite={false}
@@ -161,7 +136,6 @@ function ParticleField({
     </points>
   )
 }
-
 
 // ─────────────────────────────────────────────
 // RotatingTorus
@@ -185,12 +159,7 @@ function RotatingTorus({
   })
 
   return (
-    <mesh
-      ref={meshRef}
-      geometry={torusGeo}
-      position={position}
-      scale={scale}
-    >
+    <mesh ref={meshRef} geometry={torusGeo} position={position} scale={scale}>
       <meshStandardMaterial
         color={color}
         metalness={0.95}
@@ -203,7 +172,6 @@ function RotatingTorus({
     </mesh>
   )
 }
-
 
 // ─────────────────────────────────────────────
 // GlowingOrb
@@ -224,12 +192,7 @@ function GlowingOrb({
   })
 
   return (
-    <Trail
-      width={2}
-      length={8}
-      color={color}
-      attenuation={(t) => t * t}
-    >
+    <Trail width={2} length={8} color={color} attenuation={(t) => t * t}>
       <mesh ref={meshRef} geometry={sphereGeo16} position={position}>
         <meshBasicMaterial
           color={color}
@@ -241,7 +204,6 @@ function GlowingOrb({
     </Trail>
   )
 }
-
 
 // ─────────────────────────────────────────────
 // MouseFollower
@@ -255,12 +217,12 @@ function MouseFollower() {
     meshRef.current.position.x = THREE.MathUtils.lerp(
       meshRef.current.position.x,
       (mouse.x * viewport.width) / 2,
-      0.05
+      0.05,
     )
     meshRef.current.position.y = THREE.MathUtils.lerp(
       meshRef.current.position.y,
       (mouse.y * viewport.height) / 2,
-      0.05
+      0.05,
     )
   })
 
@@ -280,9 +242,8 @@ function MouseFollower() {
   )
 }
 
-
 // ─────────────────────────────────────────────
-// SceneContent
+// SceneContent – theme-aware colors & lights
 // ─────────────────────────────────────────────
 function SceneContent({
   containerRef,
@@ -292,35 +253,80 @@ function SceneContent({
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
 
+  // Theme-aware palette
   const primaryColor = isDark ? '#8b5cf6' : '#7c3aed'
-  const accentColor = isDark ? '#a855f7' : '#9333ea'
-  const particleColor = isDark ? '#a78bfa' : '#8b5cf6'
+  const accentColor = isDark ? '#22d3ee' : '#0ea5e9'
+  const particleColor = isDark ? '#a5b4fc' : '#8b5cf6'
+
+  const ambientIntensity = isDark ? 0.25 : 0.45
+  const dirLightIntensity = isDark ? 0.9 : 0.75
+  const pointLightIntensity = isDark ? 0.5 : 0.35
+  const particleOpacity = isDark ? 0.9 : 0.7
 
   return (
     <>
       <ScenePauser containerRef={containerRef} />
 
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 5]} intensity={0.8} />
-      <pointLight position={[-10, -10, -5]} intensity={0.4} color={accentColor} />
-      <pointLight position={[5, 5, 5]} intensity={0.3} color={primaryColor} />
+      {/* Lighting tuned per mode */}
+      <ambientLight intensity={ambientIntensity} />
+      <directionalLight position={[10, 10, 5]} intensity={dirLightIntensity} />
+      <pointLight
+        position={[-10, -10, -5]}
+        intensity={pointLightIntensity}
+        color={accentColor}
+      />
+      <pointLight
+        position={[5, 5, 5]}
+        intensity={pointLightIntensity * 0.8}
+        color={primaryColor}
+      />
 
-      <FloatingSphere position={[-5, 2, -6]} scale={2} speed={0.4} distort={0.5} color={primaryColor} />
-      <FloatingSphere position={[5, -1, -4]} scale={1} speed={0.6} distort={0.3} color={accentColor} />
-      <FloatingSphere position={[2, 4, -8]} scale={0.6} speed={0.8} distort={0.4} color={primaryColor} />
-      <FloatingSphere position={[-3, -3, -5]} scale={0.8} speed={0.7} distort={0.35} color={accentColor} />
+      {/* Floating spheres */}
+      <FloatingSphere
+        position={[-5, 2, -6]}
+        scale={2}
+        speed={0.4}
+        distort={0.5}
+        color={primaryColor}
+      />
+      <FloatingSphere
+        position={[5, -1, -4]}
+        scale={1}
+        speed={0.6}
+        distort={0.3}
+        color={accentColor}
+      />
+      <FloatingSphere
+        position={[2, 4, -8]}
+        scale={0.6}
+        speed={0.8}
+        distort={0.4}
+        color={primaryColor}
+      />
+      <FloatingSphere
+        position={[-3, -3, -5]}
+        scale={0.8}
+        speed={0.7}
+        distort={0.35}
+        color={accentColor}
+      />
 
+      {/* Torus frames */}
       <RotatingTorus position={[6, 2, -5]} scale={1.2} color={primaryColor} />
       <RotatingTorus position={[-6, -2, -4]} scale={0.8} color={accentColor} />
 
+      {/* Glowing orbs */}
       <GlowingOrb position={[3, 1, -3]} color={primaryColor} />
       <GlowingOrb position={[-4, -1, -4]} color={accentColor} />
       <GlowingOrb position={[0, 3, -5]} color={primaryColor} />
 
-      <ParticleField count={1000} color={particleColor} />
+      {/* Particles */}
+      <ParticleField count={1000} color={particleColor} opacity={particleOpacity} />
 
+      {/* Mouse follower */}
       <MouseFollower />
 
+      {/* Stars only in dark mode */}
       {isDark && (
         <Stars
           radius={120}
@@ -335,7 +341,6 @@ function SceneContent({
     </>
   )
 }
-
 
 // ─────────────────────────────────────────────
 // Scene3D — public export

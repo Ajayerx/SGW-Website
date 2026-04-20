@@ -7,6 +7,7 @@ import {
 } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/hooks/useTheme'
 
 interface TextRevealProps {
   text: string
@@ -124,16 +125,20 @@ const getItemVariants = (animation: string, preserveOpacity?: boolean): Variants
   }
 }
 
-export function TextReveal({
-  text,
-  className,
-  delay = 0,
-  once = true,
-  staggerChildren = 0.03,
-  type = 'words',
-  animation = 'slide',
-  preserveOpacity = false,
-}: TextRevealProps) {
+
+export function TextReveal(props: TextRevealProps) {
+  const {
+    text,
+    className,
+    delay = 0,
+    once = true,
+    staggerChildren = 0.03,
+    type = 'words',
+    animation = 'slide',
+    preserveOpacity = false,
+  } = props
+
+  const { resolvedTheme } = useTheme()
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once, margin: '-50px' })
 
@@ -144,17 +149,27 @@ export function TextReveal({
         ? text.split('\n')
         : text.split(' ')
 
-  const itemVariants = getItemVariants(animation, preserveOpacity)
+  const effectiveAnimation =
+    resolvedTheme === 'dark' && animation === 'slide' ? 'lift' : animation
+
+  const itemVariants = getItemVariants(effectiveAnimation, preserveOpacity)
 
   return (
     <motion.span
       ref={ref}
-      className={cn('inline-block', className)}
+      className={cn(
+        'inline-block transition-colors duration-300',
+
+        className,
+      )}
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
       variants={containerVariants}
       custom={{ staggerChildren, delayChildren: delay }}
-      style={{ perspective: '1000px' }}
+      style={{
+        perspective: '1000px',
+        color: 'var(--color-foreground)'
+      }}
     >
       {items.map((item, index) => (
         <motion.span

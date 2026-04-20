@@ -2,7 +2,11 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { AnimatedSection, StaggerContainer, StaggerItem } from '@/components/AnimatedSection'
+import {
+  AnimatedSection,
+  StaggerContainer,
+  StaggerItem,
+} from '@/components/AnimatedSection'
 import { Section3D } from '@/components/Section3D'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -30,11 +34,21 @@ const technologies = [
   { name: 'PyTorch', category: 'AI/ML', color: 'from-red-500 to-orange-600' },
 ]
 
-const categories = ['All', 'Frontend', 'Backend', 'Language', 'Cloud', 'DevOps', 'Database', 'API', 'AI/ML']
+const categories = [
+  'All',
+  'Frontend',
+  'Backend',
+  'Language',
+  'Cloud',
+  'DevOps',
+  'Database',
+  'API',
+  'AI/ML',
+]
 
 export function Technologies() {
   const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
   const [activeCategory, setActiveCategory] = useState('All')
 
@@ -45,13 +59,13 @@ export function Technologies() {
 
   const backgroundX = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
 
-  const filteredTech = activeCategory === 'All' 
-    ? technologies 
-    : technologies.filter(t => t.category === activeCategory)
+  const filteredTech =
+    activeCategory === 'All'
+      ? technologies
+      : technologies.filter((t) => t.category === activeCategory)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Floating animation for tech cards
       gsap.to('.tech-bg-blob', {
         y: -30,
         duration: 3,
@@ -66,11 +80,15 @@ export function Technologies() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="technologies" className="relative py-24 lg:py-32 overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="technologies"
+      className="relative py-24 lg:py-32 overflow-hidden"
+    >
       {/* 3D Background */}
       <Section3D variant="technologies" />
 
-      {/* Background */}
+      {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ x: backgroundX }}
@@ -83,10 +101,11 @@ export function Technologies() {
       </div>
 
       {/* Grid pattern */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none opacity-[0.02]"
         style={{
-          backgroundImage: `radial-gradient(circle, var(--color-primary) 1px, transparent 1px)`,
+          backgroundImage:
+            'radial-gradient(circle, var(--color-primary) 1px, transparent 1px)',
           backgroundSize: '30px 30px',
         }}
       />
@@ -100,7 +119,7 @@ export function Technologies() {
               transition={{ duration: 0.6 }}
               className="inline-block px-5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full mb-6 border border-primary/20"
             >
-              Tech Stack
+              Tech stack
             </motion.span>
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
@@ -108,16 +127,17 @@ export function Technologies() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)] mb-6 text-balance"
             >
-              Technologies We <span className="gradient-text">Master</span>
+              Tools we <span className="gradient-text">ship with</span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty"
+              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed"
             >
-              We stay at the forefront of technology, leveraging the most powerful and
-              reliable tools to build solutions that stand the test of time.
+              We lean on a small, battle‑tested toolkit across frontend, backend,
+              cloud, and data—picking the right pieces for each product instead of
+              forcing a one‑size‑fits‑all stack.
             </motion.p>
           </div>
         </AnimatedSection>
@@ -133,11 +153,10 @@ export function Technologies() {
             <motion.button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeCategory === category
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeCategory === category
                   ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/20'
                   : 'bg-card/80 border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground'
-              }`}
+                }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -147,7 +166,7 @@ export function Technologies() {
         </motion.div>
 
         {/* Technology grid */}
-        <motion.div 
+        <motion.div
           layout
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
         >
@@ -160,34 +179,57 @@ export function Technologies() {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.3, delay: index * 0.03 }}
               whileHover={{ y: -8, scale: 1.05 }}
-              className="group relative p-6 lg:p-8 rounded-2xl bg-card/80 backdrop-blur-sm border border-border hover:border-primary/30 transition-all duration-300 text-center cursor-pointer"
+              className="group relative p-5 lg:p-6 rounded-2xl bg-card/80 backdrop-blur-sm
+                         border border-border hover:border-primary/30
+                         transition-all duration-300 text-center cursor-default"
             >
               {/* Gradient glow on hover */}
-              <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${tech.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-              
-              {/* Floating glow effect */}
-              <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${tech.color} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10`} />
+              <div
+                className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${tech.color}
+                            opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+              />
+
+              <div
+                className={`pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br ${tech.color}
+                            opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10`}
+              />
 
               <div className="relative">
-                {/* Tech icon placeholder - gradient circle */}
+                {/* Tech avatar */}
                 <motion.div
-                  className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br ${tech.color} flex items-center justify-center shadow-lg`}
-                  whileHover={{ rotate: 10, scale: 1.1 }}
+                  className={`w-11 h-11 mx-auto mb-3 rounded-xl bg-gradient-to-br ${tech.color}
+                              flex items-center justify-center shadow-lg`}
+                  whileHover={{ rotate: 6, scale: 1.06 }}
                 >
-                  <span className="text-white font-bold text-lg">{tech.name.charAt(0)}</span>
+                  <span className="text-white font-semibold text-base">
+                    {tech.name.charAt(0)}
+                  </span>
                 </motion.div>
 
                 {/* Tech name */}
-                <h3 className="text-lg font-semibold font-[var(--font-heading)] mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-sm sm:text-base font-semibold font-[var(--font-heading)] mb-1 group-hover:text-primary transition-colors">
                   {tech.name}
                 </h3>
-                <span className={`text-xs px-3 py-1 rounded-full bg-gradient-to-r ${tech.color} text-white opacity-80`}>
+
+                {/* Category pill */}
+                <span
+                  className={`inline-flex items-center justify-center text-[11px] px-3 py-1 rounded-full
+                              bg-gradient-to-r ${tech.color} text-white/90`}
+                >
                   {tech.category}
                 </span>
               </div>
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Optional subtle note under grid */}
+        <AnimatedSection delay={0.2} className="mt-10 text-center">
+          <p className="text-xs text-muted-foreground">
+            We also work with adjacent tools and platforms where it makes sense for
+            your existing stack.
+          </p>
+        </AnimatedSection>
       </div>
     </section>
   )
