@@ -1,6 +1,15 @@
 import { useEffect, useRef } from 'react'
 import Lenis from 'lenis'
 
+// FIX #4: Expose a module-level singleton so any component can call
+// scrollTo() without prop-drilling or context. The instance is set
+// when useLenis() mounts and cleared when it unmounts.
+let lenisInstance: Lenis | null = null
+
+export function getLenis(): Lenis | null {
+  return lenisInstance
+}
+
 export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null)
 
@@ -15,6 +24,7 @@ export function useLenis() {
     })
 
     lenisRef.current = lenis
+    lenisInstance = lenis  // expose globally
 
     function raf(time: number) {
       lenis.raf(time)
@@ -25,6 +35,7 @@ export function useLenis() {
 
     return () => {
       lenis.destroy()
+      lenisInstance = null  // clean up on unmount
     }
   }, [])
 

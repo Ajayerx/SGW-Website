@@ -5,40 +5,188 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Target, Eye, Award, Users, Lightbulb, Shield } from 'lucide-react'
 import { TiltCard } from '@/components/TiltCard'
 import { AnimatedSection, StaggerContainer, StaggerItem } from '@/components/AnimatedSection'
+import { GradientText } from '@/components/TextReveal'
 import { Section3D } from '@/components/Section3D'
+
 
 gsap.registerPlugin(ScrollTrigger)
 
+
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
 const values = [
   {
     icon: Lightbulb,
     title: 'Innovation First',
     description: 'We embrace cutting-edge technologies and creative solutions to solve complex challenges.',
     gradient: 'from-amber-500 to-orange-500',
+    glow: 'rgba(245,158,11,0.15)',
   },
   {
     icon: Users,
     title: 'Client Partnership',
     description: 'We build lasting relationships, treating every client as a valued partner in success.',
     gradient: 'from-blue-500 to-cyan-500',
+    glow: 'rgba(59,130,246,0.15)',
   },
   {
     icon: Shield,
     title: 'Quality Assurance',
     description: 'We deliver excellence through rigorous testing and attention to every detail.',
     gradient: 'from-green-500 to-emerald-500',
+    glow: 'rgba(16,185,129,0.15)',
   },
   {
     icon: Award,
     title: 'Proven Excellence',
     description: 'Our track record speaks volumes with consistent delivery of outstanding results.',
     gradient: 'from-purple-500 to-pink-500',
+    glow: 'rgba(168,85,247,0.15)',
   },
 ]
 
+const stats = [
+  { value: '150+', label: 'Projects Delivered' },
+  { value: '98%', label: 'Client Satisfaction' },
+  { value: '12+', label: 'Years Experience' },
+  { value: '40+', label: 'Expert Engineers' },
+]
+
+
+// ─────────────────────────────────────────────
+// STAT CARD
+// ─────────────────────────────────────────────
+function StatCard({ value, label, index }: { value: string; label: string; index: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, margin: '-60px' })
+
+  return (
+    <motion.div
+      ref={ref}
+      className="relative flex flex-col items-center justify-center p-6 rounded-2xl
+                 bg-card/60 backdrop-blur-sm border border-border/60
+                 hover:border-primary/30 transition-colors duration-300 group overflow-hidden"
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+      whileHover={{ y: -4 }}
+    >
+      {/* Hover glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
+      {/* Subtle top line accent */}
+      <motion.div
+        className="absolute top-0 left-1/2 -translate-x-1/2 h-[2px] rounded-full"
+        style={{
+          background: 'linear-gradient(90deg, transparent, var(--color-primary), transparent)',
+        }}
+        initial={{ width: 0 }}
+        animate={isInView ? { width: '60%' } : {}}
+        transition={{ duration: 0.8, delay: index * 0.1 + 0.3 }}
+      />
+
+      <span className="relative text-3xl lg:text-4xl font-bold font-[var(--font-heading)] gradient-text mb-1 tabular-nums">
+        {value}
+      </span>
+      <span className="relative text-sm text-muted-foreground text-center tracking-wide">
+        {label}
+      </span>
+    </motion.div>
+  )
+}
+
+
+// ─────────────────────────────────────────────
+// VALUE CARD
+// ─────────────────────────────────────────────
+function ValueCard({
+  value,
+  index,
+}: {
+  value: (typeof values)[number]
+  index: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, margin: '-40px' })
+
+  return (
+    <motion.div
+      ref={ref}
+      className="group relative p-6 lg:p-8 rounded-2xl bg-card/50 backdrop-blur-sm
+                 border border-border hover:border-primary/20
+                 transition-colors duration-500 h-full overflow-hidden"
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+      whileHover={{ y: -6 }}
+    >
+      {/* Per-card glow tinted to icon color */}
+      <div
+        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: `radial-gradient(circle at 30% 30%, ${value.glow}, transparent 70%)` }}
+      />
+
+      {/* Corner accent */}
+      <div className="absolute top-0 right-0 w-20 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div
+          className="absolute inset-0 rounded-bl-3xl rounded-tr-2xl"
+          style={{ background: `linear-gradient(135deg, transparent 50%, ${value.glow})` }}
+        />
+      </div>
+
+      {/* Icon */}
+      <motion.div
+        className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${value.gradient}
+                    flex items-center justify-center mb-6 shadow-lg`}
+        whileHover={{ scale: 1.1, rotate: 5 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+      >
+        {/* Icon glow */}
+        <div
+          className="absolute inset-0 rounded-xl blur-md opacity-50"
+          style={{ background: `linear-gradient(135deg, ${value.glow.replace('0.15', '0.6')}, transparent)` }}
+        />
+        <value.icon className="relative w-7 h-7 text-white" />
+      </motion.div>
+
+      {/* Index number — subtle background decoration */}
+      <span className="absolute top-4 right-5 text-6xl font-bold font-[var(--font-heading)]
+                       text-foreground/[0.03] select-none group-hover:text-foreground/[0.05]
+                       transition-colors duration-500 leading-none">
+        0{index + 1}
+      </span>
+
+      <h4 className="relative text-lg font-bold font-[var(--font-heading)] mb-3
+                     group-hover:text-primary transition-colors duration-300">
+        {value.title}
+      </h4>
+      <p className="relative text-sm text-muted-foreground leading-relaxed">
+        {value.description}
+      </p>
+
+      {/* Bottom line that draws in on hover */}
+      <motion.div
+        className="absolute bottom-0 left-0 h-[2px] rounded-full"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${value.glow.replace('0.15', '0.8')}, transparent)`,
+        }}
+        initial={{ width: '0%' }}
+        whileHover={{ width: '100%' }}
+        transition={{ duration: 0.4 }}
+      />
+    </motion.div>
+  )
+}
+
+
+// ─────────────────────────────────────────────
+// MAIN SECTION
+// ─────────────────────────────────────────────
 export function About() {
   const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef(null)
+  const headerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
 
   const { scrollYProgress } = useScroll({
@@ -46,12 +194,13 @@ export function About() {
     offset: ['start end', 'end start'],
   })
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [100, -100])
-  const y2 = useTransform(scrollYProgress, [0, 1], [50, -50])
+  const y1 = useTransform(scrollYProgress, [0, 1], [80, -80])
+  const y2 = useTransform(scrollYProgress, [0, 1], [40, -40])
+  const rotate1 = useTransform(scrollYProgress, [0, 1], [-10, 10])
+  const rotate2 = useTransform(scrollYProgress, [0, 1], [10, -10])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Parallax for decorative elements
       gsap.to('.about-parallax-slow', {
         yPercent: -20,
         ease: 'none',
@@ -62,7 +211,6 @@ export function About() {
           scrub: 1,
         },
       })
-
       gsap.to('.about-parallax-fast', {
         yPercent: -40,
         ease: 'none',
@@ -79,153 +227,316 @@ export function About() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="about" className="relative py-24 lg:py-32 overflow-hidden">
-      {/* 3D Background */}
+    <section
+      ref={sectionRef}
+      id="about"
+      className="relative py-28 lg:py-40 overflow-hidden"
+    >
+      {/* ── 3D background ── */}
       <Section3D variant="about" />
 
-      {/* Background elements with parallax */}
+      {/* ── Ambient blobs ── */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
-          style={{ y: y1 }}
-          className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] about-parallax-slow"
+          style={{ y: y1, rotate: rotate1 }}
+          className="absolute top-1/4 -left-32 w-[600px] h-[600px]
+                     bg-primary/5 rounded-full blur-[140px] about-parallax-slow"
         />
         <motion.div
-          style={{ y: y2 }}
-          className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] about-parallax-fast"
+          style={{ y: y2, rotate: rotate2 }}
+          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px]
+                     bg-accent/5 rounded-full blur-[120px] about-parallax-fast"
+        />
+        {/* Center cross-fade blob */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                     w-[800px] h-[400px] rounded-full blur-[160px]"
+          style={{ background: 'radial-gradient(ellipse, rgba(139,92,246,0.04), transparent 70%)' }}
+          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
       </div>
 
-      {/* Decorative grid */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.02]"
-        style={{
-          backgroundImage: `linear-gradient(var(--color-foreground) 1px, transparent 1px)`,
-          backgroundSize: '100% 80px',
-        }}
-      />
+      {/* ── Decorative horizontal lines ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[15, 35, 55, 75].map((top) => (
+          <motion.div
+            key={top}
+            className="absolute left-0 right-0 h-px"
+            style={{
+              top: `${top}%`,
+              background: 'linear-gradient(90deg, transparent 0%, var(--color-border) 20%, var(--color-border) 80%, transparent 100%)',
+              opacity: 0.4,
+            }}
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+          />
+        ))}
+      </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimatedSection className="text-center mb-20">
-          <div ref={headerRef}>
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="inline-block px-5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full mb-6 border border-primary/20"
-            >
-              About Us
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)] mb-6 text-balance"
-            >
-              Pioneering Digital{' '}
-              <span className="gradient-text">Transformation</span>
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg lg:text-xl text-muted-foreground max-w-4xl mx-auto text-pretty leading-relaxed"
-            >
-              Softgoway Technologies is a premier IT consulting and software development company,
-              dedicated to empowering businesses with innovative technology solutions that drive growth
-              and operational excellence.
-            </motion.p>
-          </div>
-        </AnimatedSection>
 
-        {/* Mission & Vision */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-24">
+        {/* ── Section header ── */}
+        <div ref={headerRef} className="text-center mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium
+                       text-primary bg-primary/10 rounded-full mb-6 border border-primary/20"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            About Us
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)]
+                       mb-6 text-balance leading-tight"
+          >
+            Pioneering Digital{' '}
+            <GradientText>Transformation</GradientText>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto
+                       text-pretty leading-relaxed"
+          >
+            Softgoway Technologies is a premier IT consulting and software development company,
+            dedicated to empowering businesses with innovative technology solutions that drive
+            growth and operational excellence.
+          </motion.p>
+        </div>
+
+        {/* ── Stats row ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-24">
+          {stats.map((stat, i) => (
+            <StatCard key={stat.label} value={stat.value} label={stat.label} index={i} />
+          ))}
+        </div>
+
+        {/* ── Mission & Vision ── */}
+        {/* ── Mission & Vision ── */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-24">
+
+          {/* Mission */}
           <AnimatedSection direction="left" delay={0.2}>
-            <TiltCard glowColor="rgba(139, 92, 246, 0.3)">
-              <div className="group relative p-8 lg:p-10 rounded-3xl bg-card/80 backdrop-blur-sm border border-border overflow-hidden transition-all duration-500 hover:border-primary/30 h-full">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute -right-20 -top-20 w-60 h-60 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
-                
-                <div className="relative">
+            <TiltCard glowColor="rgba(139, 92, 246, 0.3)" className="h-full rounded-3xl">
+              <div
+                className="relative p-8 lg:p-10 rounded-3xl bg-card/80 backdrop-blur-sm
+                   border border-border h-full transition-colors duration-500
+                   hover:border-primary/30"
+              >
+                {/* BUG FIX: Removed `overflow-hidden` from the card div —
+            it was clipping TiltCard's glow overlays and the border gradient.
+            Overflow is now handled per-element only where actually needed. */}
+
+                {/* BUG FIX: Removed group/group-hover pattern — TiltCard injects a
+            motion.div wrapper between this div and its parent, so `group`
+            on this div has no parent `group` to respond to.
+            Replaced with always-visible low-opacity gradients that intensify
+            on :hover using Tailwind's direct `hover:` variant instead. */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br
+                        from-primary/3 to-transparent
+                        hover:from-primary/8 transition-all duration-500
+                        pointer-events-none" />
+
+                {/* Decorative orb — always subtly visible, brightens on hover */}
+                <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full blur-3xl
+                        bg-primary/6 hover:bg-primary/12 transition-all duration-700
+                        pointer-events-none" />
+
+                {/* Numbered label */}
+                <div className="absolute top-6 right-8 text-xs font-mono text-primary/40
+                        tracking-widest uppercase select-none">
+                  01 / Mission
+                </div>
+
+                <div className="relative z-10">
                   <motion.div
-                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-8 shadow-lg shadow-primary/20"
+                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent
+                       flex items-center justify-center mb-8 shadow-xl shadow-primary/25
+                       relative overflow-hidden"
                     whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
                   >
-                    <Target className="w-8 h-8 text-white" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br
+                            from-primary to-accent blur-md opacity-50" />
+                    <Target className="relative w-8 h-8 text-white" />
                   </motion.div>
-                  <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-6">
+
+                  <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-5">
                     Our Mission
                   </h3>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground text-base lg:text-lg leading-relaxed mb-6">
                     To deliver transformative technology solutions that accelerate business growth,
                     enhance operational efficiency, and create lasting value for our clients through
                     innovation, expertise, and unwavering commitment to excellence.
                   </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {['Innovation', 'Growth', 'Excellence'].map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1 text-xs font-medium rounded-full
+                           bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </TiltCard>
           </AnimatedSection>
 
+          {/* Vision */}
           <AnimatedSection direction="right" delay={0.3}>
-            <TiltCard glowColor="rgba(168, 85, 247, 0.3)">
-              <div className="group relative p-8 lg:p-10 rounded-3xl bg-card/80 backdrop-blur-sm border border-border overflow-hidden transition-all duration-500 hover:border-accent/30 h-full">
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute -left-20 -bottom-20 w-60 h-60 bg-gradient-to-br from-accent/10 to-transparent rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
-                
-                <div className="relative">
+            <TiltCard glowColor="rgba(168, 85, 247, 0.3)" className="h-full rounded-3xl">
+              <div
+                className="relative p-8 lg:p-10 rounded-3xl bg-card/80 backdrop-blur-sm
+                   border border-border h-full transition-colors duration-500
+                   hover:border-accent/30"
+              >
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br
+                        from-accent/3 to-transparent
+                        hover:from-accent/8 transition-all duration-500
+                        pointer-events-none" />
+
+                <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full blur-3xl
+                        bg-accent/6 hover:bg-accent/12 transition-all duration-700
+                        pointer-events-none" />
+
+                <div className="absolute top-6 right-8 text-xs font-mono text-accent/40
+                        tracking-widest uppercase select-none">
+                  02 / Vision
+                </div>
+
+                <div className="relative z-10">
                   <motion.div
-                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-primary flex items-center justify-center mb-8 shadow-lg shadow-accent/20"
+                    className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-primary
+                       flex items-center justify-center mb-8 shadow-xl shadow-accent/25
+                       relative overflow-hidden"
                     whileHover={{ scale: 1.1, rotate: -5 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
                   >
-                    <Eye className="w-8 h-8 text-white" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br
+                            from-accent to-primary blur-md opacity-50" />
+                    <Eye className="relative w-8 h-8 text-white" />
                   </motion.div>
-                  <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-6">
+
+                  <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-5">
                     Our Vision
                   </h3>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <p className="text-muted-foreground text-base lg:text-lg leading-relaxed mb-6">
                     To be the global leader in digital transformation, recognized for our innovative
                     solutions, exceptional talent, and the meaningful impact we create for businesses
                     and communities worldwide.
                   </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {['Global Reach', 'Impact', 'Leadership'].map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1 text-xs font-medium rounded-full
+                           bg-accent/10 text-accent border border-accent/20"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </TiltCard>
           </AnimatedSection>
+
         </div>
 
-        {/* Values */}
-        <AnimatedSection delay={0.4}>
-          <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] text-center mb-12">
-            Why Choose <span className="gradient-text">Softgoway</span>
+        {/* ── Values section header ── */}
+        <AnimatedSection delay={0.2} className="text-center mb-14">
+          <p className="text-xs font-mono text-primary/60 tracking-[0.3em] uppercase mb-4">
+            Our Foundation
+          </p>
+          <h3 className="text-3xl lg:text-4xl font-bold font-[var(--font-heading)]">
+            Why Choose{' '}
+            <GradientText>Softgoway</GradientText>
           </h3>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto text-sm leading-relaxed">
+            Four pillars that define how we think, work, and deliver every single project.
+          </p>
         </AnimatedSection>
 
-        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.1}>
-          {values.map((value) => (
-            <StaggerItem key={value.title}>
-              <motion.div
-                className="group relative p-6 lg:p-8 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary/20 transition-all duration-500 h-full"
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <motion.div
-                  className={`relative w-14 h-14 rounded-xl bg-gradient-to-br ${value.gradient} flex items-center justify-center mb-6 shadow-lg`}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <value.icon className="w-7 h-7 text-white" />
-                </motion.div>
-                
-                <h4 className="relative text-lg font-bold font-[var(--font-heading)] mb-3 group-hover:text-primary transition-colors">
-                  {value.title}
-                </h4>
-                <p className="relative text-sm text-muted-foreground leading-relaxed">
-                  {value.description}
-                </p>
-              </motion.div>
-            </StaggerItem>
+        {/* ── Value cards ── */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {values.map((value, index) => (
+            <ValueCard key={value.title} value={value} index={index} />
           ))}
-        </StaggerContainer>
+        </div>
+
+        {/* ── Bottom CTA strip ── */}
+        <AnimatedSection delay={0.3} className="mt-24">
+          <div className="relative p-8 lg:p-12 rounded-3xl overflow-hidden border border-border/60">
+            {/* Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-card/80 to-accent/5 backdrop-blur-sm" />
+            <div
+              className="absolute inset-0 opacity-[0.03]"
+              style={{
+                backgroundImage: `radial-gradient(var(--color-primary) 1px, transparent 1px)`,
+                backgroundSize: '24px 24px',
+              }}
+            />
+
+            <div className="relative flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="text-center lg:text-left">
+                <h4 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-2">
+                  Ready to transform your business?
+                </h4>
+                <p className="text-muted-foreground">
+                  Let's build something extraordinary together.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                <motion.a
+                  href="#contact"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="px-8 py-3 rounded-xl bg-gradient-to-r from-primary to-accent
+                             text-primary-foreground font-semibold text-sm
+                             shadow-lg shadow-primary/25 hover:opacity-90 transition-opacity"
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  Start a Project
+                </motion.a>
+                <motion.a
+                  href="#portfolio"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.querySelector('#portfolio')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="px-8 py-3 rounded-xl border border-border/80 bg-card/50
+                             text-foreground font-semibold text-sm backdrop-blur-sm
+                             hover:border-primary/30 transition-colors"
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  View Work
+                </motion.a>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+
       </div>
     </section>
   )

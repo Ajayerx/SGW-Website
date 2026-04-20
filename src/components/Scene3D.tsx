@@ -1,9 +1,62 @@
-import { useRef, useMemo, Suspense } from 'react'
+import { useRef, useMemo, Suspense, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, MeshDistortMaterial, Sphere, Stars, Trail } from '@react-three/drei'
 import * as THREE from 'three'
 import { useTheme } from '@/hooks/useTheme'
 
+
+// ─────────────────────────────────────────────
+// SHARED GEOMETRIES — created once at module level,
+// never recreated on re-render or remount
+// ─────────────────────────────────────────────
+const sphereGeo64 = new THREE.SphereGeometry(1, 64, 64)
+const sphereGeo32 = new THREE.SphereGeometry(1, 32, 32)
+const sphereGeo16 = new THREE.SphereGeometry(0.15, 16, 16)
+const torusGeo = new THREE.TorusGeometry(1, 0.25, 16, 100)
+
+
+// ─────────────────────────────────────────────
+// VISIBILITY PAUSE — stops rAF loop when Hero
+// section is off-screen (e.g. user scrolled past)
+// FIX: use useThree() to get scene + camera
+// instead of gl.scene / gl.camera which don't
+// exist on THREE.WebGLRenderer
+// ─────────────────────────────────────────────
+function ScenePauser({
+  containerRef,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>
+}) {
+  const { gl, scene, camera } = useThree()
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gl.setAnimationLoop(() => {
+            gl.render(scene, camera)
+          })
+        } else {
+          gl.setAnimationLoop(null)
+        }
+      },
+      { threshold: 0.05 }
+    )
+
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [gl, scene, camera, containerRef])
+
+  return null
+}
+
+
+// ─────────────────────────────────────────────
+// FloatingSphere
+// ─────────────────────────────────────────────
 function FloatingSphere({
   position,
   scale,
@@ -20,31 +73,50 @@ function FloatingSphere({
   const meshRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.elapsedTime * 0.15 * speed
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.2 * speed
-    }
+    if (!meshRef.current) return
+    meshRef.current.rotation.x = state.clock.elapsedTime * 0.15 * speed
+    meshRef.current.rotation.y = state.clock.elapsedTime * 0.2 * speed
   })
 
   return (
     <Float speed={speed * 1.5} rotationIntensity={0.4} floatIntensity={0.6}>
-      <Sphere ref={meshRef} args={[1, 64, 64]} position={position} scale={scale}>
+      <mesh
+        ref={meshRef}
+        geometry={sphereGeo64}
+        position={position}
+        scale={scale}
+      >
         <MeshDistortMaterial
           color={color}
-          attach="material"
           distort={distort}
           speed={2}
           roughness={0.3}
           metalness={0.9}
           envMapIntensity={0.5}
         />
-      </Sphere>
+      </mesh>
     </Float>
   )
 }
 
-function ParticleField({ count = 800, color }: { count?: number; color: string }) {
-  const particles = useMemo(() => {
+
+// ─────────────────────────────────────────────
+// ParticleField
+// FIX: bufferAttribute now uses args={[array, itemSize]}
+// instead of spreading a pre-built BufferAttribute instance.
+// R3F v9 requires args to construct Three objects internally.
+// The old spread pattern broke the reconciler type contract.
+// sizes array is kept — it's used by pointsMaterial size attribute
+// for varied particle sizes (unlike AboutParticles which had no use for speeds).
+// ─────────────────────────────────────────────
+function ParticleField({
+  count = 800,
+  color,
+}: {
+  count?: number
+  color: string
+}) {
+  const { positions, sizes } = useMemo(() => {
     const positions = new Float32Array(count * 3)
     const sizes = new Float32Array(count)
     for (let i = 0; i < count; i++) {
@@ -59,26 +131,22 @@ function ParticleField({ count = 800, color }: { count?: number; color: string }
   const pointsRef = useRef<THREE.Points>(null)
 
   useFrame((state) => {
-    if (pointsRef.current) {
-      pointsRef.current.rotation.x = state.clock.elapsedTime * 0.015
-      pointsRef.current.rotation.y = state.clock.elapsedTime * 0.01
-    }
+    if (!pointsRef.current) return
+    pointsRef.current.rotation.x = state.clock.elapsedTime * 0.015
+    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.01
   })
 
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
+        {/* FIX: args={[typedArray, itemSize]} — R3F v9 pattern */}
         <bufferAttribute
           attach="attributes-position"
-          count={count}
-          array={particles.positions}
-          itemSize={3}
+          args={[positions, 3]}
         />
         <bufferAttribute
           attach="attributes-size"
-          count={count}
-          array={particles.sizes}
-          itemSize={1}
+          args={[sizes, 1]}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -88,11 +156,16 @@ function ParticleField({ count = 800, color }: { count?: number; color: string }
         opacity={0.7}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
+        depthWrite={false}
       />
     </points>
   )
 }
 
+
+// ─────────────────────────────────────────────
+// RotatingTorus
+// ─────────────────────────────────────────────
 function RotatingTorus({
   position,
   scale = 1,
@@ -105,16 +178,19 @@ function RotatingTorus({
   const meshRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.elapsedTime * 0.25
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.15
-      meshRef.current.rotation.z = state.clock.elapsedTime * 0.1
-    }
+    if (!meshRef.current) return
+    meshRef.current.rotation.x = state.clock.elapsedTime * 0.25
+    meshRef.current.rotation.y = state.clock.elapsedTime * 0.15
+    meshRef.current.rotation.z = state.clock.elapsedTime * 0.1
   })
 
   return (
-    <mesh ref={meshRef} position={position} scale={scale}>
-      <torusGeometry args={[1, 0.25, 16, 100]} />
+    <mesh
+      ref={meshRef}
+      geometry={torusGeo}
+      position={position}
+      scale={scale}
+    >
       <meshStandardMaterial
         color={color}
         metalness={0.95}
@@ -122,52 +198,74 @@ function RotatingTorus({
         wireframe
         transparent
         opacity={0.6}
+        depthWrite={false}
       />
     </mesh>
   )
 }
 
-function GlowingOrb({ position, color }: { position: [number, number, number]; color: string }) {
+
+// ─────────────────────────────────────────────
+// GlowingOrb
+// ─────────────────────────────────────────────
+function GlowingOrb({
+  position,
+  color,
+}: {
+  position: [number, number, number]
+  color: string
+}) {
   const meshRef = useRef<THREE.Mesh>(null)
 
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.5
-    }
+    if (!meshRef.current) return
+    meshRef.current.position.y =
+      position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.5
   })
 
   return (
-    <Trail width={2} length={8} color={color} attenuation={(t) => t * t}>
-      <mesh ref={meshRef} position={position}>
-        <sphereGeometry args={[0.15, 32, 32]} />
-        <meshBasicMaterial color={color} transparent opacity={0.9} />
+    <Trail
+      width={2}
+      length={8}
+      color={color}
+      attenuation={(t) => t * t}
+    >
+      <mesh ref={meshRef} geometry={sphereGeo16} position={position}>
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.9}
+          depthWrite={false}
+        />
       </mesh>
     </Trail>
   )
 }
 
+
+// ─────────────────────────────────────────────
+// MouseFollower
+// ─────────────────────────────────────────────
 function MouseFollower() {
   const meshRef = useRef<THREE.Mesh>(null)
   const { viewport, mouse } = useThree()
 
   useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.position.x = THREE.MathUtils.lerp(
-        meshRef.current.position.x,
-        (mouse.x * viewport.width) / 2,
-        0.05
-      )
-      meshRef.current.position.y = THREE.MathUtils.lerp(
-        meshRef.current.position.y,
-        (mouse.y * viewport.height) / 2,
-        0.05
-      )
-    }
+    if (!meshRef.current) return
+    meshRef.current.position.x = THREE.MathUtils.lerp(
+      meshRef.current.position.x,
+      (mouse.x * viewport.width) / 2,
+      0.05
+    )
+    meshRef.current.position.y = THREE.MathUtils.lerp(
+      meshRef.current.position.y,
+      (mouse.y * viewport.height) / 2,
+      0.05
+    )
   })
 
   return (
-    <mesh ref={meshRef} position={[0, 0, 2]}>
-      <sphereGeometry args={[0.5, 32, 32]} />
+    <mesh ref={meshRef} geometry={sphereGeo32} scale={0.5} position={[0, 0, 2]}>
       <meshStandardMaterial
         color="#8b5cf6"
         emissive="#8b5cf6"
@@ -176,12 +274,21 @@ function MouseFollower() {
         opacity={0.3}
         roughness={0.1}
         metalness={0.8}
+        depthWrite={false}
       />
     </mesh>
   )
 }
 
-function SceneContent() {
+
+// ─────────────────────────────────────────────
+// SceneContent
+// ─────────────────────────────────────────────
+function SceneContent({
+  containerRef,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>
+}) {
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
 
@@ -191,6 +298,8 @@ function SceneContent() {
 
   return (
     <>
+      <ScenePauser containerRef={containerRef} />
+
       <ambientLight intensity={0.4} />
       <directionalLight position={[10, 10, 5]} intensity={0.8} />
       <pointLight position={[-10, -10, -5]} intensity={0.4} color={accentColor} />
@@ -213,27 +322,52 @@ function SceneContent() {
       <MouseFollower />
 
       {isDark && (
-        <Stars radius={120} depth={60} count={3000} factor={5} saturation={0} fade speed={0.5} />
+        <Stars
+          radius={120}
+          depth={60}
+          count={3000}
+          factor={5}
+          saturation={0}
+          fade
+          speed={0.5}
+        />
       )}
     </>
   )
 }
 
+
+// ─────────────────────────────────────────────
+// Scene3D — public export
+// ─────────────────────────────────────────────
 export function Scene3D() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [dpr, setDpr] = useState<[number, number]>([1, 1.5])
+
+  useEffect(() => {
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      setDpr([1, 1])
+    }
+  }, [])
+
   return (
-    <div className="absolute inset-0 z-0">
+    <div ref={containerRef} className="absolute inset-0 z-0">
       <Canvas
         camera={{ position: [0, 0, 12], fov: 55 }}
-        dpr={[1, 1.5]}
+        dpr={dpr}
+        frameloop="always"
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: 'high-performance',
+          premultipliedAlpha: false,
+          preserveDrawingBuffer: false,
         }}
         style={{ background: 'transparent' }}
+        resize={{ scroll: false, debounce: { scroll: 50, resize: 200 } }}
       >
         <Suspense fallback={null}>
-          <SceneContent />
+          <SceneContent containerRef={containerRef} />
         </Suspense>
       </Canvas>
     </div>

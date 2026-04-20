@@ -1,5 +1,11 @@
-import { motion, useInView, type Variants } from 'framer-motion'
-import { useRef } from 'react'
+import {
+  motion,
+  useInView,
+  useMotionValue,
+  useSpring,
+  type Variants,
+} from 'framer-motion'
+import { useRef, useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface TextRevealProps {
@@ -10,6 +16,8 @@ interface TextRevealProps {
   staggerChildren?: number
   type?: 'words' | 'chars' | 'lines'
   animation?: 'slide' | 'fade' | 'blur' | 'scale' | 'wave'
+  // NEW: when true, we never drive opacity via the variants (so gradient stays solid)
+  preserveOpacity?: boolean
 }
 
 const containerVariants: Variants = {
@@ -22,18 +30,22 @@ const containerVariants: Variants = {
   }),
 }
 
-const getItemVariants = (animation: string): Variants => {
+// UPDATED: accept preserveOpacity flag
+const getItemVariants = (animation: string, preserveOpacity?: boolean): Variants => {
+  const baseHiddenOpacity = preserveOpacity ? 1 : 0
+  const baseVisibleOpacity = 1
+
   switch (animation) {
     case 'slide':
       return {
-        hidden: { 
-          y: 50, 
-          opacity: 0,
+        hidden: {
+          y: 50,
+          opacity: baseHiddenOpacity,
           rotateX: -40,
         },
-        visible: { 
-          y: 0, 
-          opacity: 1,
+        visible: {
+          y: 0,
+          opacity: baseVisibleOpacity,
           rotateX: 0,
           transition: {
             type: 'spring',
@@ -44,21 +56,21 @@ const getItemVariants = (animation: string): Variants => {
       }
     case 'fade':
       return {
-        hidden: { opacity: 0 },
-        visible: { 
-          opacity: 1,
+        hidden: { opacity: baseHiddenOpacity },
+        visible: {
+          opacity: baseVisibleOpacity,
           transition: { duration: 0.6 },
         },
       }
     case 'blur':
       return {
-        hidden: { 
-          opacity: 0, 
+        hidden: {
+          opacity: baseHiddenOpacity,
           filter: 'blur(10px)',
           y: 20,
         },
-        visible: { 
-          opacity: 1, 
+        visible: {
+          opacity: baseVisibleOpacity,
           filter: 'blur(0px)',
           y: 0,
           transition: { duration: 0.5 },
@@ -66,13 +78,13 @@ const getItemVariants = (animation: string): Variants => {
       }
     case 'scale':
       return {
-        hidden: { 
-          opacity: 0, 
+        hidden: {
+          opacity: baseHiddenOpacity,
           scale: 0.5,
           y: 30,
         },
-        visible: { 
-          opacity: 1, 
+        visible: {
+          opacity: baseVisibleOpacity,
           scale: 1,
           y: 0,
           transition: {
@@ -84,29 +96,28 @@ const getItemVariants = (animation: string): Variants => {
       }
     case 'wave':
       return {
-        hidden: { 
-          y: 30, 
-          opacity: 0,
+        hidden: {
+          y: 30,
+          opacity: baseHiddenOpacity,
           rotate: 5,
         },
-        visible: (i: number) => ({ 
-          y: 0, 
-          opacity: 1,
+        visible: {
+          y: 0,
+          opacity: baseVisibleOpacity,
           rotate: 0,
           transition: {
             type: 'spring',
             damping: 12,
             stiffness: 100,
-            delay: i * 0.03,
           },
-        }),
+        },
       }
     default:
       return {
-        hidden: { y: 50, opacity: 0 },
-        visible: { 
-          y: 0, 
-          opacity: 1,
+        hidden: { y: 50, opacity: baseHiddenOpacity },
+        visible: {
+          y: 0,
+          opacity: baseVisibleOpacity,
           transition: { duration: 0.5 },
         },
       }
@@ -121,17 +132,19 @@ export function TextReveal({
   staggerChildren = 0.03,
   type = 'words',
   animation = 'slide',
+  preserveOpacity = false,
 }: TextRevealProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once, margin: '-50px' })
-  
-  const items = type === 'chars' 
-    ? text.split('') 
-    : type === 'lines'
-    ? text.split('\n')
-    : text.split(' ')
 
-  const itemVariants = getItemVariants(animation)
+  const items =
+    type === 'chars'
+      ? text.split('')
+      : type === 'lines'
+        ? text.split('\n')
+        : text.split(' ')
+
+  const itemVariants = getItemVariants(animation, preserveOpacity)
 
   return (
     <motion.span
@@ -150,7 +163,7 @@ export function TextReveal({
             'inline-block',
             type === 'words' && 'mr-[0.25em]',
             type === 'chars' && item === ' ' && 'w-[0.25em]',
-            type === 'lines' && 'block'
+            type === 'lines' && 'block',
           )}
           variants={itemVariants}
           custom={index}
@@ -163,7 +176,7 @@ export function TextReveal({
   )
 }
 
-// Animated gradient text component
+// Animated gradient text wrapper
 interface GradientTextProps {
   children: React.ReactNode
   className?: string
@@ -172,21 +185,18 @@ interface GradientTextProps {
 
 export function GradientText({ children, className, animate = true }: GradientTextProps) {
   return (
-    <motion.span
+    <span
       className={cn(
         animate ? 'gradient-text-animated' : 'gradient-text',
-        className
+        className,
       )}
-      style={{
-        display: 'inline-block',
-      }}
     >
       {children}
-    </motion.span>
+    </span>
   )
 }
 
-// Character-by-character reveal with stagger
+// Char-by-char reveal
 interface CharRevealProps {
   text: string
   className?: string
@@ -194,10 +204,15 @@ interface CharRevealProps {
   stagger?: number
 }
 
-export function CharReveal({ text, className, delay = 0, stagger = 0.02 }: CharRevealProps) {
+export function CharReveal({
+  text,
+  className,
+  delay = 0,
+  stagger = 0.02,
+}: CharRevealProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
-  
+
   const chars = text.split('')
 
   return (
@@ -214,7 +229,7 @@ export function CharReveal({ text, className, delay = 0, stagger = 0.02 }: CharR
             stiffness: 150,
             delay: delay + index * stagger,
           }}
-          style={{ 
+          style={{
             transformOrigin: 'center bottom',
             display: char === ' ' ? 'inline' : 'inline-block',
             width: char === ' ' ? '0.25em' : 'auto',
@@ -236,7 +251,13 @@ interface LineRevealProps {
   stagger?: number
 }
 
-export function LineReveal({ lines, className, lineClassName, delay = 0, stagger = 0.15 }: LineRevealProps) {
+export function LineReveal({
+  lines,
+  className,
+  lineClassName,
+  delay = 0,
+  stagger = 0.15,
+}: LineRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
 
@@ -263,7 +284,7 @@ export function LineReveal({ lines, className, lineClassName, delay = 0, stagger
   )
 }
 
-// Counter animation component
+// Counter
 interface CounterProps {
   from?: number
   to: number
@@ -271,53 +292,49 @@ interface CounterProps {
   delay?: number
   suffix?: string
   className?: string
+  decimals?: number
 }
 
-export function Counter({ from = 0, to, duration = 2, delay = 0, suffix = '', className }: CounterProps) {
+export function Counter({
+  from = 0,
+  to,
+  duration = 2,
+  delay = 0,
+  suffix = '',
+  className,
+  decimals = 0,
+}: CounterProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-50px' })
+  const [displayValue, setDisplayValue] = useState(from)
+
+  const motionValue = useMotionValue(from)
+  const springValue = useSpring(motionValue, {
+    stiffness: 80,
+    damping: 18,
+  })
+
+  useEffect(() => {
+    if (!isInView) return
+
+    const timeout = setTimeout(() => {
+      motionValue.set(to)
+    }, delay * 1000)
+
+    return () => clearTimeout(timeout)
+  }, [isInView, motionValue, to, delay])
+
+  useEffect(() => {
+    const unsubscribe = springValue.on('change', (latest) => {
+      setDisplayValue(parseFloat(latest.toFixed(decimals)))
+    })
+    return unsubscribe
+  }, [springValue, decimals])
 
   return (
-    <motion.span
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-    >
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay }}
-      >
-        {isInView && (
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <CounterValue from={from} to={to} duration={duration} delay={delay} />
-            {suffix}
-          </motion.span>
-        )}
-      </motion.span>
-    </motion.span>
-  )
-}
-
-function CounterValue({ from, to, duration, delay }: { from: number; to: number; duration: number; delay: number }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  
-  return (
-    <motion.span
-      ref={ref}
-      initial={{ textContent: String(from) }}
-      animate={{ textContent: String(to) }}
-      transition={{ 
-        duration, 
-        delay,
-        ease: 'easeOut',
-      }}
-    >
-      {to}
-    </motion.span>
+    <span ref={ref} className={className}>
+      {displayValue.toLocaleString()}
+      {suffix}
+    </span>
   )
 }

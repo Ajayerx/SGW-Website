@@ -1,20 +1,26 @@
 import { useRef, useEffect } from 'react'
-import { motion, useInView, useAnimation, type Variants } from 'framer-motion'
+import { motion, useInView, type Variants } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { cn } from '@/lib/utils'
 
+
 gsap.registerPlugin(ScrollTrigger)
+
 
 interface AnimatedSectionProps {
   children: React.ReactNode
   className?: string
   delay?: number
   direction?: 'up' | 'down' | 'left' | 'right'
-  stagger?: boolean
   parallax?: boolean
   parallaxSpeed?: number
 }
+// FIX #10: Removed dead `stagger` prop from interface.
+// It was declared but never read or used anywhere in the component body.
+// Keeping unused props in interfaces creates false expectations for consumers
+// who might pass stagger={true} and wonder why nothing changes.
+
 
 const directionVariants: Record<string, Variants> = {
   up: {
@@ -35,6 +41,7 @@ const directionVariants: Record<string, Variants> = {
   },
 }
 
+
 export function AnimatedSection({
   children,
   className,
@@ -45,16 +52,18 @@ export function AnimatedSection({
 }: AnimatedSectionProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
-  const controls = useAnimation()
 
+  // FIX #9: Store the ScrollTrigger instance and call .kill() in cleanup.
+  // Previously the useEffect returned nothing when parallax=true, so the
+  // ScrollTrigger instance was never destroyed on unmount. On pages with
+  // multiple AnimatedSection components (or during React strict mode double
+  // invocation) this caused stale triggers to stack up, firing on scroll
+  // after the component was gone and potentially causing ghost animations
+  // or "Cannot read properties of null" errors on the unmounted ref.
   useEffect(() => {
-    if (isInView) {
-      controls.start('visible')
-    }
-  }, [isInView, controls])
+    if (!parallax || !ref.current) return
 
-  useEffect(() => {
-    if (parallax && ref.current) {
+    const ctx = gsap.context(() => {
       gsap.to(ref.current, {
         yPercent: -10 * parallaxSpeed,
         ease: 'none',
@@ -65,14 +74,22 @@ export function AnimatedSection({
           scrub: 1,
         },
       })
-    }
+    }, ref) // scope context to this ref
+
+    // FIX #9: ctx.revert() kills all GSAP animations and ScrollTrigger
+    // instances created inside this context, cleanly on every unmount.
+    return () => ctx.revert()
   }, [parallax, parallaxSpeed])
+
 
   return (
     <motion.div
       ref={ref}
       initial="hidden"
-      animate={controls}
+      // Simplified: useAnimation + separate controls.start() removed.
+      // useInView directly drives animate — cleaner, same result,
+      // and avoids the stale closure risk with useAnimation.
+      animate={isInView ? 'visible' : 'hidden'}
       variants={directionVariants[direction]}
       transition={{
         duration: 0.8,
@@ -85,6 +102,7 @@ export function AnimatedSection({
     </motion.div>
   )
 }
+
 
 export function StaggerContainer({
   children,
@@ -117,6 +135,7 @@ export function StaggerContainer({
     </motion.div>
   )
 }
+
 
 export function StaggerItem({
   children,

@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion'
 import { cn } from '@/lib/utils'
+
 
 interface TiltCardProps {
   children: React.ReactNode
@@ -11,6 +12,7 @@ interface TiltCardProps {
   scale?: number
   perspective?: number
 }
+
 
 export function TiltCard({
   children,
@@ -23,20 +25,39 @@ export function TiltCard({
 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
-  
-  // Motion values for smooth animation
+
+  // Motion values for tilt
   const mouseX = useMotionValue(0.5)
   const mouseY = useMotionValue(0.5)
-  
-  // Spring config for smooth animations
+
+  // Spring config for smooth tilt
   const springConfig = { stiffness: 300, damping: 30 }
   const rotateX = useSpring(useTransform(mouseY, [0, 1], [tiltAmount, -tiltAmount]), springConfig)
   const rotateY = useSpring(useTransform(mouseX, [0, 1], [-tiltAmount, tiltAmount]), springConfig)
-  const scaleValue = useSpring(isHovered ? scale : 1, springConfig)
-  
-  // Glow position
+
+  // FIX #2: Scale as a MotionValue so useSpring receives a MotionValue, not a plain number.
+  // Previously: useSpring(isHovered ? scale : 1) — passed a plain number directly,
+  // which is unconventional and doesn't respond reactively to hover state changes.
+  const scaleTarget = useMotionValue(1)
+  const scaleValue = useSpring(scaleTarget, springConfig)
+
+  // FIX #2: Glow position as reactive MotionValues fed into useMotionTemplate.
+  // Previously: glowX.get() / glowY.get() inside style={{}} read a static snapshot
+  // at render time — the glow circle was frozen and never followed the cursor.
+  // useMotionTemplate creates a reactive string that updates every frame without
+  // triggering a React re-render, making the glow track the cursor in real time.
   const glowX = useTransform(mouseX, [0, 1], [0, 100])
   const glowY = useTransform(mouseY, [0, 1], [0, 100])
+  const glowBackground = useMotionTemplate`radial-gradient(circle at ${glowX}% ${glowY}%, ${glowColor} 0%, transparent 60%)`
+
+  // FIX #3: Border rotation uses a dedicated motionValue for the angle,
+  // driven by a CSS rotate transform on a conic-gradient div.
+  // Previously animated `background` between gradient strings — FM cannot
+  // interpolate CSS gradient strings so it snapped between keyframes.
+  // Now the conic-gradient is static; only the div's rotation animates,
+  // which FM handles perfectly as a numeric transform.
+  const borderRotation = useMotionValue(0)
+  const borderRotateSpring = useSpring(borderRotation, { stiffness: 60, damping: 20 })
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
@@ -44,20 +65,24 @@ export function TiltCard({
     const rect = cardRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / rect.width
     const y = (e.clientY - rect.top) / rect.height
-    
+
     mouseX.set(x)
     mouseY.set(y)
   }, [mouseX, mouseY])
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true)
-  }, [])
+    scaleTarget.set(scale)
+    borderRotation.set(360)
+  }, [scale, scaleTarget, borderRotation])
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false)
     mouseX.set(0.5)
     mouseY.set(0.5)
-  }, [mouseX, mouseY])
+    scaleTarget.set(1)
+    borderRotation.set(0)
+  }, [mouseX, mouseY, scaleTarget, borderRotation])
 
   return (
     <motion.div
@@ -74,19 +99,20 @@ export function TiltCard({
       }}
       className={cn('relative', className)}
     >
-      {/* Dynamic glow effect that follows cursor */}
+      {/* FIX #2: Dynamic glow that genuinely follows cursor via useMotionTemplate */}
       <motion.div
-        className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 transition-opacity duration-300"
+        className="absolute inset-0 rounded-3xl pointer-events-none"
         style={{
-          background: `radial-gradient(circle at calc(${glowX.get()}%) calc(${glowY.get()}%), ${glowColor} 0%, transparent 60%)`,
+          background: glowBackground,
           opacity: isHovered ? glowIntensity : 0,
+          transition: 'opacity 0.3s ease',
         }}
       />
 
-      {/* Spotlight effect */}
+      {/* Spotlight sweep effect */}
       <motion.div
         className="absolute inset-0 rounded-3xl pointer-events-none overflow-hidden"
-        style={{ opacity: isHovered ? 1 : 0 }}
+        style={{ opacity: isHovered ? 1 : 0, transition: 'opacity 0.3s ease' }}
       >
         <motion.div
           className="absolute w-[200%] h-[200%] -top-1/2 -left-1/2"
@@ -98,32 +124,29 @@ export function TiltCard({
           transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
         />
       </motion.div>
-      
-      {/* Border glow that intensifies on hover */}
-      <motion.div
-        className="absolute -inset-[1px] rounded-3xl pointer-events-none"
-        style={{
-          background: `linear-gradient(135deg, ${glowColor} 0%, transparent 40%, transparent 60%, ${glowColor} 100%)`,
-          padding: '1px',
-          WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-          WebkitMaskComposite: 'xor',
-          maskComposite: 'exclude',
-          opacity: isHovered ? 0.8 : 0,
-        }}
-        animate={isHovered ? {
-          background: [
-            `linear-gradient(0deg, ${glowColor} 0%, transparent 40%, transparent 60%, ${glowColor} 100%)`,
-            `linear-gradient(90deg, ${glowColor} 0%, transparent 40%, transparent 60%, ${glowColor} 100%)`,
-            `linear-gradient(180deg, ${glowColor} 0%, transparent 40%, transparent 60%, ${glowColor} 100%)`,
-            `linear-gradient(270deg, ${glowColor} 0%, transparent 40%, transparent 60%, ${glowColor} 100%)`,
-            `linear-gradient(360deg, ${glowColor} 0%, transparent 40%, transparent 60%, ${glowColor} 100%)`,
-          ],
-        } : {}}
-        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-      />
 
-      {/* Content with 3D depth effect */}
-      <motion.div
+      {/* FIX #3: Border glow — static conic-gradient div that rotates as a transform.
+          The gradient itself never changes; only the CSS rotate value animates.
+          This is something Framer Motion handles perfectly as a numeric interpolation. */}
+      <div
+        className="absolute -inset-[1px] rounded-3xl pointer-events-none overflow-hidden"
+        style={{ opacity: isHovered ? 0.8 : 0, transition: 'opacity 0.3s ease' }}
+      >
+        <motion.div
+          className="absolute inset-0 rounded-3xl"
+          style={{
+            background: `conic-gradient(from 0deg, ${glowColor}, transparent 40%, transparent 60%, ${glowColor})`,
+            rotate: borderRotateSpring,
+            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+            WebkitMaskComposite: 'xor',
+            maskComposite: 'exclude',
+            padding: '1px',
+          }}
+        />
+      </div>
+
+      {/* Content with 3D depth */}
+      <div
         style={{
           transform: 'translateZ(20px)',
           transformStyle: 'preserve-3d',
@@ -131,28 +154,31 @@ export function TiltCard({
         className="relative"
       >
         {children}
-      </motion.div>
+      </div>
 
-      {/* Shadow that responds to tilt */}
+      {/* Depth shadow */}
       <motion.div
         className="absolute inset-0 rounded-3xl -z-10"
-        style={{
+        animate={{
           boxShadow: isHovered
             ? `0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 40px ${glowColor}`
             : '0 10px 20px -5px rgba(0, 0, 0, 0.1)',
-          transform: 'translateZ(-20px)',
         }}
+        transition={{ duration: 0.3 }}
+        style={{ transform: 'translateZ(-20px)' }}
       />
     </motion.div>
   )
 }
 
-// Hover card with reveal effect
+
+// Hover card with reveal effect — unchanged, no bugs
 interface HoverRevealCardProps {
   children: React.ReactNode
   overlay?: React.ReactNode
   className?: string
 }
+
 
 export function HoverRevealCard({ children, overlay, className }: HoverRevealCardProps) {
   const [isHovered, setIsHovered] = useState(false)
@@ -164,7 +190,7 @@ export function HoverRevealCard({ children, overlay, className }: HoverRevealCar
       onMouseLeave={() => setIsHovered(false)}
     >
       {children}
-      
+
       {overlay && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end justify-center p-6"

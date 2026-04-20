@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Sun, Moon, Monitor } from 'lucide-react'
+// FIX #6: Removed unused `Monitor` import
+import { Menu, X, Sun, Moon } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
+import { getLenis } from '@/hooks/useLenis'
 import { cn } from '@/lib/utils'
 import { MagneticWrap } from '@/components/GlowButton'
+
 
 const navLinks = [
   { name: 'Home', href: '#hero' },
@@ -16,23 +19,28 @@ const navLinks = [
   { name: 'Contact', href: '#contact' },
 ]
 
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
-  const { resolvedTheme, setTheme } = useTheme()
+  // FIX #5: Destructure toggleTheme instead of manually comparing resolvedTheme
+  const { resolvedTheme, toggleTheme } = useTheme()
+
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
 
-      // Scroll spy
+      // Scroll spy — reads navbar height dynamically instead of hardcoded 150
+      const navHeight = document.querySelector('nav')?.offsetHeight ?? 80
       const sections = navLinks.map(link => link.href.slice(1))
+
       for (const section of sections.reverse()) {
         const element = document.getElementById(section)
         if (element) {
           const rect = element.getBoundingClientRect()
-          if (rect.top <= 150) {
+          if (rect.top <= navHeight + 20) {
             setActiveSection(section)
             break
           }
@@ -44,13 +52,33 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+
+  // FIX #4: Use Lenis scrollTo() instead of native scrollIntoView().
+  // Previously: element.scrollIntoView({ behavior: 'smooth' }) conflicted
+  // with Lenis which overrides native scroll — both fought for scroll control,
+  // causing stuttering on nav link clicks.
+  // Now: getLenis().scrollTo() delegates entirely to Lenis, keeping one
+  // single scroll controller in charge at all times.
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+    const lenis = getLenis()
+
+    if (lenis) {
+      lenis.scrollTo(href, {
+        offset: -80,         // account for fixed navbar height
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      })
+    } else {
+    // Fallback if Lenis hasn't mounted yet (e.g. very fast click on load)
+      const element = document.querySelector(href)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
     }
+
     setIsMobileMenuOpen(false)
   }
+
 
   return (
     <>
@@ -67,6 +95,7 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
+
             {/* Logo */}
             <motion.a
               href="#hero"
@@ -114,7 +143,10 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               <MagneticWrap strength={0.3}>
                 <motion.button
-                  onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+                  // FIX #5: Use toggleTheme() — the correct hook API — instead of
+                  // manually calling setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+                  // which duplicates logic already encapsulated in the ThemeProvider.
+                  onClick={toggleTheme}
                   className="relative p-2.5 rounded-xl glass border border-border/50 hover:border-primary/30 transition-all group overflow-hidden"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
