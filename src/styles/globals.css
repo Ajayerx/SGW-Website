@@ -11,6 +11,26 @@
   --font-mono: 'Fira Code', 'Consolas', monospace;
   --font-heading: 'Poppins', 'Inter', sans-serif;
 
+  /* Typography Scale - Standardized sizing */
+  --text-heading-xl: clamp(2.5rem, 5vw, 4rem);
+  --text-heading-lg: clamp(2rem, 4vw, 3rem);
+  --text-heading-md: clamp(1.5rem, 3vw, 2rem);
+  --text-body-lg: 1.125rem;
+  --text-body-md: 1rem;
+  --text-caption: 0.875rem;
+
+  /* Animation Duration - Consistent timing */
+  --duration-fast: 0.2s;
+  --duration-normal: 0.35s;
+  --duration-slow: 0.5s;
+  --duration-slower: 0.8s;
+  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Spacing Scale */
+  --section-spacing: clamp(4rem, 8vw, 8rem);
+  --container-padding: clamp(1rem, 4vw, 2rem);
+
   /* Light mode colors */
   --color-background: #f9fafb;
   --color-foreground: #0f172a;
@@ -747,7 +767,94 @@ select:focus {
 
 /* ============================================
    3D CANVAS BACKGROUNDS - DARK MODE
-                                                                 =============================================*/
+   ============================================ */
 .dark canvas {
   opacity: 0.7;
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* Force GPU acceleration on animated elements */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Optimize blur performance */
+.blur-optimized {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Portfolio card optimization */
+.portfolio-card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ============================================
+   SECTION BACKGROUNDS - THEME AWARE
+   ============================================ */
+
+/* Alternating section backgrounds for visual hierarchy */
+.section-bg-primary {
+  background-color: var(--color-background);
+}
+
+.section-bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.dark .section-bg-secondary {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+
+.text-heading-xl {
+  font-size: var(--text-heading-xl);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.text-heading-lg {
+  font-size: var(--text-heading-lg);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.text-heading-md {
+  font-size: var(--text-heading-md);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.text-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: 1.6;
+}
+
+.text-body-md {
+  font-size: var(--text-body-md);
+  line-height: 1.5;
+}
+
+.text-caption {
+  font-size: var(--text-caption);
+  line-height: 1.4;
 }
