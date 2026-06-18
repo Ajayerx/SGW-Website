@@ -21,7 +21,7 @@ const testimonials = [
       'Softgoway helped us consolidate fragmented tools into a single platform our teams actually enjoy using. Within one quarter, our ops team was closing 40% more work with the same headcount.',
     avatar: 'SJ',
     rating: 5,
-    gradient: 'from-blue-500 to-cyan-500',
+    gradient: 'from-brand-blue to-brand-blue-bright',
   },
   {
     name: 'Michael Chen',
@@ -30,7 +30,7 @@ const testimonials = [
       'We needed a partner who could move quickly without sacrificing code quality. Softgoway shipped a scalable architecture that comfortably serves millions of requests per day and is still easy to extend.',
     avatar: 'MC',
     rating: 5,
-    gradient: 'from-purple-500 to-pink-500',
+    gradient: 'from-brand-green-bright to-brand-green',
   },
   {
     name: 'Emily Rodriguez',
@@ -39,7 +39,7 @@ const testimonials = [
       'Our legacy stack was holding us back. Softgoway led a phased cloud migration that reduced our infrastructure spend and cut deployment times from hours to minutes.',
     avatar: 'ER',
     rating: 5,
-    gradient: 'from-green-500 to-emerald-500',
+    gradient: 'from-brand-green to-brand-blue-bright',
   },
   {
     name: 'David Park',
@@ -48,16 +48,16 @@ const testimonials = [
       'From early prototypes to launch, the team felt like an extension of our own. The AI‑powered features we shipped together have become a key differentiator in our sales conversations.',
     avatar: 'DP',
     rating: 5,
-    gradient: 'from-orange-500 to-red-500',
+    gradient: 'from-brand-yellow to-orange-600',
   },
   {
     name: 'Lisa Thompson',
     role: 'VP Engineering, DataDriven Co.',
     content:
-      'Softgoway’s data engineering work gave us a trustworthy analytics layer. Product, sales, and leadership are finally looking at the same numbers when making decisions.',
+      "Softgoway's data engineering work gave us a trustworthy analytics layer. Product, sales, and leadership are finally looking at the same numbers when making decisions.",
     avatar: 'LT',
     rating: 5,
-    gradient: 'from-indigo-500 to-purple-500',
+    gradient: 'from-blue-400 to-green-400',
   },
 ]
 

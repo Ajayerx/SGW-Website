@@ -40,8 +40,8 @@ const services = [
       'API design & integration',
       'Performance tuning & refactoring',
     ],
-    gradient: 'from-blue-500 to-cyan-500',
-    glow: 'rgba(59, 130, 246, 0.4)',
+    gradient: 'from-blue-600 to-cyan-500',
+    glow: 'rgba(0, 102, 255, 0.5)',
   },
   {
     icon: Globe,
@@ -54,8 +54,8 @@ const services = [
       'Design systems & storybooks',
       'Headless CMS & e‑commerce',
     ],
-    gradient: 'from-cyan-500 to-blue-500',
-    glow: 'rgba(6, 182, 212, 0.4)',
+    gradient: 'from-emerald-500 to-green-600',
+    glow: 'rgba(34, 197, 94, 0.5)',
   },
   {
     icon: Smartphone,
@@ -68,8 +68,8 @@ const services = [
       'Real‑time sync & push',
       'App store rollout & support',
     ],
-    gradient: 'from-orange-500 to-red-500',
-    glow: 'rgba(249, 115, 22, 0.4)',
+    gradient: 'from-green-500 to-emerald-600',
+    glow: 'rgba(34, 197, 94, 0.5)',
   },
   {
     icon: Cloud,
@@ -82,8 +82,8 @@ const services = [
       'CI/CD pipelines',
       'Infrastructure as Code',
     ],
-    gradient: 'from-purple-500 to-pink-500',
-    glow: 'rgba(168, 85, 247, 0.4)',
+    gradient: 'from-blue-500 to-indigo-600',
+    glow: 'rgba(59, 151, 255, 0.5)',
   },
   {
     icon: Database,
@@ -96,8 +96,8 @@ const services = [
       'Real‑time event streams',
       'Analytics dashboards',
     ],
-    gradient: 'from-indigo-500 to-purple-500',
-    glow: 'rgba(99, 102, 241, 0.4)',
+    gradient: 'from-green-600 to-teal-500',
+    glow: 'rgba(34, 197, 94, 0.5)',
   },
   {
     icon: Brain,
@@ -110,8 +110,8 @@ const services = [
       'NLP for support & ops',
       'AI‑augmented workflows',
     ],
-    gradient: 'from-green-500 to-emerald-500',
-    glow: 'rgba(34, 197, 94, 0.4)',
+    gradient: 'from-yellow-500 to-orange-600',
+    glow: 'rgba(255, 215, 0, 0.5)',
   },
   {
     icon: Shield,
@@ -124,8 +124,8 @@ const services = [
       'Monitoring & alerting',
       'Incident readiness',
     ],
-    gradient: 'from-red-500 to-orange-500',
-    glow: 'rgba(239, 68, 68, 0.4)',
+    gradient: 'from-red-500 to-pink-600',
+    glow: 'rgba(255, 68, 68, 0.5)',
   },
   {
     icon: Cog,
@@ -138,8 +138,8 @@ const services = [
       'Scaling & cost optimisation',
       'Team enablement & pairing',
     ],
-    gradient: 'from-slate-400 to-zinc-500',
-    glow: 'rgba(148, 163, 184, 0.4)',
+    gradient: 'from-slate-500 to-slate-700',
+    glow: 'rgba(132, 226, 53, 0.4)',
   },
 ]
 
