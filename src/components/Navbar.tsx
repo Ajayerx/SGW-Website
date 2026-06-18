@@ -20,7 +20,7 @@ const navLinks = [
 ]
 
 
-export function Navbar() {
+export function Navbar({ onNavigateToServices }: { onNavigateToServices?: () => void } = {}) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
@@ -79,6 +79,18 @@ export function Navbar() {
     setIsMobileMenuOpen(false)
   }
 
+  const handleServicesClick = () => {
+    if (window.location.hash === '#services') {
+      // If already on home and services section exists, scroll to it
+      scrollToSection('#services')
+    } else {
+      // Navigate to services page
+      window.location.hash = 'services'
+      onNavigateToServices?.()
+    }
+    setIsMobileMenuOpen(false)
+  }
+
 
   return (
     <>
@@ -117,7 +129,14 @@ export function Navbar() {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  onClick={(e) => { e.preventDefault(); scrollToSection(link.href) }}
+                  onClick={(e) => { 
+                    e.preventDefault()
+                    if (link.name === 'Services') {
+                      handleServicesClick()
+                    } else {
+                      scrollToSection(link.href)
+                    }
+                  }}
                   className={cn(
                     'px-4 py-2 text-sm font-medium rounded-lg transition-colors relative',
                     activeSection === link.href.slice(1)
@@ -226,7 +245,14 @@ export function Navbar() {
                   <motion.a
                     key={link.name}
                     href={link.href}
-                    onClick={(e) => { e.preventDefault(); scrollToSection(link.href) }}
+                    onClick={(e) => { 
+                      e.preventDefault()
+                      if (link.name === 'Services') {
+                        handleServicesClick()
+                      } else {
+                        scrollToSection(link.href)
+                      }
+                    }}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}

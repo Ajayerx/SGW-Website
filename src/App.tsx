@@ -13,6 +13,8 @@ import { Portfolio } from '@/sections/Portfolio'
 import { Testimonials } from '@/sections/Testimonials'
 import { Contact } from '@/sections/Contact'
 import { Footer } from '@/sections/Footer'
+import ServicesPage from '@/pages/ServicesPage'
+import ServiceDetailPage from '@/pages/ServiceDetailPage'
 
 // Cursor glow effect component
 function CursorGlow() {
@@ -64,6 +66,8 @@ function SectionDivider() {
 
 function AppContent() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const [currentPage, setCurrentPage] = useState<'home' | 'services' | 'service-detail'>('home')
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
   const { resolvedTheme } = useTheme()
   
   useLenis()
@@ -71,6 +75,40 @@ function AppContent() {
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
+  // Handle hash routing
+  useEffect(() => {
+    const hash = window.location.hash.slice(1)
+    if (hash === 'services') {
+      setCurrentPage('services')
+      setSelectedServiceId(null)
+    } else if (hash.startsWith('service/')) {
+      const serviceId = hash.replace('service/', '')
+      setSelectedServiceId(serviceId)
+      setCurrentPage('service-detail')
+    } else {
+      setCurrentPage('home')
+      setSelectedServiceId(null)
+    }
+  }, [])
+
+  const handleSelectService = (id: string) => {
+    window.location.hash = `service/${id}`
+    setSelectedServiceId(id)
+    setCurrentPage('service-detail')
+  }
+
+  const handleBackToServices = () => {
+    window.location.hash = 'services'
+    setCurrentPage('services')
+    setSelectedServiceId(null)
+  }
+
+  const handleBackToHome = () => {
+    window.location.hash = ''
+    setCurrentPage('home')
+    setSelectedServiceId(null)
+  }
 
   return (
     <>
@@ -89,27 +127,37 @@ function AppContent() {
         <CursorGlow />
         
         <ScrollProgress />
-        <Navbar />
+        <Navbar onNavigateToServices={() => handleBackToServices()} />
         
         <main className="relative">
-          <Hero />
-          <SectionDivider />
-          <About />
-          <SectionDivider />
-          <Services />
-          <SectionDivider />
-          <Process />
-          <SectionDivider />
-          <Technologies />
-          <SectionDivider />
-          <Portfolio />
-          <SectionDivider />
-          <Testimonials />
-          <SectionDivider />
-          <Contact />
+          {currentPage === 'home' && (
+            <>
+              <Hero />
+              <SectionDivider />
+              <About />
+              <SectionDivider />
+              <Services />
+              <SectionDivider />
+              <Process />
+              <SectionDivider />
+              <Technologies />
+              <SectionDivider />
+              <Portfolio />
+              <SectionDivider />
+              <Testimonials />
+              <SectionDivider />
+              <Contact />
+            </>
+          )}
+          {currentPage === 'services' && (
+            <ServicesPage onSelectService={handleSelectService} />
+          )}
+          {currentPage === 'service-detail' && selectedServiceId && (
+            <ServiceDetailPage serviceId={selectedServiceId} onBack={handleBackToServices} />
+          )}
         </main>
         
-        <Footer />
+        {currentPage === 'home' && <Footer />}
       </div>
     </>
   )
