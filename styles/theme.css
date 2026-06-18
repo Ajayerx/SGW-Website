@@ -2,13 +2,21 @@
 /* Single source of truth for colors, shadows, spacing, radii, typography */
 /* Colors extracted directly from SoftGoWay logo */
 :root {
-  /* Primary Brand Colors - extracted from logo */
-  --brand-green: #22C55E;
-  --brand-green-bright: #84E235;
-  --brand-blue: #0066FF;
-  --brand-blue-bright: #3B97FF;
-  --brand-yellow: #FFD700;
-  --brand-red: #FF4444;
+  /* Primary Brand Colors - from SoftGoWay logo */
+  --brand-green-primary: #1FAE3B;
+  --brand-green-light: #67E06F;
+  --brand-blue-primary: #1565D8;
+  --brand-blue-light: #22A6F2;
+  --brand-yellow: #F6C62F;
+  --brand-red: #E53935;
+
+  /* Spectrum gradient stops for premium hero and accents */
+  --spectrum-red: #E53935;
+  --spectrum-pink: #D946EF;
+  --spectrum-purple: #7C3AED;
+  --spectrum-indigo: #4F46E5;
+  --spectrum-blue: #1565D8;
+  --spectrum-cyan: #22A6F2;
 
   /* Neutral palette - premium grayscale */
   --neutral-50: #FAFBFC;
@@ -23,17 +31,30 @@
   --neutral-900: #0F172A;
 
   /* Semantic tokens (light mode defaults) */
-  --primary: var(--brand-green);
-  --secondary: var(--brand-blue);
-  --accent: var(--brand-green-bright);
-  --success: var(--brand-green);
+  --primary: var(--brand-green-primary);
+  --secondary: var(--brand-blue-primary);
+  --accent: var(--brand-green-light);
+  --success: var(--brand-green-primary);
   --warning: var(--brand-yellow);
   --danger: var(--brand-red);
 
-  /* Logo-inspired gradient palette */
-  --gradient-primary-secondary: linear-gradient(135deg, var(--brand-green), var(--brand-blue-bright));
-  --gradient-accent-primary: linear-gradient(135deg, var(--brand-green-bright), var(--brand-green));
-  --gradient-vibrant: linear-gradient(120deg, var(--brand-green), var(--brand-yellow), var(--brand-blue-bright));
+  /* Premium spectrum gradients */
+  --gradient-brand: linear-gradient(90deg, 
+    var(--brand-green-primary) 0%, 
+    var(--brand-blue-primary) 50%, 
+    var(--brand-blue-light) 100%);
+  
+  --gradient-hero: linear-gradient(90deg, 
+    var(--spectrum-red) 0%, 
+    var(--spectrum-pink) 16%, 
+    var(--spectrum-purple) 32%, 
+    var(--spectrum-indigo) 48%, 
+    var(--spectrum-blue) 64%, 
+    var(--spectrum-cyan) 100%);
+  
+  --gradient-primary: linear-gradient(135deg, var(--brand-green-primary), var(--brand-blue-primary));
+  --gradient-accent: linear-gradient(135deg, var(--brand-green-light), var(--brand-green-primary));
+  --gradient-vibrant: var(--gradient-hero);
 
   --background: #F8FAFC;
   --surface: #FFFFFF;
@@ -47,9 +68,9 @@
 
   --ring: color-mix(in oklab, var(--primary) 60%, black 10%);
 
-  /* Glow and shadow tints - use logo primary green */
-  --shadow-glow-green: 0 0 30px color-mix(in oklab, var(--brand-green) 40%, transparent);
-  --shadow-glow-blue: 0 0 30px color-mix(in oklab, var(--brand-blue) 35%, transparent);
+  /* Glow and shadow tints - use logo brand colors */
+  --shadow-glow-green: 0 0 30px color-mix(in oklab, var(--brand-green-primary) 40%, transparent);
+  --shadow-glow-blue: 0 0 30px color-mix(in oklab, var(--brand-blue-primary) 35%, transparent);
 
   /* Typography tokens */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
@@ -101,14 +122,14 @@
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
 
-  --primary: var(--brand-green-bright);
-  --secondary: var(--brand-blue-bright);
-  --accent: var(--brand-green);
+  --primary: var(--brand-green-light);
+  --secondary: var(--brand-blue-light);
+  --accent: var(--brand-green-primary);
 
-  /* Dark mode uses brighter brand colors for contrast */
-  --gradient-primary-secondary: linear-gradient(135deg, var(--brand-green-bright), var(--brand-blue-bright));
-  --gradient-accent-primary: linear-gradient(135deg, var(--brand-green), var(--brand-green-bright));
-  --gradient-vibrant: linear-gradient(120deg, var(--brand-green-bright), var(--brand-yellow), var(--brand-blue-bright));
+  /* Dark mode gradients remain consistent with spectrum */
+  --gradient-primary: linear-gradient(135deg, var(--brand-green-light), var(--brand-blue-light));
+  --gradient-accent: linear-gradient(135deg, var(--brand-green-primary), var(--brand-green-light));
+  --gradient-vibrant: var(--gradient-hero);
 
   --ring: color-mix(in oklab, var(--primary) 70%, white 10%);
 
