@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { Section3D } from '@/components/Section3D'
 import { getLenis } from '@/hooks/useLenis'
+import { useTheme } from '@/hooks/useTheme'
 
 const footerLinks = {
   services: [
@@ -45,6 +46,7 @@ const socialLinks = [
 export function Footer() {
   const footerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(footerRef, { once: true, margin: '-100px' })
+  const { resolvedTheme } = useTheme()
 
   const scrollToTop = () => {
     const lenis = getLenis()
@@ -94,15 +96,11 @@ export function Footer() {
               className="inline-flex items-center gap-3 mb-6"
               whileHover={{ scale: 1.02 }}
             >
-              <motion.div
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20"
-                whileHover={{ rotate: 5 }}
-              >
-                <span className="text-white font-bold text-xl">S</span>
-              </motion.div>
-              <span className="text-2xl font-bold font-[var(--font-heading)] gradient-text">
-                Softgoway
-              </span>
+              <img
+                src={resolvedTheme === 'dark' ? '/logo_dark.png' : '/logo_light.png'}
+                alt="Softgoway"
+                className="h-11 w-auto"
+              />
             </motion.button>
             <p className="text-muted-foreground max-w-sm mb-8 leading-relaxed">
               A product‑focused engineering studio helping teams design, build, and

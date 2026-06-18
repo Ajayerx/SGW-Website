@@ -104,12 +104,11 @@ export function Navbar() {
               className="flex items-center gap-2"
               whileHover={{ scale: 1.02 }}
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg font-[var(--font-heading)]">S</span>
-              </div>
-              <span className="hidden sm:block text-lg font-semibold font-[var(--font-heading)] gradient-text">
-                Softgoway
-              </span>
+              <img
+                src={resolvedTheme === 'dark' ? '/logo_dark.png' : '/logo_light.png'}
+                alt="Softgoway"
+                className="h-9 w-auto"
+              />
             </motion.a>
 
             {/* Desktop Navigation */}

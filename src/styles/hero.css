@@ -208,11 +208,11 @@
 
 /* Neon glow colors */
 .neon-cyan {
-  color: #06b6d4;
+  color: var(--accent);
 }
 
 .neon-purple {
-  color: #a855f7;
+  color: var(--primary);
 }
 
 /* Custom scrollbar */

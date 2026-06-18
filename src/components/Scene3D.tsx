@@ -208,7 +208,7 @@ function GlowingOrb({
 // ─────────────────────────────────────────────
 // MouseFollower
 // ─────────────────────────────────────────────
-function MouseFollower() {
+function MouseFollower({ color }: { color: string }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const { viewport, mouse } = useThree()
 
@@ -229,8 +229,8 @@ function MouseFollower() {
   return (
     <mesh ref={meshRef} geometry={sphereGeo32} scale={0.5} position={[0, 0, 2]}>
       <meshStandardMaterial
-        color="#8b5cf6"
-        emissive="#8b5cf6"
+        color={color}
+        emissive={color}
         emissiveIntensity={0.5}
         transparent
         opacity={0.3}
@@ -253,15 +253,30 @@ function SceneContent({
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
 
-  // Theme-aware palette
-  const primaryColor = isDark ? '#8b5cf6' : '#7c3aed'
-  const accentColor = isDark ? '#22d3ee' : '#0ea5e9'
-  const particleColor = isDark ? '#a5b4fc' : '#8b5cf6'
-
+  // Derive lighting intensities and colors from the resolved theme.
+  // Use sensible defaults so SSR and missing tokens don't break rendering.
   const ambientIntensity = isDark ? 0.25 : 0.45
   const dirLightIntensity = isDark ? 0.9 : 0.75
   const pointLightIntensity = isDark ? 0.5 : 0.35
   const particleOpacity = isDark ? 0.9 : 0.7
+
+  // Derive colors from CSS variables so JS uses the central theme file.
+  // Guard for SSR: default fallbacks match the theme.css semantic tokens.
+  const [themeColors, setThemeColors] = useState({
+    primary: isDark ? '#67E06F' : '#1FAE3B',  // SoftGoWay green
+    accent: isDark ? '#3B97FF' : '#1565D8',   // SoftGoWay blue
+    particle: isDark ? '#67E06F' : '#1FAE3B', // Green particles
+  })
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const root = document.documentElement
+    const cs = getComputedStyle(root)
+    const primary = cs.getPropertyValue('--color-primary').trim() || cs.getPropertyValue('--primary').trim() || (isDark ? '#67E06F' : '#1FAE3B')
+    const accent = cs.getPropertyValue('--color-accent').trim() || cs.getPropertyValue('--accent').trim() || (isDark ? '#3B97FF' : '#1565D8')
+    const particle = cs.getPropertyValue('--color-neon-purple').trim() || cs.getPropertyValue('--neon-purple').trim() || primary || (isDark ? '#67E06F' : '#1FAE3B')
+    setThemeColors({ primary, accent, particle })
+  }, [resolvedTheme, isDark])
 
   return (
     <>
@@ -270,61 +285,28 @@ function SceneContent({
       {/* Lighting tuned per mode */}
       <ambientLight intensity={ambientIntensity} />
       <directionalLight position={[10, 10, 5]} intensity={dirLightIntensity} />
-      <pointLight
-        position={[-10, -10, -5]}
-        intensity={pointLightIntensity}
-        color={accentColor}
-      />
-      <pointLight
-        position={[5, 5, 5]}
-        intensity={pointLightIntensity * 0.8}
-        color={primaryColor}
-      />
+      <pointLight position={[-10, -10, -5]} intensity={pointLightIntensity} color={themeColors.accent} />
+      <pointLight position={[5, 5, 5]} intensity={pointLightIntensity * 0.8} color={themeColors.primary} />
 
       {/* Floating spheres */}
-      <FloatingSphere
-        position={[-5, 2, -6]}
-        scale={2}
-        speed={0.4}
-        distort={0.5}
-        color={primaryColor}
-      />
-      <FloatingSphere
-        position={[5, -1, -4]}
-        scale={1}
-        speed={0.6}
-        distort={0.3}
-        color={accentColor}
-      />
-      <FloatingSphere
-        position={[2, 4, -8]}
-        scale={0.6}
-        speed={0.8}
-        distort={0.4}
-        color={primaryColor}
-      />
-      <FloatingSphere
-        position={[-3, -3, -5]}
-        scale={0.8}
-        speed={0.7}
-        distort={0.35}
-        color={accentColor}
-      />
+      <FloatingSphere position={[0, 0, -6]} scale={2} speed={0.4} distort={0.5} color={themeColors.primary} />
+      <FloatingSphere position={[5, -1, -4]} scale={1} distort={0.3} color={themeColors.accent} />
+      <FloatingSphere position={[2, 4, -8]} scale={0.6} distort={0.4} color={themeColors.particle} />
+      <FloatingSphere position={[-3, -3, -5]} scale={0.8} distort={0.35} color={themeColors.primary} />
 
-      {/* Torus frames */}
-      <RotatingTorus position={[6, 2, -5]} scale={1.2} color={primaryColor} />
-      <RotatingTorus position={[-6, -2, -4]} scale={0.8} color={accentColor} />
+    {/* Torus frames */}
+    <RotatingTorus position={[6, 2, -5]} scale={1.2} color={themeColors.primary} />
 
-      {/* Glowing orbs */}
-      <GlowingOrb position={[3, 1, -3]} color={primaryColor} />
-      <GlowingOrb position={[-4, -1, -4]} color={accentColor} />
-      <GlowingOrb position={[0, 3, -5]} color={primaryColor} />
+  {/* Glowing orbs */}
+  <GlowingOrb position={[3, 1, -3]} color={themeColors.primary} />
+  <GlowingOrb position={[-4, -1, -4]} color={themeColors.accent} />
+  <GlowingOrb position={[0, 3, -5]} color={themeColors.primary} />
 
-      {/* Particles - reduced count for performance */}
-      <ParticleField count={600} color={particleColor} opacity={particleOpacity} />
+  {/* Particles - reduced count for performance */}
+  <ParticleField count={600} color={themeColors.particle} opacity={particleOpacity} />
 
-      {/* Mouse follower */}
-      <MouseFollower />
+  {/* Mouse follower */}
+  <MouseFollower color={themeColors.primary} />
 
       {/* Stars only in dark mode */}
       {isDark && (

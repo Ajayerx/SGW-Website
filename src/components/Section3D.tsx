@@ -468,24 +468,34 @@ function SceneContent({
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
 
-  const primaryColor = isDark ? '#8b5cf6' : '#7c3aed'
-  const accentColor = isDark ? '#a855f7' : '#9333ea'
-  const particleColor = isDark ? '#a78bfa' : '#8b5cf6'
+  // Derive colors from centralized CSS variables to keep single source of truth
+  const [themeColors, setThemeColors] = useState({
+    primary: isDark ? '#67E06F' : '#1FAE3B',  // SoftGoWay green
+    accent: isDark ? '#3B97FF' : '#1565D8',   // SoftGoWay blue  
+    particle: isDark ? '#67E06F' : '#1FAE3B', // Green particles
+  })
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const cs = getComputedStyle(document.documentElement)
+    const primary = cs.getPropertyValue('--color-primary').trim() || cs.getPropertyValue('--primary').trim() || 'var(--primary)'
+    const accent = cs.getPropertyValue('--color-accent').trim() || cs.getPropertyValue('--accent').trim() || 'var(--accent)'
+    const particle = cs.getPropertyValue('--color-neon-purple').trim() || cs.getPropertyValue('--neon-purple').trim() || primary || 'var(--color-neon-purple)'
+    setThemeColors({ primary, accent, particle })
+  }, [resolvedTheme, isDark])
   return (
     <>
       {/* ScenePauser wires up IntersectionObserver inside Canvas context */}
       <ScenePauser containerRef={containerRef} />
-
       <ambientLight intensity={0.3} />
-      <pointLight position={[10, 10, 5]} intensity={0.5} color={primaryColor} />
-      <pointLight position={[-10, -10, -5]} intensity={0.3} color={accentColor} />
+  <pointLight position={[10, 10, 5]} intensity={0.5} color={themeColors.primary} />
+  <pointLight position={[-10, -10, -5]} intensity={0.3} color={themeColors.accent} />
 
-      {variant === 'services' && <FloatingShapes color={primaryColor} secondaryColor={accentColor} />}
-      {variant === 'about' && <AboutParticles count={300} color={particleColor} />}
-      {variant === 'process' && <RotatingRings color={primaryColor} secondaryColor={accentColor} />}
-      {variant === 'technologies' && <TechGrid color={primaryColor} />}
-      {variant === 'footer' && <GlowingOrbs color={primaryColor} secondaryColor={accentColor} />}
+  {variant === 'services' && <FloatingShapes color={themeColors.primary} secondaryColor={themeColors.accent} />}
+  {variant === 'about' && <AboutParticles count={300} color={themeColors.particle} />}
+  {variant === 'process' && <RotatingRings color={themeColors.primary} secondaryColor={themeColors.accent} />}
+  {variant === 'technologies' && <TechGrid color={themeColors.primary} />}
+  {variant === 'footer' && <GlowingOrbs color={themeColors.primary} secondaryColor={themeColors.accent} />}
     </>
   )
 }

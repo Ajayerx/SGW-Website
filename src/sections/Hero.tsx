@@ -88,7 +88,7 @@ export function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden mesh-gradient"
     >
       {/* 3D Background */}
-      <Scene3D />
+      {/* <Scene3D /> */}
 
       {/* Vertical fade to background (respects dark mode) */}
 

@@ -1,64 +1,53 @@
 @import "tailwindcss";
+@import '../../styles/theme.css';
 
-/* ============================================
-   THEME CONFIGURATION - TAILWIND V4
-   Refined violet / cyan / slate palette
-   ============================================ */
+/* Map existing inline theme tokens to centralized theme tokens */
 @theme inline {
-  /* Typography - Font families */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Georgia', 'Cambria', serif;
-  --font-mono: 'Fira Code', 'Consolas', monospace;
-  --font-heading: 'Poppins', 'Inter', sans-serif;
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-sans);
 
-  /* Typography Scale - Standardized sizing */
-  --text-heading-xl: clamp(2.5rem, 5vw, 4rem);
-  --text-heading-lg: clamp(2rem, 4vw, 3rem);
-  --text-heading-md: clamp(1.5rem, 3vw, 2rem);
-  --text-body-lg: 1.125rem;
-  --text-body-md: 1rem;
-  --text-caption: 0.875rem;
+  --text-heading-xl: clamp(2.25rem, 4.5vw, 3.5rem);
+  --text-heading-lg: clamp(1.75rem, 3.5vw, 2.75rem);
+  --text-heading-md: clamp(1.25rem, 2.5vw, 1.75rem);
+  --text-body-lg: var(--text-lg);
+  --text-body-md: var(--text-base);
+  --text-caption: var(--text-sm);
 
-  /* Animation Duration - Consistent timing */
-  --duration-fast: 0.2s;
+  --duration-fast: 0.18s;
   --duration-normal: 0.35s;
-  --duration-slow: 0.5s;
-  --duration-slower: 0.8s;
-  --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: var(--ease-smooth, cubic-bezier(0.25,0.1,0.25,1));
 
-  /* Spacing Scale */
-  --section-spacing: clamp(4rem, 8vw, 8rem);
-  --container-padding: clamp(1rem, 4vw, 2rem);
+  --section-spacing: var(--space-6);
+  --container-padding: var(--space-4);
 
-  /* Light mode colors */
-  --color-background: #f9fafb;
-  --color-foreground: #0f172a;
-  --color-card: #ffffff;
-  --color-card-foreground: #020617;
-  --color-popover: #ffffff;
-  --color-popover-foreground: #020617;
-  --color-primary: #7c3aed;
-  --color-primary-foreground: #fafafa;
+  --color-background: var(--color-bg);
+  --color-foreground: var(--text-main);
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--text-main);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--text-main);
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: #ffffff;
 
-  --color-secondary: #f1f5f9;
-  --color-secondary-foreground: #1e293b;
+  --color-secondary: var(--color-secondary, var(--neutral-100));
+  --color-secondary-foreground: var(--color-secondary-foreground, var(--text-main));
 
-  --color-muted: #e2e8f0;
-  --color-muted-foreground: #64748b;
+  --color-muted: var(--neutral-200);
+  --color-muted-foreground: var(--text-disabled);
 
-  --color-accent: #06b6d4;
-  --color-accent-foreground: #020617;
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--text-main);
 
-  --color-border: #e2e8f0;
-  --color-input: #e2e8f0;
-  --color-ring: #7c3aed;
+  --color-border: var(--color-border);
+  --color-input: var(--color-border);
+  --color-ring: var(--ring);
 
-  /* Neon accent colors */
-  --color-neon-blue: #3b82f6;
-  --color-neon-purple: #a855f7;
-  --color-neon-cyan: #06b6d4;
-  --color-neon-pink: #ec4899;
+  --color-neon-blue: #60A5FA;
+  --color-neon-purple: #C084FC;
+  --color-neon-cyan: var(--brand-green-light);
+  --color-neon-pink: #F472B6;
 }
 
 /* ============================================
@@ -73,7 +62,7 @@
 
   --color-popover: #0f172a !important;
   --color-popover-foreground: #f8fafc !important;
-  --color-primary: #8b5cf6 !important;
+    --color-primary: var(--primary) !important;
   --color-primary-foreground: #020617 !important;
 
   --color-secondary: #1e293b !important;
@@ -82,17 +71,17 @@
   --color-muted: #1e293b !important;
   --color-muted-foreground: #94a3b8 !important;
 
-  --color-accent: #22d3ee !important;
+    --color-accent: var(--accent) !important;
   --color-accent-foreground: #020617 !important;
 
   --color-border: #334155 !important;
   --color-input: #1e293b !important;
-  --color-ring: #8b5cf6 !important;
+    --color-ring: var(--ring) !important;
 
   /* Neon accent colors - brighter in dark mode */
   --color-neon-blue: #60a5fa !important;
   --color-neon-purple: #c084fc !important;
-  --color-neon-cyan: #22d3ee !important;
+    --color-neon-cyan: var(--neon-cyan, var(--accent)) !important;
   --color-neon-pink: #f472b6 !important;
 }
 
@@ -238,17 +227,15 @@ html.lenis body {
 
 .gradient-text {
   @apply bg-clip-text text-transparent;
-  background-image: linear-gradient(120deg, #a855f7, #22d3ee);
+  background-image: linear-gradient(120deg, var(--brand-green), var(--brand-blue));
 }
 
 .gradient-text-animated {
   @apply bg-clip-text text-transparent;
-  background-image: linear-gradient(120deg, #a855f7, #22d3ee, #f97316);
-    background-size: 200% 200%;
+  background-image: linear-gradient(120deg, var(--brand-green), var(--brand-yellow), var(--brand-blue));
+  background-size: 200% 200%;
   animation: gradient-shift 6s ease-in-out infinite;
-  }
-  
-  .text-glow {
+}  .text-glow {
   text-shadow:
       0 0 18px rgba(168, 85, 247, 0.8);
 }
@@ -258,36 +245,36 @@ html.lenis body {
                                                                  =============================================*/
 .glow-primary {
   box-shadow:
-      0 0 40px rgba(139, 92, 246, 0.3),
-      0 0 80px rgba(139, 92, 246, 0.15),
-      0 0 120px rgba(139, 92, 246, 0.1);
+      0 0 40px rgba(31, 174, 59, 0.3),
+      0 0 80px rgba(31, 174, 59, 0.15),
+      0 0 120px rgba(31, 174, 59, 0.1);
 }
 
 .glow-accent {
   box-shadow:
-      0 0 40px rgba(168, 85, 247, 0.3),
-      0 0 80px rgba(168, 85, 247, 0.15),
-      0 0 120px rgba(168, 85, 247, 0.1);
+      0 0 40px rgba(21, 101, 216, 0.3),
+      0 0 80px rgba(21, 101, 216, 0.15),
+      0 0 120px rgba(21, 101, 216, 0.1);
 }
 
 .glow-cyan {
   box-shadow:
-      0 0 40px rgba(6, 182, 212, 0.3),
-      0 0 80px rgba(6, 182, 212, 0.15);
+      0 0 40px rgba(103, 224, 111, 0.3),
+      0 0 80px rgba(103, 224, 111, 0.15);
 }
 
 .text-glow {
   text-shadow:
-      0 0 20px rgba(139, 92, 246, 0.5),
-      0 0 40px rgba(139, 92, 246, 0.3),
-      0 0 60px rgba(139, 92, 246, 0.2);
+      0 0 20px rgba(31, 174, 59, 0.5),
+      0 0 40px rgba(31, 174, 59, 0.3),
+      0 0 60px rgba(31, 174, 59, 0.2);
 }
 
 .dark .text-glow {
   text-shadow:
-      0 0 30px rgba(139, 92, 246, 0.6),
-      0 0 60px rgba(139, 92, 246, 0.4),
-      0 0 90px rgba(139, 92, 246, 0.2);
+      0 0 30px rgba(103, 224, 111, 0.6),
+      0 0 60px rgba(103, 224, 111, 0.4),
+      0 0 90px rgba(103, 224, 111, 0.2);
 }
 
 /* ============================================
@@ -308,17 +295,17 @@ html.lenis body {
 /* Mesh gradient backgrounds */
 .mesh-gradient {
   background:
-    radial-gradient(at 40% 20%, rgba(139, 92, 246, 0.10) 0px, transparent 55%),
-      radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 55%),
-      radial-gradient(at 0% 50%, rgba(6, 182, 212, 0.08) 0px, transparent 55%),
-      radial-gradient(at 80% 50%, rgba(139, 92, 246, 0.08) 0px, transparent 55%),
-      radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.10) 0px, transparent 55%),
-      radial-gradient(at 80% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 55%);
+    radial-gradient(at 40% 20%, rgba(31, 174, 59, 0.10) 0px, transparent 55%),
+      radial-gradient(at 80% 0%, rgba(21, 101, 216, 0.08) 0px, transparent 55%),
+      radial-gradient(at 0% 50%, rgba(103, 224, 111, 0.08) 0px, transparent 55%),
+      radial-gradient(at 80% 50%, rgba(31, 174, 59, 0.08) 0px, transparent 55%),
+      radial-gradient(at 0% 100%, rgba(21, 101, 216, 0.10) 0px, transparent 55%),
+      radial-gradient(at 80% 100%, rgba(103, 224, 111, 0.08) 0px, transparent 55%);
 }
 
 /* PURE dark in dark mode */
 .dark .mesh-gradient {
-  background-color: #020617;
+  background-color: #0B1114;
 }
 
 /* ============================================
@@ -599,13 +586,13 @@ html.transitioning *::after {
   transform: translateY(-8px) scale(1.02);
   box-shadow:
       0 25px 50px -12px rgba(0, 0, 0, 0.15),
-      0 0 40px rgba(139, 92, 246, 0.1);
+      0 0 40px rgba(31, 174, 59, 0.15);
 }
 
 .dark .card-lift:hover {
   box-shadow:
       0 25px 50px -12px rgba(0, 0, 0, 0.5),
-      0 0 60px rgba(139, 92, 246, 0.2);
+      0 0 60px rgba(103, 224, 111, 0.25);
 }
 
 /* ============================================
