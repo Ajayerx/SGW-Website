@@ -25,32 +25,32 @@ const values = [
     title: 'Engineering‑led innovation',
     description:
       'We prototype fast, validate early, and ship solutions that balance ambitious ideas with real‑world constraints.',
-    gradient: 'from-amber-500 to-orange-500',
-    glow: 'rgba(245,158,11,0.15)',
+    gradient: 'from-brand-yellow to-orange-600',
+    glow: 'rgba(255,215,0,0.2)',
   },
   {
     icon: Users,
     title: 'Long‑term partnerships',
     description:
       'We embed with your team, align on outcomes, and stay accountable from first commit to post‑launch iterations.',
-    gradient: 'from-blue-500 to-cyan-500',
-    glow: 'rgba(59,130,246,0.15)',
+    gradient: 'from-brand-blue to-brand-blue-bright',
+    glow: 'rgba(0,102,255,0.2)',
   },
   {
     icon: Shield,
     title: 'Reliability at scale',
     description:
       'We design for uptime, observability, and predictable releases, not just demos that look good in slides.',
-    gradient: 'from-green-500 to-emerald-500',
-    glow: 'rgba(16,185,129,0.15)',
+    gradient: 'from-brand-green to-brand-green-bright',
+    glow: 'rgba(34,197,94,0.2)',
   },
   {
     icon: Award,
     title: 'Craft and ownership',
     description:
       'We treat every product as our own, obsessing over details, performance, and maintainability long after launch.',
-    gradient: 'from-purple-500 to-pink-500',
-    glow: 'rgba(168,85,247,0.15)',
+    gradient: 'from-brand-green-bright to-brand-blue',
+    glow: 'rgba(132,226,53,0.2)',
   },
 ]
 

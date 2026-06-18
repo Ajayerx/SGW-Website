@@ -37,10 +37,10 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { icon: Twitter, href: '#', label: 'Twitter', gradient: 'from-blue-400 to-blue-600' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn', gradient: 'from-blue-500 to-blue-700' },
-  { icon: Github, href: '#', label: 'GitHub', gradient: 'from-gray-600 to-gray-800' },
-  { icon: Instagram, href: '#', label: 'Instagram', gradient: 'from-pink-500 to-purple-600' },
+  { icon: Twitter, href: '#', label: 'Twitter', gradient: 'from-blue-600 to-blue-400' },
+  { icon: Linkedin, href: '#', label: 'LinkedIn', gradient: 'from-blue-400 to-green-600' },
+  { icon: Github, href: '#', label: 'GitHub', gradient: 'from-slate-600 to-slate-800' },
+  { icon: Instagram, href: '#', label: 'Instagram', gradient: 'from-green-600 to-green-400' },
 ]
 
 export function Footer() {
@@ -75,10 +75,10 @@ export function Footer() {
       {/* 3D Background */}
       <Section3D variant="footer" />
 
-      {/* Background gradient */}
+      {/* Background gradient - brand colors */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1400px] h-[300px] bg-gradient-to-t from-primary/5 via-accent/5 to-transparent rounded-full blur-[150px]" />
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1400px] h-[300px] bg-gradient-to-t from-brand-green/6 via-brand-blue/4 to-transparent rounded-full blur-[150px]" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-green-bright/4 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -202,7 +202,7 @@ export function Footer() {
             <motion.button
               type="button"
               onClick={scrollToTop}
-              className="p-3 rounded-xl bg-gradient-to-br from-primary to-accent text-white shadow-lg shadow-primary/20"
+              className="p-3 rounded-xl bg-gradient-to-br from-green-600 to-blue-600 text-white shadow-lg shadow-green-600/40 dark:shadow-green-400/20"
               whileHover={{ scale: 1.1, y: -3 }}
               whileTap={{ scale: 0.9 }}
               aria-label="Scroll to top"

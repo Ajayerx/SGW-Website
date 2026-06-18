@@ -26,7 +26,7 @@ const steps = [
     title: 'Discovery & context',
     description:
       'We align on goals, constraints, and existing systems so we understand the real problem—not just the initial feature request.',
-    gradient: 'from-blue-500 to-cyan-500',
+    gradient: 'from-brand-blue to-brand-blue-bright',
   },
   {
     icon: Lightbulb,
@@ -34,7 +34,7 @@ const steps = [
     title: 'Solution shaping',
     description:
       'Together we define scope, architecture options, and success metrics, then map them into a realistic, phase‑based plan.',
-    gradient: 'from-amber-500 to-orange-500',
+    gradient: 'from-brand-yellow to-orange-600',
   },
   {
     icon: Code2,
@@ -42,7 +42,7 @@ const steps = [
     title: 'Build & iterate',
     description:
       'We ship in small, reviewable slices with frequent check‑ins, keeping you close to decisions and progress as code lands.',
-    gradient: 'from-purple-500 to-pink-500',
+    gradient: 'from-brand-green-bright to-brand-blue',
   },
   {
     icon: Settings,
@@ -50,7 +50,7 @@ const steps = [
     title: 'Hardening & QA',
     description:
       'We invest in testing, performance passes, and monitoring so the release behaves well in production—not just in demos.',
-    gradient: 'from-green-500 to-emerald-500',
+    gradient: 'from-brand-green to-brand-green-bright',
   },
   {
     icon: Rocket,
@@ -58,7 +58,7 @@ const steps = [
     title: 'Launch & rollout',
     description:
       'We support cutover, smoke tests, and staged rollouts, with a plan for handling issues and capturing early feedback.',
-    gradient: 'from-red-500 to-orange-500',
+    gradient: 'from-brand-red to-orange-600',
   },
   {
     icon: HeadphonesIcon,
@@ -66,7 +66,7 @@ const steps = [
     title: 'Support & evolution',
     description:
       'Post‑launch, we help you iterate, optimise, and plan next phases so the product keeps matching the roadmap and usage.',
-    gradient: 'from-indigo-500 to-purple-500',
+    gradient: 'from-brand-blue-bright to-brand-green',
   },
 ]
 

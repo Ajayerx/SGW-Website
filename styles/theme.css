@@ -1,47 +1,49 @@
 /* Centralized theme tokens for SoftGoWay branding */
 /* Single source of truth for colors, shadows, spacing, radii, typography */
+/* Colors extracted directly from SoftGoWay logo */
 :root {
-  /* Brand colors (from provided logo) */
-  --brand-green: #1FAE3B;
-  --brand-green-light: #67E06F;
-  --brand-blue: #1565D8;
-  --brand-yellow: #F6C62F;
-  --brand-red: #E53935;
+  /* Primary Brand Colors - extracted from logo */
+  --brand-green: #22C55E;
+  --brand-green-bright: #84E235;
+  --brand-blue: #0066FF;
+  --brand-blue-bright: #3B97FF;
+  --brand-yellow: #FFD700;
+  --brand-red: #FF4444;
 
-  /* Neutral (premium) palette */
+  /* Neutral palette - premium grayscale */
   --neutral-50: #FAFBFC;
-  --neutral-100: #F3F5F7;
-  --neutral-200: #E6E9EE;
-  --neutral-300: #CBD4DF;
-  --neutral-400: #9EA9B8;
-  --neutral-500: #6E7A87;
-  --neutral-600: #495560;
-  --neutral-700: #2F3A45;
-  --neutral-800: #1B242B;
-  --neutral-900: #0F161A;
+  --neutral-100: #F1F5F9;
+  --neutral-200: #E2E8F0;
+  --neutral-300: #CBD5E1;
+  --neutral-400: #94A3B8;
+  --neutral-500: #64748B;
+  --neutral-600: #475569;
+  --neutral-700: #334155;
+  --neutral-800: #1E293B;
+  --neutral-900: #0F172A;
 
   /* Semantic tokens (light mode defaults) */
   --primary: var(--brand-green);
   --secondary: var(--brand-blue);
-  --accent: var(--brand-green-light);
+  --accent: var(--brand-green-bright);
   --success: var(--brand-green);
   --warning: var(--brand-yellow);
   --danger: var(--brand-red);
 
-  /* Logo-inspired gradient palette (green + blue + yellow) */
-  --gradient-primary-secondary: linear-gradient(135deg, var(--brand-green), var(--brand-blue));
-  --gradient-accent-primary: linear-gradient(135deg, var(--brand-green-light), var(--brand-green));
-  --gradient-vibrant: linear-gradient(120deg, var(--brand-green), var(--brand-yellow), var(--brand-blue));
+  /* Logo-inspired gradient palette */
+  --gradient-primary-secondary: linear-gradient(135deg, var(--brand-green), var(--brand-blue-bright));
+  --gradient-accent-primary: linear-gradient(135deg, var(--brand-green-bright), var(--brand-green));
+  --gradient-vibrant: linear-gradient(120deg, var(--brand-green), var(--brand-yellow), var(--brand-blue-bright));
 
-  --background: var(--neutral-50);
+  --background: #F8FAFC;
   --surface: #FFFFFF;
-  --surface-elevated: var(--neutral-100);
+  --surface-elevated: #F1F5F9;
   --card: #FFFFFF;
-  --border: var(--neutral-200);
+  --border: #E2E8F0;
 
-  --text-primary: var(--neutral-800);
-  --text-secondary: var(--neutral-600);
-  --text-muted: var(--neutral-500);
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
 
   --ring: color-mix(in oklab, var(--primary) 60%, black 10%);
 
@@ -87,36 +89,36 @@
   --elevation-3: var(--shadow-lg);
 }
 
-/* Dark theme overrides - use .dark on root (existing system uses this class) */
+/* Dark theme overrides - premium deep modern aesthetic */
 .dark {
-  --background: #0B1114; /* deep but not pure black */
-  --surface: #0F161A;
-  --surface-elevated: #121820;
-  --card: #0F1720;
-  --border: #21282D;
+  --background: #0A0E27; /* deep navy-black, not pure black */
+  --surface: #0F1629;
+  --surface-elevated: #14192D;
+  --card: #0D1728;
+  --border: #1E293B;
 
-  --text-primary: #E6EEF6;
-  --text-secondary: #B7C4CF;
-  --text-muted: #8F9AA3;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
 
-  --primary: var(--brand-green-light);
-  --secondary: var(--brand-blue);
+  --primary: var(--brand-green-bright);
+  --secondary: var(--brand-blue-bright);
   --accent: var(--brand-green);
 
-  /* Dark mode emphasizes brighter green and blue for contrast */
-  --gradient-primary-secondary: linear-gradient(135deg, var(--brand-green-light), #3B97FF);
-  --gradient-accent-primary: linear-gradient(135deg, var(--brand-green), var(--brand-green-light));
-  --gradient-vibrant: linear-gradient(120deg, var(--brand-green-light), #FFD900, #3B97FF);
+  /* Dark mode uses brighter brand colors for contrast */
+  --gradient-primary-secondary: linear-gradient(135deg, var(--brand-green-bright), var(--brand-blue-bright));
+  --gradient-accent-primary: linear-gradient(135deg, var(--brand-green), var(--brand-green-bright));
+  --gradient-vibrant: linear-gradient(120deg, var(--brand-green-bright), var(--brand-yellow), var(--brand-blue-bright));
 
   --ring: color-mix(in oklab, var(--primary) 70%, white 10%);
 
-  --shadow-sm: 0 1px 2px rgba(2,6,23,0.6);
-  --shadow-md: 0 10px 30px rgba(2,6,23,0.7);
-  --shadow-lg: 0 30px 60px rgba(2,6,23,0.75);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
+  --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
 
-  /* Dark mode glow effects */
-  --shadow-glow-green: 0 0 40px color-mix(in oklab, var(--brand-green-light) 50%, transparent);
-  --shadow-glow-blue: 0 0 40px color-mix(in oklab, #3B97FF 45%, transparent);
+  /* Dark mode glow effects - vibrant */
+  --shadow-glow-green: 0 0 50px color-mix(in oklab, var(--brand-green-bright) 60%, transparent);
+  --shadow-glow-blue: 0 0 50px color-mix(in oklab, var(--brand-blue-bright) 55%, transparent);
 }
 
 /* Semantic aliases used across components */
@@ -152,13 +154,13 @@
 }
 
 .glow-green-primary {
-  box-shadow: 0 0 30px color-mix(in oklab, var(--brand-green) 40%, transparent),
-              0 0 60px color-mix(in oklab, var(--brand-green) 20%, transparent);
+  box-shadow: 0 0 40px color-mix(in oklab, var(--brand-green) 50%, transparent),
+              0 0 80px color-mix(in oklab, var(--brand-green) 25%, transparent);
 }
 
 .glow-blue-secondary {
-  box-shadow: 0 0 30px color-mix(in oklab, var(--brand-blue) 35%, transparent),
-              0 0 60px color-mix(in oklab, var(--brand-blue) 15%, transparent);
+  box-shadow: 0 0 40px color-mix(in oklab, var(--brand-blue) 45%, transparent),
+              0 0 80px color-mix(in oklab, var(--brand-blue) 20%, transparent);
 }
 
 .text-gradient-primary {
