@@ -113,7 +113,7 @@ function ValueCard({
             )}, transparent)`,
           }}
         />
-        <value.icon className="relative w-7 h-7 text-white" />
+        <value.icon className="relative w-7 h-7 text-primary" />
       </motion.div>
 
       {/* Index decoration */}

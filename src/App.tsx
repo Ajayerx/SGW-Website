@@ -11,6 +11,7 @@ import { Process } from '@/sections/Process'
 import { Technologies } from '@/sections/Technologies'
 import { Portfolio } from '@/sections/Portfolio'
 import { Testimonials } from '@/sections/Testimonials'
+import { WorkSection } from '@/sections/Worksection'
 import { Contact } from '@/sections/Contact'
 import { Footer } from '@/sections/Footer'
 import ServicesPage from '@/pages/ServicesPage'
@@ -145,6 +146,8 @@ function AppContent() {
               <Portfolio />
               <SectionDivider />
               <Testimonials />
+              <SectionDivider />
+              <WorkSection />
               <SectionDivider />
               <Contact />
             </>

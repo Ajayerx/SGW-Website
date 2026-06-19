@@ -1,201 +1,197 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter } from 'lucide-react';
-import { services, categories, Service } from '../data/services';
-import { TiltCard } from '../components/TiltCard';
-import { GlowButton } from '../components/GlowButton';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, ArrowRight, Sparkles } from 'lucide-react';
+import { services, categories } from '../data/services';
+import { cn } from '@/lib/utils';
 
 export default function ServicesPage({ onSelectService }: { onSelectService: (id: string) => void }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const filteredServices = useMemo(() => {
     return services.filter((service) => {
-      const matchesSearch = service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch = !searchTerm ||
+        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         service.shortDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
         service.technologies.some((tech) => tech.toLowerCase().includes(searchTerm.toLowerCase()));
-
       const matchesCategory = !selectedCategory || service.category === selectedCategory;
-
       return matchesSearch && matchesCategory;
     });
   }, [searchTerm, selectedCategory]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="relative pt-32 pb-20 px-4">
+      {/* Hero */}
+      <div className="relative pt-36 pb-24 px-4 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-primary/8 via-secondary/5 to-transparent rounded-full blur-[100px]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[700px] bg-gradient-to-b from-primary/10 via-secondary/5 to-transparent rounded-full blur-[120px]" />
+          <div
+            className="absolute inset-0 opacity-[0.015]"
+            style={{
+              backgroundImage: 'radial-gradient(circle, var(--color-primary) 1px, transparent 1px)',
+              backgroundSize: '40px 40px',
+            }}
+          />
+          <div className="absolute top-40 right-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px]" />
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="relative z-10 max-w-7xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.7 }}
+            className="max-w-4xl"
           >
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 gradient-text">
-              Our Services
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-primary bg-primary/10 rounded-full mb-6 border border-primary/20"
+            >
+              <Sparkles className="w-4 h-4" />
+              Comprehensive Solutions
+            </motion.span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance leading-[1.05]">
+              Enterprise-Grade<br />
+              <span className="gradient-text">Digital Services</span>
             </h1>
-            <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-              Comprehensive technology solutions tailored to accelerate your business. From product development to strategic advisory, we partner with you every step of the way.
+            <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
+              From product engineering to AI-powered experiences, we deliver
+              <span className="text-primary font-semibold"> enterprise-grade solutions</span> that accelerate your business transformation.
             </p>
-          </motion.div>
-
-          {/* Search and Filter */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="space-y-6"
-          >
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
-              <input
-                type="text"
-                placeholder="Search services, technologies, or keywords..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-surface border border-border rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-3 items-center">
-              <Filter className="w-5 h-5 text-text-secondary" />
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-lg transition ${
-                  selectedCategory === null
-                    ? 'bg-primary text-white'
-                    : 'bg-surface-elevated text-text-secondary hover:bg-surface'
-                }`}
-              >
-                All Services
-              </button>
-              {categories.map((category) => (
-                <button
-                  key={category.value}
-                  onClick={() => setSelectedCategory(category.value)}
-                  className={`px-4 py-2 rounded-lg transition ${
-                    selectedCategory === category.value
-                      ? 'bg-primary text-white'
-                      : 'bg-surface-elevated text-text-secondary hover:bg-surface'
-                  }`}
-                >
-                  {category.label}
-                </button>
-              ))}
-            </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Services Grid */}
-      <div className="relative px-4 pb-24">
-        <div className="max-w-7xl mx-auto">
+      {/* Sticky Filter Bar */}
+      <div className="sticky top-20 z-20 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="relative flex-1 max-w-xs">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+              <input
+                type="text"
+                placeholder="Search services..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+              />
+            </div>
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+              {[{ value: null, label: 'All Services' }, ...categories.map((c) => ({ value: c.value, label: c.label }))].map((cat) => (
+                <button
+                  key={cat.value ?? 'all'}
+                  onClick={() => setSelectedCategory(cat.value)}
+                  className={cn(
+                    'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200',
+                    selectedCategory === cat.value
+                      ? 'bg-primary text-white shadow-sm'
+                      : 'text-text-secondary hover:text-foreground hover:bg-surface-elevated'
+                  )}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Service Rows */}
+      <div className="max-w-7xl mx-auto px-4 py-16 pb-32">
+        <AnimatePresence mode="wait">
           {filteredServices.length > 0 ? (
             <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              key="list"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="divide-y divide-border/30"
             >
-              {filteredServices.map((service, idx) => {
+              {filteredServices.map((service, index) => {
                 const IconComponent = service.icon;
+                const isHovered = hoveredId === service.id;
                 return (
-                  <motion.div key={service.id} variants={itemVariants}>
-                    <TiltCard>
-                      <div className="p-6 h-full flex flex-col">
-                        {/* Icon and Category */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div
-                            className={`p-3 rounded-lg bg-gradient-to-br ${service.gradient} bg-opacity-10`}
-                          >
-                            <IconComponent className="w-6 h-6 text-primary" />
-                          </div>
-                          <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
-                            {service.category}
-                          </span>
-                        </div>
+                  <motion.button
+                    key={service.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.03 }}
+                    onClick={() => onSelectService(service.id)}
+                    onMouseEnter={() => setHoveredId(service.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                    className="w-full group flex items-start gap-6 py-7 text-left transition-all duration-300"
+                  >
+                    {/* Left Accent Bar */}
+                    <div
+                      className={cn(
+                        'w-[3px] rounded-full mt-2 flex-shrink-0 transition-all duration-500 bg-gradient-to-b',
+                        service.gradient,
+                        isHovered ? 'h-20 opacity-100' : 'h-14 opacity-40'
+                      )}
+                    />
 
-                        {/* Title */}
-                        <h3 className="text-xl font-bold text-text-primary mb-2">
-                          {service.title}
-                        </h3>
+                    {/* Icon */}
+                    <div
+                      className={cn(
+                        'p-3.5 rounded-xl flex-shrink-0 transition-all duration-500 bg-gradient-to-br shadow-lg',
+                        service.gradient,
+                        isHovered ? 'scale-110 shadow-xl shadow-black/30' : 'shadow-black/10'
+                      )}
+                    >
+                      <IconComponent className="w-6 h-6 text-white" />
+                    </div>
 
-                        {/* Description */}
-                        <p className="text-text-secondary mb-4 flex-grow">
-                          {service.shortDescription}
-                        </p>
-
-                        {/* Features Preview */}
-                        <div className="mb-4 pb-4 border-t border-border">
-                          <div className="flex flex-wrap gap-1 mt-3">
-                            {service.features.slice(0, 3).map((feature) => (
-                              <span
-                                key={feature}
-                                className="text-xs px-2 py-1 bg-primary/8 text-primary rounded"
-                              >
-                                {feature}
-                              </span>
-                            ))}
-                            {service.features.length > 3 && (
-                              <span className="text-xs px-2 py-1 text-text-muted">
-                                +{service.features.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* CTA Button */}
-                        <GlowButton
-                          onClick={() => onSelectService(service.id)}
-                          className="w-full"
-                        >
-                          Learn More
-                        </GlowButton>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0 pt-1">
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="text-xs font-semibold tracking-wider text-primary uppercase">
+                          {categories.find((c) => c.value === service.category)?.label}
+                        </span>
+                        <span className="text-xs text-text-muted">·</span>
+                        <span className="text-xs text-text-muted">
+                          {service.technologies.slice(0, 2).join(', ')}
+                        </span>
                       </div>
-                    </TiltCard>
-                  </motion.div>
+                      <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+                        {service.title}
+                      </h3>
+                      <p className="text-text-secondary text-sm mt-1 line-clamp-2 max-w-3xl">
+                        {service.shortDescription}
+                      </p>
+                    </div>
+
+                    {/* Arrow Indicator */}
+                    <div
+                      className={cn(
+                        'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 mt-2',
+                        isHovered
+                          ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-110'
+                          : 'bg-surface-elevated text-text-muted border border-border/50'
+                      )}
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </div>
+                  </motion.button>
                 );
               })}
             </motion.div>
           ) : (
             <motion.div
+              key="empty"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-20"
+              className="text-center py-32"
             >
-              <p className="text-xl text-text-secondary">
-                No services found matching your search. Try different keywords or reset filters.
-              </p>
+              <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-surface-elevated border border-border/50 flex items-center justify-center">
+                <Search className="w-5 h-5 text-text-muted" />
+              </div>
+              <p className="text-xl text-text-secondary font-medium mb-1">No services found</p>
+              <p className="text-sm text-text-muted">Try different keywords or reset filters.</p>
             </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
     </div>
   );
