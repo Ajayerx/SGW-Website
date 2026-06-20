@@ -1,13 +1,9 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { useRef, useState, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef, useState } from 'react'
 import { Send, Mail, Phone, MapPin, CheckCircle, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { TiltCard } from '@/components/TiltCard'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const contactInfo = [
   {
@@ -55,28 +51,22 @@ export function Contact() {
 
   const backgroundScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1.2])
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.contact-bg-blob', {
-        y: -40,
-        duration: 4,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.5,
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // TODO: replace with real API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      })
+      if (!res.ok) throw new Error('Failed to send')
+      setIsSubmitted(true)
+    } catch {
+      alert('Something went wrong. Please email us directly at hello@softgoway.com.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (
@@ -98,12 +88,22 @@ export function Contact() {
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ scale: backgroundScale }}
+          animate={{ y: [-40, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                      w-[1200px] h-[1200px] bg-gradient-radial from-primary/5 to-transparent
-                     rounded-full contact-bg-blob"
+                     rounded-full"
         />
-        <div className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px] contact-bg-blob" />
-        <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px] contact-bg-blob" />
+        <motion.div
+          animate={{ y: [-40, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 0.5 }}
+          className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px]"
+        />
+        <motion.div
+          animate={{ y: [-40, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
+          className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]"
+        />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,80 +1,76 @@
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform, type MotionValue } from 'framer-motion'
 import { useRef, useEffect, useState, useLayoutEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ExternalLink, Github } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AnimatedSection } from '@/components/AnimatedSection'
 import { getLenis } from '@/hooks/useLenis'
 
-gsap.registerPlugin(ScrollTrigger)
-
 const projects = [
   {
     title: 'FinTech Control Center',
     description:
-      'A real-time analytics console for finance teams to monitor risk, liquidity, and key KPIs across multiple systems.',
+      'Real-time analytics console for finance teams to monitor risk, liquidity, and KPIs across 12+ data sources. Reduced reporting time from days to seconds.',
     tags: ['React', 'Node.js', 'PostgreSQL', 'AWS'],
     image:
       'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop',
     gradient: 'from-blue-500 to-cyan-500',
-    liveUrl: '#',
-    repoUrl: '#',
+    liveUrl: undefined as string | undefined,
+    repoUrl: undefined as string | undefined,
   },
   {
     title: 'Global Telehealth Platform',
     description:
-      'HIPAA-ready telehealth workflows with virtual consultations, prescriptions, and integrated scheduling.',
+      'HIPAA-compliant telehealth system with virtual consultations, e-prescriptions, and integrated scheduling. 2M+ patients served across 200+ clinics.',
     tags: ['Next.js', 'GraphQL', 'MongoDB', 'WebRTC'],
     image:
       'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop',
     gradient: 'from-green-500 to-emerald-500',
-    liveUrl: '#',
-    repoUrl: '#',
+    liveUrl: undefined as string | undefined,
+    repoUrl: undefined as string | undefined,
   },
   {
     title: 'Multi‑vendor Commerce Suite',
     description:
-      'A marketplace engine with configurable catalogues, real-time inventory, and personalised recommendations.',
+      'A marketplace engine with configurable catalogues, real-time inventory across 50+ warehouses, and ML-powered recommendations. Handles 10K+ orders/hour.',
     tags: ['Vue.js', 'Python', 'Redis', 'Kubernetes'],
     image:
       'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop',
     gradient: 'from-orange-500 to-red-500',
-    liveUrl: '#',
-    repoUrl: '#',
+    liveUrl: undefined as string | undefined,
+    repoUrl: undefined as string | undefined,
   },
   {
     title: 'AI Content Studio',
     description:
-      'A content operations hub where marketing teams brief, generate, and review AI‑assisted assets in one place.',
+      'Content operations platform where marketing teams brief, generate, and review AI-assisted assets in one workflow. 3× content output with same team size.',
     tags: ['React', 'Python', 'TensorFlow', 'GCP'],
     image:
       'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop',
     gradient: 'from-purple-500 to-pink-500',
-    liveUrl: '#',
-    repoUrl: '#',
+    liveUrl: undefined as string | undefined,
+    repoUrl: undefined as string | undefined,
   },
   {
     title: 'Logistics Command Hub',
     description:
-      'An operations layer for fleet tracking, route optimisation, and exception handling across regions.',
+      'Operations layer for fleet tracking, route optimisation, and exception handling across 8 regions. Cut last-mile delivery costs by 22% in first quarter.',
     tags: ['Angular', 'Go', 'PostgreSQL', 'Azure'],
     image:
       'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop',
     gradient: 'from-amber-500 to-orange-500',
-    liveUrl: '#',
-    repoUrl: '#',
+    liveUrl: undefined as string | undefined,
+    repoUrl: undefined as string | undefined,
   },
   {
     title: 'Adaptive Learning Platform',
     description:
-      'An LMS with adaptive paths, progress analytics, and content authoring tools for education providers.',
+      'AI-driven LMS with adaptive learning paths, real-time progress analytics, and content authoring tools. 98% learner completion rate across 500K+ users.',
     tags: ['React', 'Node.js', 'MongoDB', 'AWS'],
     image:
       'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&auto=format&fit=crop',
     gradient: 'from-indigo-500 to-purple-500',
-    liveUrl: '#',
-    repoUrl: '#',
+    liveUrl: undefined as string | undefined,
+    repoUrl: undefined as string | undefined,
   },
 ]
 
@@ -85,19 +81,15 @@ function ProjectCard({
 }: {
   project: (typeof projects)[number]
   index: number
-  progress: number
+  progress: MotionValue<number>
 }) {
   const [isHovered, setIsHovered] = useState(false)
 
   const cardStart = index / projects.length
   const cardEnd = (index + 1) / projects.length
-  const cardProgress = Math.max(
-    0,
-    Math.min(1, (progress - cardStart) / (cardEnd - cardStart))
-  )
-
-  const scale = 0.85 + cardProgress * 0.15
-  const opacity = 0.45 + cardProgress * 0.55
+  const cardProgress = useTransform(progress, [cardStart, cardEnd], [0, 1])
+  const scale = useTransform(cardProgress, [0, 1], [0.85, 1])
+  const opacity = useTransform(cardProgress, [0, 1], [0.45, 1])
 
   const handleOpen = (url?: string) => {
     if (!url || url === '#') return
@@ -106,11 +98,8 @@ function ProjectCard({
 
   return (
     <motion.article
-      className="flex-none w-[380px] lg:w-[450px] h-[520px] lg:h-[580px] portfolio-card"
-      style={{
-        transform: `scale(${scale})`,
-        opacity,
-      }}
+      className="flex-none w-[380px] lg:w-[450px] h-[520px] lg:h-[580px]"
+      style={{ scale, opacity }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label={project.title}
@@ -234,6 +223,7 @@ export function Portfolio() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
+  const [totalWidth, setTotalWidth] = useState(0)
   const [scrollProgress, setScrollProgress] = useState(0)
 
   const { scrollYProgress } = useScroll({
@@ -241,81 +231,32 @@ export function Portfolio() {
     offset: ['start end', 'end start'],
   })
 
-  const backgroundX = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
+  const backgroundX = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+
+  const { scrollYProgress: triggerProgress } = useScroll({
+    target: triggerRef,
+    offset: ['start start', 'end start'],
+  })
+
+  const x = useTransform(triggerProgress, [0, 1], [0, -totalWidth])
 
   useLayoutEffect(() => {
-    const section = sectionRef.current
-    const trigger = triggerRef.current
-    const scrollContainer = scrollContainerRef.current
-
-    if (!section || !trigger || !scrollContainer) return
-
-    const cards = scrollContainer.querySelectorAll('.portfolio-card')
-
-    const getTotalWidth = () =>
-      scrollContainer.scrollWidth - window.innerWidth + 200
-
-    const ctx = gsap.context(() => {
-      const horizontalScroll = gsap.to(scrollContainer, {
-        x: () => -getTotalWidth(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger,
-          start: 'top top',
-          end: () => `+=${getTotalWidth()}`,
-          pin: true,
-          scrub: 0.8,
-          invalidateOnRefresh: true,
-          anticipatePin: 1,
-          snap: {
-            snapTo: 1 / (projects.length),
-            duration: { min: 0.2, max: 0.4 },
-            ease: 'power2.inOut',
-          },
-          onUpdate: (self) => {
-            setScrollProgress(self.progress)
-          },
-        },
-      })
-
-      cards.forEach((card) => {
-        gsap.fromTo(
-          card,
-          {
-            opacity: 0.5,
-            scale: 0.85,
-            rotateY: 15,
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            rotateY: 0,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: card,
-              containerAnimation: horizontalScroll,
-              start: 'left 80%',
-              end: 'left 20%',
-              scrub: true,
-            },
-          }
+    const updateWidth = () => {
+      if (scrollContainerRef.current) {
+        setTotalWidth(
+          scrollContainerRef.current.scrollWidth - window.innerWidth + 200
         )
-      })
-
-      gsap.to('.portfolio-bg', {
-        xPercent: -20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-    }, section)
-
-    return () => ctx.revert()
+      }
+    }
+    updateWidth()
+    window.addEventListener('resize', updateWidth)
+    return () => window.removeEventListener('resize', updateWidth)
   }, [])
+
+  useEffect(() => {
+    const unsubscribe = triggerProgress.on('change', setScrollProgress)
+    return unsubscribe
+  }, [triggerProgress])
 
   return (
     <section ref={sectionRef} id="portfolio" className="relative overflow-hidden">
@@ -391,7 +332,7 @@ export function Portfolio() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: scrollProgress < 0.12 ? 1 : 0 }}
-          className="absolute top-8 left-1/2 -translate-x-1/2 text-muted-foreground text-sm flex items-center gap-2"
+          className="absolute top-8 left-1/2 -translate-x-1/2 text-muted-foreground text-sm flex items-center gap-2 z-10"
         >
           <span>Scroll to explore</span>
           <motion.span
@@ -402,24 +343,24 @@ export function Portfolio() {
           </motion.span>
         </motion.div>
 
-        {/* Horizontal scroll container */}
-        <div className="h-screen flex items-center overflow-hidden">
-          <div
+        {/* Sticky horizontal scroll container */}
+        <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+          <motion.div
             ref={scrollContainerRef}
+            style={{ x, perspective: '1000px' }}
             className="flex gap-8 pl-[10vw] pr-[20vw] will-change-transform"
-            style={{ perspective: '1000px' }}
           >
             {projects.map((project, index) => (
               <ProjectCard
                 key={project.title}
                 project={project}
                 index={index}
-                progress={scrollProgress}
+                progress={triggerProgress}
               />
             ))}
 
             {/* End CTA card */}
-            <motion.div className="flex-none w-[380px] lg:w-[450px] h-[520px] lg:h-[580px] flex items-center justify-center portfolio-card">
+            <motion.div className="flex-none w-[380px] lg:w-[450px] h-[520px] lg:h-[580px] flex items-center justify-center">
               <div className="text-center glass-card rounded-3xl p-10 lg:p-12 border-gradient">
                 <motion.div
                   className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg glow-primary"
@@ -432,7 +373,7 @@ export function Portfolio() {
                   Have a project in mind?
                 </h3>
                 <p className="text-muted-foreground mb-8 text-sm lg:text-base leading-relaxed">
-                  Share a brief, and we’ll walk you through how we’d approach it—no
+                  Share a brief, and we'll walk you through how we'd approach it—no
                   obligation, just a practical next step.
                 </p>
                 <motion.button
@@ -453,7 +394,7 @@ export function Portfolio() {
                 </motion.button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </div>
 

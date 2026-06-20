@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle2, Zap, Sparkles, Cpu } from 'lucide-react';
 import { getServiceById, services, categories } from '../data/services';
 import { GlowButton } from '../components/GlowButton';
@@ -11,21 +12,21 @@ const sectionLinks = [
   { id: 'cta', label: 'Get Started' },
 ];
 
-export default function ServiceDetailPage({
-  serviceId,
-  onBack,
-}: {
-  serviceId: string;
-  onBack: () => void;
-}) {
-  const service = getServiceById(serviceId);
+export default function ServiceDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const service = id ? getServiceById(id) : undefined;
+
+  const goToContact = () => {
+    navigate('/', { state: { scrollTo: 'contact' } });
+  };
 
   if (!service) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl text-text-secondary mb-6">Service not found</p>
-          <GlowButton onClick={onBack}>Go Back</GlowButton>
+          <p className="text-2xl text-muted-foreground mb-6">Service not found</p>
+          <GlowButton onClick={() => navigate('/services')}>Go Back</GlowButton>
         </div>
       </div>
     );
@@ -77,8 +78,8 @@ export default function ServiceDetailPage({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            onClick={onBack}
-            className="inline-flex items-center gap-2 text-text-secondary hover:text-primary transition-colors mb-14 group"
+            onClick={() => navigate('/services')}
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-14 group"
           >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             <span className="text-sm font-medium">Back to Services</span>
@@ -103,14 +104,14 @@ export default function ServiceDetailPage({
                 </h1>
               </div>
             </div>
-            <p className="text-xl text-text-secondary leading-relaxed mb-10">
+            <p className="text-xl text-muted-foreground leading-relaxed mb-10">
               {service.description}
             </p>
             <div className="flex flex-wrap gap-4">
-              <GlowButton variant="primary" size="lg">
+              <GlowButton variant="primary" size="lg" onClick={goToContact}>
                 Get Started
               </GlowButton>
-              <GlowButton variant="secondary" size="lg">
+              <GlowButton variant="secondary" size="lg" onClick={goToContact}>
                 Schedule Consultation
               </GlowButton>
             </div>
@@ -123,7 +124,7 @@ export default function ServiceDetailPage({
         <div className="flex gap-16">
           {/* Sidebar Nav - Desktop */}
           <nav className="hidden lg:block flex-shrink-0 w-48 sticky top-32 self-start">
-            <p className="text-xs font-semibold tracking-wider text-text-muted uppercase mb-4">
+            <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase mb-4">
               On this page
             </p>
             <ul className="space-y-1">
@@ -131,7 +132,7 @@ export default function ServiceDetailPage({
                 <li key={section.id}>
                   <a
                     href={`#${section.id}`}
-                    className="block text-sm text-text-secondary hover:text-primary transition-colors py-1.5 border-l-2 border-transparent hover:border-primary pl-3 -ml-1"
+                    className="block text-sm text-muted-foreground hover:text-primary transition-colors py-1.5 border-l-2 border-transparent hover:border-primary pl-3 -ml-1"
                   >
                     {section.label}
                   </a>
@@ -157,7 +158,7 @@ export default function ServiceDetailPage({
                 <h2 className="text-4xl font-bold text-foreground mb-3">
                   Key <span className="gradient-text">Features</span>
                 </h2>
-                <p className="text-text-secondary">
+                <p className="text-muted-foreground">
                   Everything you need to accelerate your business with {service.title.toLowerCase()}.
                 </p>
               </div>
@@ -174,7 +175,7 @@ export default function ServiceDetailPage({
                     <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                       <CheckCircle2 className="w-5 h-5 text-primary" />
                     </div>
-                    <p className="text-text-secondary text-sm leading-relaxed pt-1">
+                    <p className="text-muted-foreground text-sm leading-relaxed pt-1">
                       {feature}
                     </p>
                   </motion.div>
@@ -192,7 +193,7 @@ export default function ServiceDetailPage({
                 <h2 className="text-4xl font-bold text-foreground mb-3">
                   Business <span className="gradient-text">Benefits</span>
                 </h2>
-                <p className="text-text-secondary">
+                <p className="text-muted-foreground">
                   Real impact that drives your business forward.
                 </p>
               </div>
@@ -227,7 +228,7 @@ export default function ServiceDetailPage({
                 <h2 className="text-4xl font-bold text-foreground mb-3">
                   Technologies <span className="gradient-text">We Use</span>
                 </h2>
-                <p className="text-text-secondary">
+                <p className="text-muted-foreground">
                   Modern tools and frameworks we leverage for {service.title.toLowerCase()}.
                 </p>
               </div>
@@ -256,15 +257,15 @@ export default function ServiceDetailPage({
                   <h3 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
                     Ready to Get Started?
                   </h3>
-                  <p className="text-lg text-text-secondary mb-10 max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
                     Let's discuss how we can help you achieve your goals with{' '}
                     {service.title.toLowerCase()}. Our team is ready to partner with you.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4">
-                    <GlowButton variant="primary" size="lg">
+                    <GlowButton variant="primary" size="lg" onClick={goToContact}>
                       Schedule a Call
                     </GlowButton>
-                    <GlowButton variant="secondary" size="lg">
+                    <GlowButton variant="secondary" size="lg" onClick={goToContact}>
                       Learn More
                     </GlowButton>
                   </div>
@@ -292,7 +293,7 @@ export default function ServiceDetailPage({
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: idx * 0.1 }}
-                    onClick={onBack}
+                    onClick={() => navigate(`/services/${rel.id}`)}
                     className="group flex items-start gap-4 p-5 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-card/50 transition-all duration-300 text-left"
                   >
                     <div className={cn('p-3 rounded-xl bg-gradient-to-br flex-shrink-0', rel.gradient)}>
@@ -302,11 +303,11 @@ export default function ServiceDetailPage({
                       <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                         {rel.title}
                       </h4>
-                      <p className="text-xs text-text-secondary mt-1 line-clamp-2">
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                         {rel.shortDescription}
                       </p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-text-muted mt-1 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+                    <ArrowRight className="w-4 h-4 text-muted-foreground mt-1 group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
                   </motion.button>
                 );
               })}

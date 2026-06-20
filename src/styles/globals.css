@@ -28,7 +28,7 @@
   --color-card-foreground: var(--text-main);
   --color-popover: var(--color-surface);
   --color-popover-foreground: var(--text-main);
-  --color-primary: var(--color-primary);
+  --color-primary: var(--primary);
   --color-primary-foreground: #ffffff;
 
   --color-secondary: var(--color-secondary, var(--neutral-100));
@@ -896,7 +896,7 @@ select:focus {
 .text-emphasized {
   position: relative;
   font-weight: 600;
-  background: linear-gradient(90deg, var(--brand-green), var(--brand-blue));
+  background: linear-gradient(90deg, var(--brand-green-primary), var(--brand-blue-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

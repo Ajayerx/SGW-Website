@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
 import { getLenis } from '@/hooks/useLenis'
@@ -17,11 +18,13 @@ const navLinks = [
   { name: 'Contact', href: '#contact' },
 ]
 
-export function Navbar({ onNavigateToServices, onNavigateToCareers, onNavigateHome }: { onNavigateToServices?: () => void; onNavigateToCareers?: () => void; onNavigateHome?: () => void } = {}) {
+export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
   const { resolvedTheme, toggleTheme } = useTheme()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,18 +67,16 @@ export function Navbar({ onNavigateToServices, onNavigateToCareers, onNavigateHo
   }
 
   const handleServicesClick = () => {
-    if (window.location.hash === '#services') {
+    if (location.pathname === '/') {
       scrollToSection('#services')
     } else {
-      window.location.hash = 'services'
-      onNavigateToServices?.()
+      navigate('/services')
     }
     setIsMobileMenuOpen(false)
   }
 
   const handleCareersClick = () => {
-    window.location.hash = 'careers'
-    onNavigateToCareers?.()
+    navigate('/careers')
     setIsMobileMenuOpen(false)
   }
 
@@ -95,17 +96,16 @@ export function Navbar({ onNavigateToServices, onNavigateToCareers, onNavigateHo
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <motion.a
-              href="#hero"
-              onClick={(e) => {
-                e.preventDefault()
-                const hash = window.location.hash.slice(1)
-                if (hash && hash !== 'hero') {
-                  onNavigateHome?.()
-                } else {
-                  scrollToSection('#hero')
-                }
-              }}
+              <motion.a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (location.pathname === '/') {
+                    scrollToSection('#hero')
+                  } else {
+                    navigate('/')
+                  }
+                }}
               className="flex items-center gap-2 relative z-10"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}

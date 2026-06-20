@@ -6,55 +6,51 @@ import {
   useTransform,
 } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react'
 import { AnimatedSection } from '@/components/AnimatedSection'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const testimonials = [
   {
     name: 'Sarah Johnson',
-    role: 'CEO, TechVentures Inc.',
+    role: 'CEO, FinFlow (Series B, 120 employees)',
     content:
-      'Softgoway helped us consolidate fragmented tools into a single platform our teams actually enjoy using. Within one quarter, our ops team was closing 40% more work with the same headcount.',
+      'Softgoway helped us consolidate fragmented tools into a single platform our teams actually enjoy using. Within one quarter, our ops team was closing 40% more work with the same headcount. They think like product engineers, not ticket-takers.',
     avatar: 'SJ',
     rating: 5,
-    gradient: 'from-brand-blue to-brand-blue-bright',
+    gradient: 'from-[var(--brand-blue-primary)] to-[var(--brand-blue-light)]',
   },
   {
     name: 'Michael Chen',
-    role: 'CTO, InnovateLabs',
+    role: 'CTO, Synthwave Health (HIPAA, 2M+ patients)',
     content:
-      'We needed a partner who could move quickly without sacrificing code quality. Softgoway shipped a scalable architecture that comfortably serves millions of requests per day and is still easy to extend.',
+      'We needed a partner who could move quickly without sacrificing code quality. Softgoway shipped a scalable architecture that comfortably serves millions of requests per day and is still easy to extend. Their team integrated with ours within a week.',
     avatar: 'MC',
     rating: 5,
-    gradient: 'from-brand-green-bright to-brand-green',
+    gradient: 'from-[var(--brand-green-light)] to-[var(--brand-green-primary)]',
   },
   {
     name: 'Emily Rodriguez',
-    role: 'Director of IT, GlobalCorp',
+    role: 'Director of IT, OmniCorp Logistics',
     content:
-      'Our legacy stack was holding us back. Softgoway led a phased cloud migration that reduced our infrastructure spend and cut deployment times from hours to minutes.',
+      'Our legacy stack was holding us back. Softgoway led a phased cloud migration that reduced our infrastructure spend by 35% and cut deployment times from hours to minutes. They were pragmatic about what to keep and what to rebuild.',
     avatar: 'ER',
     rating: 5,
-    gradient: 'from-brand-green to-brand-blue-bright',
+    gradient: 'from-[var(--brand-green-primary)] to-[var(--brand-blue-primary)]',
   },
   {
     name: 'David Park',
-    role: 'Founder, NextGen Solutions',
+    role: 'Founder, Teal (Seed, 15 employees)',
     content:
-      'From early prototypes to launch, the team felt like an extension of our own. The AI‑powered features we shipped together have become a key differentiator in our sales conversations.',
+      'From early prototypes to launch, the team felt like an extension of our own. The AI‑powered features we shipped together have become a key differentiator in our sales conversations. They moved at startup speed with enterprise discipline.',
     avatar: 'DP',
     rating: 5,
-    gradient: 'from-brand-yellow to-orange-600',
+    gradient: 'from-[var(--brand-yellow)] to-orange-600',
   },
   {
     name: 'Lisa Thompson',
-    role: 'VP Engineering, DataDriven Co.',
+    role: 'VP Engineering, DataCoral (Series A, 40 employees)',
     content:
-      "Softgoway's data engineering work gave us a trustworthy analytics layer. Product, sales, and leadership are finally looking at the same numbers when making decisions.",
+      "Softgoway's data engineering work gave us a trustworthy analytics layer. Product, sales, and leadership are finally looking at the same numbers when making decisions. The architecture they designed will scale well past our Series B.",
     avatar: 'LT',
     rating: 5,
     gradient: 'from-blue-400 to-green-400',
@@ -85,20 +81,7 @@ export function Testimonials() {
     return () => clearInterval(interval)
   }, [autoplay])
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.testimonials-bg-blob', {
-        y: -30,
-        duration: 3,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.5,
-      })
-    }, sectionRef)
 
-    return () => ctx.revert()
-  }, [])
 
   const handleManualChange = (nextIndex: number) => {
     if (nextIndex === current) return
@@ -138,11 +121,15 @@ export function Testimonials() {
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ y: backgroundY }}
-          className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] testimonials-bg-blob"
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]"
         />
         <motion.div
           style={{ y: backgroundY }}
-          className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px] testimonials-bg-blob"
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 0.5 }}
+          className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px]"
         />
       </div>
 

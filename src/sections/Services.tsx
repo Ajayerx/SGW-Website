@@ -1,7 +1,6 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { services } from '@/data/services'
@@ -10,9 +9,6 @@ import {
   StaggerContainer,
   StaggerItem,
 } from '@/components/AnimatedSection'
-import { Section3D } from '@/components/Section3D'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const displayedServices = services.slice(0, 8)
 
@@ -20,24 +16,10 @@ export function Services() {
   const sectionRef = useRef<HTMLElement>(null)
   const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.services-bg-blob', {
-        y: -30,
-        duration: 4,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 1,
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
+  const navigate = useNavigate()
 
   const handleServiceClick = (id: string) => {
-    window.location.hash = `service/${id}`
+    navigate(`/services/${id}`)
   }
 
   return (
@@ -46,13 +28,18 @@ export function Services() {
       id="services"
       className="relative py-24 lg:py-32 overflow-hidden"
     >
-      {/* 3D Background */}
-      <Section3D variant="services" />
-
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px] services-bg-blob" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px] services-bg-blob" />
+        <motion.div
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]"
+        />
+        <motion.div
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
+          className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px]"
+        />
       </div>
 
       {/* Subtle pattern */}

@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   ArrowRight,
   Search,
@@ -22,13 +20,10 @@ import {
   StaggerContainer,
   StaggerItem,
 } from '@/components/AnimatedSection'
-import { Section3D } from '@/components/Section3D'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface Step {
   id: string
-  icon: string
+  icon: React.ReactNode
   title: string
   desc: string
   gradient: string
@@ -46,35 +41,35 @@ interface Reason {
 const steps: Step[] = [
   {
     id: '01',
-    icon: '🔍',
+    icon: <Search className="w-5 h-5" />,
     title: 'Discovery & Strategy',
     desc: 'We audit your goals, tech stack, and constraints. Out comes a clear scope with timelines and no guesswork.',
     gradient: 'from-violet-500 to-purple-600',
   },
   {
     id: '02',
-    icon: '🎨',
+    icon: <Palette className="w-5 h-5" />,
     title: 'Design & Architecture',
     desc: 'UX wireframes, system architecture, and API contracts — agreed before a single line of production code.',
     gradient: 'from-cyan-500 to-teal-500',
   },
   {
     id: '03',
-    icon: '⚙️',
+    icon: <Code2 className="w-5 h-5" />,
     title: 'Build & Iterate',
     desc: 'Agile sprints with weekly demos. You see real progress, not just status updates.',
     gradient: 'from-emerald-500 to-green-600',
   },
   {
     id: '04',
-    icon: '🚀',
+    icon: <Rocket className="w-5 h-5" />,
     title: 'Deploy & Go Live',
     desc: 'CI/CD pipelines, zero-downtime releases, and full monitoring before we hand you the keys.',
     gradient: 'from-amber-500 to-orange-600',
   },
   {
     id: '05',
-    icon: '🛡️',
+    icon: <Shield className="w-5 h-5" />,
     title: 'Support & Scale',
     desc: 'Post-launch SLAs, performance tuning, and a team that grows alongside your product.',
     gradient: 'from-pink-500 to-rose-600',
@@ -176,32 +171,25 @@ export function WorkSection() {
   const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.worksection-bg-blob', {
-        y: -30,
-        duration: 4,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 1,
-      })
-    }, sectionRef)
-    return () => ctx.revert()
-  }, [])
+
 
   return (
     <section
       ref={sectionRef}
       className="relative py-24 lg:py-32 overflow-hidden"
     >
-      {/* 3D Background */}
-      {/* <Section3D variant="process" /> */}
-
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px] worksection-bg-blob" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px] worksection-bg-blob" />
+        <motion.div
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]"
+        />
+        <motion.div
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
+          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[150px]"
+        />
       </div>
 
       {/* Subtle pattern */}
@@ -357,14 +345,16 @@ export function WorkSection() {
               }}
             >
               <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                <div
-                  className={cn(
-                    'w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 text-3xl shadow-lg',
-                    steps[activeStep].gradient
-                  )}
-                >
-                  {steps[activeStep].icon}
-                </div>
+                  <div
+                    className={cn(
+                      'w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 shadow-lg',
+                      steps[activeStep].gradient
+                    )}
+                  >
+                    <div className="text-white w-7 h-7 lg:w-8 lg:h-8">
+                      {steps[activeStep].icon}
+                    </div>
+                  </div>
                 <div className="flex-1">
                   <div className="text-xs font-bold tracking-widest text-primary mb-1">
                     PHASE {steps[activeStep].id}

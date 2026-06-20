@@ -68,6 +68,15 @@
 
   --ring: color-mix(in oklab, var(--primary) 60%, black 10%);
 
+  /* RGB component vars for rgba() use in glass/glow effects */
+  /* RGB component vars for rgba() use in glass/glow effects */
+  --color-primary-rgb: 31, 174, 59;
+  --color-accent-rgb: 21, 101, 216;
+
+  /* Legacy aliases for backward compat */
+  --brand-green: var(--brand-green-primary);
+  --brand-blue: var(--brand-blue-primary);
+
   /* Glow and shadow tints - use logo brand colors */
   --shadow-glow-green: 0 0 30px color-mix(in oklab, var(--brand-green-primary) 40%, transparent);
   --shadow-glow-blue: 0 0 30px color-mix(in oklab, var(--brand-blue-primary) 35%, transparent);
@@ -138,8 +147,8 @@
   --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
 
   /* Dark mode glow effects - vibrant */
-  --shadow-glow-green: 0 0 50px color-mix(in oklab, var(--brand-green-bright) 60%, transparent);
-  --shadow-glow-blue: 0 0 50px color-mix(in oklab, var(--brand-blue-bright) 55%, transparent);
+  --shadow-glow-green: 0 0 50px color-mix(in oklab, var(--brand-green-light) 60%, transparent);
+  --shadow-glow-blue: 0 0 50px color-mix(in oklab, var(--brand-blue-light) 55%, transparent);
 }
 
 /* Semantic aliases used across components */
@@ -164,7 +173,7 @@
 
 /* Logo-inspired utility classes */
 .gradient-logo-green-blue {
-  background: var(--gradient-primary-secondary);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -175,17 +184,17 @@
 }
 
 .glow-green-primary {
-  box-shadow: 0 0 40px color-mix(in oklab, var(--brand-green) 50%, transparent),
-              0 0 80px color-mix(in oklab, var(--brand-green) 25%, transparent);
+  box-shadow: 0 0 40px color-mix(in oklab, var(--brand-green-primary) 50%, transparent),
+              0 0 80px color-mix(in oklab, var(--brand-green-primary) 25%, transparent);
 }
 
 .glow-blue-secondary {
-  box-shadow: 0 0 40px color-mix(in oklab, var(--brand-blue) 45%, transparent),
-              0 0 80px color-mix(in oklab, var(--brand-blue) 20%, transparent);
+  box-shadow: 0 0 40px color-mix(in oklab, var(--brand-blue-primary) 45%, transparent),
+              0 0 80px color-mix(in oklab, var(--brand-blue-primary) 20%, transparent);
 }
 
 .text-gradient-primary {
-  background: linear-gradient(90deg, var(--brand-green), var(--brand-blue));
+  background: linear-gradient(90deg, var(--brand-green-primary), var(--brand-blue-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

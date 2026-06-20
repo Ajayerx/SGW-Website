@@ -1,7 +1,5 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { useRef, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef } from 'react'
 import { Target, Eye, Award, Users, Lightbulb, Shield } from 'lucide-react'
 import { TiltCard } from '@/components/TiltCard'
 import {
@@ -10,10 +8,7 @@ import {
   StaggerItem,
 } from '@/components/AnimatedSection'
 import { GradientText } from '@/components/TextReveal'
-import { Section3D } from '@/components/Section3D'
 import { getLenis } from '@/hooks/useLenis'
-
-gsap.registerPlugin(ScrollTrigger)
 
 // ─────────────────────────────────────────────
 // DATA
@@ -25,7 +20,7 @@ const values = [
     title: 'Engineering‑led innovation',
     description:
       'We prototype fast, validate early, and ship solutions that balance ambitious ideas with real‑world constraints.',
-    gradient: 'from-brand-yellow to-orange-600',
+    gradient: 'from-[var(--brand-yellow)] to-orange-600',
     glow: 'rgba(255,215,0,0.2)',
   },
   {
@@ -33,7 +28,7 @@ const values = [
     title: 'Long‑term partnerships',
     description:
       'We embed with your team, align on outcomes, and stay accountable from first commit to post‑launch iterations.',
-    gradient: 'from-brand-blue to-brand-blue-bright',
+    gradient: 'from-[var(--brand-blue-primary)] to-[var(--brand-blue-light)]',
     glow: 'rgba(0,102,255,0.2)',
   },
   {
@@ -41,7 +36,7 @@ const values = [
     title: 'Reliability at scale',
     description:
       'We design for uptime, observability, and predictable releases, not just demos that look good in slides.',
-    gradient: 'from-brand-green to-brand-green-bright',
+    gradient: 'from-[var(--brand-green-primary)] to-[var(--brand-green-light)]',
     glow: 'rgba(34,197,94,0.2)',
   },
   {
@@ -49,7 +44,7 @@ const values = [
     title: 'Craft and ownership',
     description:
       'We treat every product as our own, obsessing over details, performance, and maintainability long after launch.',
-    gradient: 'from-brand-green-bright to-brand-blue',
+    gradient: 'from-[var(--brand-green-light)] to-[var(--brand-blue-primary)]',
     glow: 'rgba(132,226,53,0.2)',
   },
 ]
@@ -170,53 +165,23 @@ export function About() {
   const rotate1 = useTransform(scrollYProgress, [0, 1], [-10, 10])
   const rotate2 = useTransform(scrollYProgress, [0, 1], [10, -10])
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.about-parallax-slow', {
-        yPercent: -20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-      gsap.to('.about-parallax-fast', {
-        yPercent: -40,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
   return (
     <section
       ref={sectionRef}
       id="about"
       className="relative py-28 lg:py-40 overflow-hidden"
     >
-      {/* 3D background */}
-      <Section3D variant="about" />
-
       {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ y: y1, rotate: rotate1 }}
           className="absolute top-1/4 -left-32 w-[600px] h-[600px]
-                     bg-primary/5 rounded-full blur-[140px] about-parallax-slow"
+                     bg-primary/5 rounded-full blur-[140px]"
         />
         <motion.div
           style={{ y: y2, rotate: rotate2 }}
           className="absolute bottom-1/4 -right-32 w-[500px] h-[500px]
-                     bg-accent/5 rounded-full blur-[120px] about-parallax-fast"
+                     bg-accent/5 rounded-full blur-[120px]"
         />
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2

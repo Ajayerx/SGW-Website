@@ -1,5 +1,6 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Github,
   Linkedin,
@@ -12,7 +13,6 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Section3D } from '@/components/Section3D'
 import { getLenis } from '@/hooks/useLenis'
 import { useTheme } from '@/hooks/useTheme'
 import { GlowButton } from '@/components/GlowButton'
@@ -73,6 +73,18 @@ export function Footer() {
   const footerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(footerRef, { once: true, margin: '-100px' })
   const { resolvedTheme } = useTheme()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const goToContact = () => {
+    if (location.pathname === '/') {
+      const lenis = getLenis()
+      if (lenis) lenis.scrollTo('#contact', { offset: -80, duration: 1.2 })
+      else document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      navigate('/', { state: { scrollTo: 'contact' } })
+    }
+  }
 
   const scrollToTop = () => {
     const lenis = getLenis()
@@ -98,8 +110,6 @@ export function Footer() {
       ref={footerRef}
       className="relative bg-background border-t border-border/40 overflow-hidden"
     >
-      <Section3D variant="footer" />
-
       {/* Background layers */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Mesh gradient */}
@@ -147,10 +157,10 @@ export function Footer() {
                   </p>
                 </div>
                 <div className="flex gap-3 flex-shrink-0">
-                  <GlowButton variant="primary" size="lg">
+                  <GlowButton variant="primary" size="lg" onClick={goToContact}>
                     Start a Project
                   </GlowButton>
-                  <GlowButton variant="secondary" size="lg">
+                  <GlowButton variant="secondary" size="lg" onClick={goToContact}>
                     Contact Us
                   </GlowButton>
                 </div>

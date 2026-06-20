@@ -1,12 +1,7 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { useRef, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef } from 'react'
 import type { SVGProps } from 'react'
 import { AnimatedSection } from '@/components/AnimatedSection'
-import { Section3D } from '@/components/Section3D'
-
-gsap.registerPlugin(ScrollTrigger)
 
 // ─── Premium SVG Icons ────────────────────
 function SvgMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
@@ -79,7 +74,7 @@ const steps = [
     title: 'Discovery & context',
     description:
       'We align on goals, constraints, and existing systems so we understand the real problem—not just the initial feature request.',
-    gradient: 'from-brand-blue to-brand-blue-bright',
+    gradient: 'from-[var(--brand-blue-primary)] to-[var(--brand-blue-light)]',
   },
   {
     icon: SvgLightbulb,
@@ -87,7 +82,7 @@ const steps = [
     title: 'Solution shaping',
     description:
       'Together we define scope, architecture options, and success metrics, then map them into a realistic, phase‑based plan.',
-    gradient: 'from-brand-yellow to-orange-600',
+    gradient: 'from-[var(--brand-yellow)] to-orange-600',
   },
   {
     icon: SvgCode,
@@ -95,7 +90,7 @@ const steps = [
     title: 'Build & iterate',
     description:
       'We ship in small, reviewable slices with frequent check‑ins, keeping you close to decisions and progress as code lands.',
-    gradient: 'from-brand-green-bright to-brand-blue',
+    gradient: 'from-[var(--brand-green-light)] to-[var(--brand-blue-primary)]',
   },
   {
     icon: SvgShield,
@@ -103,7 +98,7 @@ const steps = [
     title: 'Hardening & QA',
     description:
       'We invest in testing, performance passes, and monitoring so the release behaves well in production—not just in demos.',
-    gradient: 'from-brand-green to-brand-green-bright',
+    gradient: 'from-[var(--brand-green-primary)] to-[var(--brand-green-light)]',
   },
   {
     icon: SvgRocketIcon,
@@ -111,7 +106,7 @@ const steps = [
     title: 'Launch & rollout',
     description:
       'We support cutover, smoke tests, and staged rollouts, with a plan for handling issues and capturing early feedback.',
-    gradient: 'from-brand-red to-orange-600',
+    gradient: 'from-[var(--brand-red)] to-orange-600',
   },
   {
     icon: SvgHeadset,
@@ -119,7 +114,7 @@ const steps = [
     title: 'Support & evolution',
     description:
       'Post‑launch, we help you iterate, optimise, and plan next phases so the product keeps matching the roadmap and usage.',
-    gradient: 'from-brand-blue-bright to-brand-green',
+    gradient: 'from-[var(--brand-blue-light)] to-[var(--brand-green-primary)]',
   },
 ]
 
@@ -136,53 +131,11 @@ export function Process() {
 
   const backgroundY = useTransform(scrollYProgress, [0, 1], ['-16%', '18%'])
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (timelineRef.current) {
-        gsap.fromTo(
-          '.timeline-line',
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: timelineRef.current,
-              start: 'top 80%',
-              end: 'bottom 20%',
-              scrub: 1,
-            },
-          }
-        )
-      }
-
-      gsap.fromTo(
-        '.process-step',
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: timelineRef.current,
-            start: 'top 70%',
-          },
-        }
-      )
-
-      gsap.to('.process-bg-blob', {
-        y: -40,
-        duration: 3,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.5,
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
+  const { scrollYProgress: timelineProgress } = useScroll({
+    target: timelineRef,
+    offset: ['start end', 'end start'],
+  })
+  const lineScale = useTransform(timelineProgress, [0, 1], [0, 1])
 
   return (
     <section
@@ -190,19 +143,26 @@ export function Process() {
       id="process"
       className="relative py-24 lg:py-32 overflow-hidden"
     >
-      {/* 3D Background */}
-      <Section3D variant="process" />
-
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ y: backgroundY }}
+          animate={{ y: [-40, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                      w-[900px] h-[900px] bg-gradient-radial from-primary/5 to-transparent
-                     rounded-full process-bg-blob"
+                     rounded-full"
         />
-        <div className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px] process-bg-blob" />
-        <div className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px] process-bg-blob" />
+        <motion.div
+          animate={{ y: [-40, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 0.5 }}
+          className="absolute top-1/4 left-0 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[120px]"
+        />
+        <motion.div
+          animate={{ y: [-40, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 1 }}
+          className="absolute bottom-1/4 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]"
+        />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -243,15 +203,27 @@ export function Process() {
         <div ref={timelineRef} className="relative">
           {/* Central line (desktop) */}
           <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2">
-            <div className="timeline-line h-full w-full origin-top bg-gradient-to-b from-primary via-accent to-primary" />
+            <motion.div style={{ scaleY: lineScale, transformOrigin: 'top' }} className="h-full w-full bg-gradient-to-b from-primary via-accent to-primary" />
           </div>
 
-          <div className="space-y-12 lg:space-y-0">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.15 } },
+            }}
+            className="space-y-12 lg:space-y-0"
+          >
             {steps.map((step, index) => (
-              <div
+              <motion.div
                 key={step.number}
-                className={`process-step relative lg:flex lg:items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
-                  }`}
+                variants={{
+                  hidden: { opacity: 0, y: 60 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] } },
+                }}
+                className={`relative lg:flex lg:items-center ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
               >
                 {/* Content card */}
                 <div
@@ -319,9 +291,9 @@ export function Process() {
 
                 {/* Spacer column */}
                 <div className="hidden lg:block lg:w-1/2" />
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

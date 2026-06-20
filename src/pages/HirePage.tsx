@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Briefcase, Clock, Sparkles, ArrowUpRight, ChevronRight, Check, Send, X } from 'lucide-react';
+import { Search, MapPin, Briefcase, Clock, Sparkles, ArrowUpRight, ChevronRight, Check, Send, X, Laptop, Monitor, GraduationCap, Heart, Clock4, Users } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -154,7 +154,7 @@ function PositionCard({ position, index, onApply }: { position: Position; index:
             </span>
           </div>
 
-          <p className="mt-3 text-sm text-text-secondary line-clamp-2">{position.description}</p>
+          <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{position.description}</p>
 
           <div className="flex flex-wrap gap-1.5 mt-3">
             {position.techStack.slice(0, 4).map((tech) => (
@@ -176,7 +176,7 @@ function PositionCard({ position, index, onApply }: { position: Position; index:
             'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 mt-1',
             isHovered
               ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-110'
-              : 'bg-surface-elevated text-text-muted border border-border/50'
+              : 'bg-secondary text-muted-foreground border border-border/50'
           )}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
@@ -208,8 +208,17 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
   });
 
   const onSubmit = async (data: ApplyFormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitted(true);
+    try {
+      const res = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, positionTitle: position?.title }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      setIsSubmitted(true);
+    } catch {
+      alert('Something went wrong. Please email us directly at careers@softgoway.com.')
+    }
   };
 
   return (
@@ -261,7 +270,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                     <Check className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold mb-2">Application Submitted!</h3>
-                  <p className="text-text-secondary mb-6 max-w-sm mx-auto">
+                  <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
                     We&apos;ve received your application for{' '}
                     <span className="text-primary font-semibold">{position.title}</span>. Our team will review it and reach out to you within 3-5 business days.
                   </p>
@@ -282,7 +291,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                       <input
                         {...register('name')}
                         placeholder="John Doe"
-                        className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                        className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                       />
                       {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
                     </div>
@@ -292,7 +301,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                         {...register('email')}
                         type="email"
                         placeholder="john@example.com"
-                        className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                        className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                       />
                       {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
                     </div>
@@ -304,7 +313,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                       <input
                         {...register('role')}
                         placeholder="Senior React Engineer"
-                        className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                        className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                       />
                       {errors.role && <p className="text-xs text-red-500 mt-1">{errors.role.message}</p>}
                     </div>
@@ -312,7 +321,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                       <label className="block text-sm font-medium mb-1.5">Experience Level *</label>
                       <select
                         {...register('experience')}
-                        className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                        className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                       >
                         <option value="">Select...</option>
                         <option value="0-1">Entry (0-1 years)</option>
@@ -330,7 +339,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                     <input
                       {...register('portfolio')}
                       placeholder="https://linkedin.com/in/johndoe"
-                      className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                      className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                     />
                     {errors.portfolio && <p className="text-xs text-red-500 mt-1">{errors.portfolio.message}</p>}
                   </div>
@@ -341,7 +350,7 @@ function ApplyModal({ position, onClose }: { position: Position | null; onClose:
                       {...register('message')}
                       rows={4}
                       placeholder="Tell us about your experience, skills, and why you'd be a great fit..."
-                      className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none"
+                      className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none"
                     />
                     {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
                   </div>
@@ -398,9 +407,18 @@ function DeveloperApplySection() {
   });
 
   const onSubmit = async (data: ApplyFormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitted(true);
-    reset();
+    try {
+      const res = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error('Failed')
+      setIsSubmitted(true);
+      reset();
+    } catch {
+      alert('Something went wrong. Please email us directly at careers@softgoway.com.')
+    }
   };
 
   return (
@@ -428,7 +446,7 @@ function DeveloperApplySection() {
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             Don&apos;t see the right role?
           </h2>
-          <p className="text-lg text-text-secondary max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             We&apos;re always looking for talented developers. Submit your details and we&apos;ll reach out when a position that matches your skills opens up.
           </p>
         </motion.div>
@@ -450,7 +468,7 @@ function DeveloperApplySection() {
                 <Check className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-2">You&apos;re on our radar!</h3>
-              <p className="text-text-secondary mb-6 max-w-sm mx-auto">
+              <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
                 We&apos;ll keep your application on file and reach out when a matching opportunity comes up.
               </p>
               <motion.button
@@ -470,7 +488,7 @@ function DeveloperApplySection() {
                   <input
                     {...register('name')}
                     placeholder="John Doe"
-                    className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                    className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                   />
                   {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
                 </div>
@@ -480,7 +498,7 @@ function DeveloperApplySection() {
                     {...register('email')}
                     type="email"
                     placeholder="john@example.com"
-                    className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                    className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                   />
                   {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
                 </div>
@@ -492,7 +510,7 @@ function DeveloperApplySection() {
                   <input
                     {...register('role')}
                     placeholder="e.g. React Developer, DevOps Engineer"
-                    className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                    className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                   />
                   {errors.role && <p className="text-xs text-red-500 mt-1">{errors.role.message}</p>}
                 </div>
@@ -500,7 +518,7 @@ function DeveloperApplySection() {
                   <label className="block text-sm font-medium mb-1.5">Experience Level *</label>
                   <select
                     {...register('experience')}
-                    className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                    className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                   >
                     <option value="">Select...</option>
                     <option value="0-1">Entry (0-1 years)</option>
@@ -518,7 +536,7 @@ function DeveloperApplySection() {
                 <input
                   {...register('portfolio')}
                   placeholder="https://github.com/johndoe"
-                  className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                  className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                 />
                 {errors.portfolio && <p className="text-xs text-red-500 mt-1">{errors.portfolio.message}</p>}
               </div>
@@ -529,7 +547,7 @@ function DeveloperApplySection() {
                   {...register('message')}
                   rows={4}
                   placeholder="What technologies do you work with? What kind of projects interest you?"
-                  className="w-full px-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none"
+                  className="w-full px-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all resize-none"
                 />
                 {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>}
               </div>
@@ -618,7 +636,7 @@ export default function HirePage() {
               Work With The<br />
               <span className="gradient-text">Best Developers</span>
             </h1>
-            <p className="text-xl text-text-secondary max-w-3xl leading-relaxed">
+            <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
               We&apos;re looking for passionate developers to join our team. 
               <span className="text-primary font-semibold"> Browse open positions</span> or submit your profile and we&apos;ll reach out when a role matches your skills.
             </p>
@@ -638,11 +656,38 @@ export default function HirePage() {
             ].map((stat) => (
               <div key={stat.label} className="flex items-center gap-3 px-5 py-3 rounded-xl bg-card/50 border border-border/40 backdrop-blur-sm">
                 <span className="text-2xl font-bold gradient-text">{stat.value}</span>
-                <span className="text-sm text-text-secondary">{stat.label}</span>
+                <span className="text-sm text-muted-foreground">{stat.label}</span>
               </div>
             ))}
           </motion.div>
         </div>
+      </div>
+
+      {/* Benefits Section */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"
+        >
+          {[
+            { icon: Laptop, label: 'Remote-first' },
+            { icon: Monitor, label: 'Equipment budget' },
+            { icon: GraduationCap, label: 'Learning stipend' },
+            { icon: Heart, label: 'Health & wellness' },
+            { icon: Clock4, label: 'Flexible hours' },
+            { icon: Users, label: 'Team retreats' },
+          ].map((benefit) => (
+            <div
+              key={benefit.label}
+              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card/50 border border-border/40 backdrop-blur-sm text-center"
+            >
+              <benefit.icon className="w-5 h-5 text-primary" />
+              <span className="text-xs text-muted-foreground font-medium">{benefit.label}</span>
+            </div>
+          ))}
+        </motion.div>
       </div>
 
       {/* Sticky Filter Bar */}
@@ -650,13 +695,13 @@ export default function HirePage() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
                 placeholder="Search positions, tech, or department..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-surface/50 border border-border rounded-xl text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-card/50 border border-border rounded-xl text-sm text-foreground placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
               />
             </div>
             <div className="flex gap-1 overflow-x-auto scrollbar-hide">
@@ -668,7 +713,7 @@ export default function HirePage() {
                     'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200',
                     selectedDepartment === dept.value
                       ? 'bg-primary text-white shadow-sm'
-                      : 'text-text-secondary hover:text-foreground hover:bg-surface-elevated'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                   )}
                 >
                   {dept.label}
@@ -684,11 +729,11 @@ export default function HirePage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl font-bold">Open Positions</h2>
-            <p className="text-sm text-text-secondary mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {filteredPositions.length} position{filteredPositions.length !== 1 ? 's' : ''} found
             </p>
           </div>
-          <div className="hidden md:flex items-center gap-2 text-sm text-text-secondary">
+          <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
             <Briefcase className="w-4 h-4" />
             <span>Last updated today</span>
           </div>
@@ -719,11 +764,11 @@ export default function HirePage() {
               animate={{ opacity: 1 }}
               className="text-center py-32"
             >
-              <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-surface-elevated border border-border/50 flex items-center justify-center">
-                <Search className="w-5 h-5 text-text-muted" />
+              <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-secondary border border-border/50 flex items-center justify-center">
+                <Search className="w-5 h-5 text-muted-foreground" />
               </div>
-              <p className="text-xl text-text-secondary font-medium mb-1">No positions found</p>
-              <p className="text-sm text-text-muted">Try a different search term or department filter.</p>
+              <p className="text-xl text-muted-foreground font-medium mb-1">No positions found</p>
+              <p className="text-sm text-muted-foreground">Try a different search term or department filter.</p>
             </motion.div>
           )}
         </AnimatePresence>
