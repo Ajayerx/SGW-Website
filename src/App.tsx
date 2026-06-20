@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ThemeProvider, useTheme } from '@/hooks/useTheme'
 import { useLenis } from '@/hooks/useLenis'
 import { Navbar } from '@/components/Navbar'
@@ -16,6 +17,7 @@ import { Contact } from '@/sections/Contact'
 import { Footer } from '@/sections/Footer'
 import ServicesPage from '@/pages/ServicesPage'
 import ServiceDetailPage from '@/pages/ServiceDetailPage'
+import HirePage from '@/pages/HirePage'
 
 // Cursor glow effect component
 function CursorGlow() {
@@ -67,7 +69,7 @@ function SectionDivider() {
 
 function AppContent() {
   const [isLoaded, setIsLoaded] = useState(false)
-  const [currentPage, setCurrentPage] = useState<'home' | 'services' | 'service-detail'>('home')
+  const [currentPage, setCurrentPage] = useState<'home' | 'services' | 'service-detail' | 'careers'>('home')
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
   const { resolvedTheme } = useTheme()
   
@@ -79,18 +81,26 @@ function AppContent() {
 
   // Handle hash routing
   useEffect(() => {
-    const hash = window.location.hash.slice(1)
-    if (hash === 'services') {
-      setCurrentPage('services')
-      setSelectedServiceId(null)
-    } else if (hash.startsWith('service/')) {
-      const serviceId = hash.replace('service/', '')
-      setSelectedServiceId(serviceId)
-      setCurrentPage('service-detail')
-    } else {
-      setCurrentPage('home')
-      setSelectedServiceId(null)
+    const handleHash = () => {
+      const hash = window.location.hash.slice(1)
+      if (hash === 'services') {
+        setCurrentPage('services')
+        setSelectedServiceId(null)
+      } else if (hash.startsWith('service/')) {
+        const serviceId = hash.replace('service/', '')
+        setSelectedServiceId(serviceId)
+        setCurrentPage('service-detail')
+      } else if (hash === 'careers') {
+        setCurrentPage('careers')
+        setSelectedServiceId(null)
+      } else {
+        setCurrentPage('home')
+        setSelectedServiceId(null)
+      }
     }
+    handleHash()
+    window.addEventListener('hashchange', handleHash)
+    return () => window.removeEventListener('hashchange', handleHash)
   }, [])
 
   const handleSelectService = (id: string) => {
@@ -111,6 +121,12 @@ function AppContent() {
     setSelectedServiceId(null)
   }
 
+  const handleNavigateToCareers = () => {
+    window.location.hash = 'careers'
+    setCurrentPage('careers')
+    setSelectedServiceId(null)
+  }
+
   return (
     <>
       {/* Loading screen */}
@@ -128,36 +144,71 @@ function AppContent() {
         <CursorGlow />
         
         <ScrollProgress />
-        <Navbar onNavigateToServices={() => handleBackToServices()} />
+        <Navbar onNavigateToServices={() => handleBackToServices()} onNavigateToCareers={handleNavigateToCareers} onNavigateHome={handleBackToHome} />
         
         <main className="relative">
-          {currentPage === 'home' && (
-            <>
-              <Hero />
-              <SectionDivider />
-              <About />
-              <SectionDivider />
-              <Services />
-              <SectionDivider />
-              <Process />
-              <SectionDivider />
-              <Technologies />
-              <SectionDivider />
-              <Portfolio />
-              <SectionDivider />
-              <Testimonials />
-              <SectionDivider />
-              <WorkSection />
-              <SectionDivider />
-              <Contact />
-            </>
-          )}
-          {currentPage === 'services' && (
-            <ServicesPage onSelectService={handleSelectService} />
-          )}
-          {currentPage === 'service-detail' && selectedServiceId && (
-            <ServiceDetailPage serviceId={selectedServiceId} onBack={handleBackToServices} />
-          )}
+          <AnimatePresence mode="wait">
+            {currentPage === 'home' && (
+              <motion.div
+                key="home"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Hero />
+                <SectionDivider />
+                <About />
+                <SectionDivider />
+                <Services />
+                <SectionDivider />
+                <Process />
+                <SectionDivider />
+                <Technologies />
+                <SectionDivider />
+                <Portfolio />
+                <SectionDivider />
+                <Testimonials />
+                <SectionDivider />
+                <WorkSection />
+                <SectionDivider />
+                <Contact />
+              </motion.div>
+            )}
+            {currentPage === 'services' && (
+              <motion.div
+                key="services"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+              >
+                <ServicesPage onSelectService={handleSelectService} />
+              </motion.div>
+            )}
+            {currentPage === 'service-detail' && selectedServiceId && (
+              <motion.div
+                key="service-detail"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+              >
+                <ServiceDetailPage serviceId={selectedServiceId} onBack={handleBackToServices} />
+              </motion.div>
+            )}
+            {currentPage === 'careers' && (
+              <motion.div
+                key="careers"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+              >
+                <HirePage />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
         
         {currentPage === 'home' && <Footer />}

@@ -17,7 +17,7 @@ const navLinks = [
   { name: 'Contact', href: '#contact' },
 ]
 
-export function Navbar({ onNavigateToServices }: { onNavigateToServices?: () => void } = {}) {
+export function Navbar({ onNavigateToServices, onNavigateToCareers, onNavigateHome }: { onNavigateToServices?: () => void; onNavigateToCareers?: () => void; onNavigateHome?: () => void } = {}) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
@@ -73,6 +73,12 @@ export function Navbar({ onNavigateToServices }: { onNavigateToServices?: () => 
     setIsMobileMenuOpen(false)
   }
 
+  const handleCareersClick = () => {
+    window.location.hash = 'careers'
+    onNavigateToCareers?.()
+    setIsMobileMenuOpen(false)
+  }
+
   return (
     <>
       <motion.nav
@@ -91,7 +97,15 @@ export function Navbar({ onNavigateToServices }: { onNavigateToServices?: () => 
             {/* Logo */}
             <motion.a
               href="#hero"
-              onClick={(e) => { e.preventDefault(); scrollToSection('#hero') }}
+              onClick={(e) => {
+                e.preventDefault()
+                const hash = window.location.hash.slice(1)
+                if (hash && hash !== 'hero') {
+                  onNavigateHome?.()
+                } else {
+                  scrollToSection('#hero')
+                }
+              }}
               className="flex items-center gap-2 relative z-10"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -187,6 +201,15 @@ export function Navbar({ onNavigateToServices }: { onNavigateToServices?: () => 
               </motion.a>
 
               <motion.button
+                onClick={handleCareersClick}
+                className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-secondary/50 border border-border/60 text-foreground rounded-xl font-medium text-sm hover:bg-secondary transition-all duration-300"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+              >
+                Hire
+              </motion.button>
+
+              <motion.button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className="lg:hidden p-2.5 rounded-xl border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-secondary transition-all"
                 whileHover={{ scale: 1.05 }}
@@ -276,7 +299,16 @@ export function Navbar({ onNavigateToServices }: { onNavigateToServices?: () => 
               </div>
 
               {/* Bottom CTA */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/40 bg-card/80 backdrop-blur-sm">
+              <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/40 bg-card/80 backdrop-blur-sm space-y-2">
+                <motion.button
+                  onClick={handleCareersClick}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: navLinks.length * 0.05 + 0.05 }}
+                  className="block w-full px-4 py-3.5 border border-border/60 text-foreground rounded-xl font-medium text-center hover:bg-secondary transition-all"
+                >
+                  Hire
+                </motion.button>
                 <motion.a
                   href="#contact"
                   onClick={(e) => { e.preventDefault(); scrollToSection('#contact') }}

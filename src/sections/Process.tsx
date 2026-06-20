@@ -2,26 +2,79 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import {
-  Search,
-  Lightbulb,
-  Code2,
-  Rocket,
-  Settings,
-  HeadphonesIcon,
-} from 'lucide-react'
-import {
-  AnimatedSection,
-  StaggerContainer,
-  StaggerItem,
-} from '@/components/AnimatedSection'
+import type { SVGProps } from 'react'
+import { AnimatedSection } from '@/components/AnimatedSection'
 import { Section3D } from '@/components/Section3D'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// ─── Premium SVG Icons ────────────────────
+function SvgMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" {...props}>
+      <circle cx="17" cy="17" r="9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      <line x1="23.5" y1="23.5" x2="32" y2="32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function SvgLightbulb(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" {...props}>
+      <path d="M20 6C14 6 11 10.5 11 15C11 19 14 21 15 23V28H25V23C26 21 29 19 29 15C29 10.5 26 6 20 6Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="15" y1="32" x2="25" y2="32" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function SvgCode(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" {...props}>
+      <path d="M12 12L4 20L12 28" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M28 12L36 20L28 28" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="23" y1="8" x2="17" y2="32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function SvgShield(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" {...props}>
+      <path d="M8 6V22C8 28 20 34 20 34C20 34 32 28 32 22V6L20 2L8 6Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 20L18.5 24L25 16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function SvgRocketIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" {...props}>
+      <path d="M20 4C16 10 12 18 12 28H28C28 18 24 10 20 4Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="20" cy="18" r="4" stroke="currentColor" strokeWidth="2.2" />
+      <line x1="14" y1="28" x2="10" y2="36" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="20" y1="28" x2="20" y2="36" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="26" y1="28" x2="30" y2="36" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M8 32L12 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M32 32L28 28" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function SvgHeadset(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" {...props}>
+      <path d="M6 22V20C6 12.3 12.3 6 20 6C27.7 6 34 12.3 34 20V22" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="4" y="22" width="8" height="10" rx="3" stroke="currentColor" strokeWidth="2.2" />
+      <rect x="28" y="22" width="8" height="10" rx="3" stroke="currentColor" strokeWidth="2.2" />
+      <line x1="20" y1="28" x2="20" y2="34" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+// ─── Steps Data ────────────────────────────
 const steps = [
   {
-    icon: Search,
+    icon: SvgMagnifyingGlass,
     number: '01',
     title: 'Discovery & context',
     description:
@@ -29,7 +82,7 @@ const steps = [
     gradient: 'from-brand-blue to-brand-blue-bright',
   },
   {
-    icon: Lightbulb,
+    icon: SvgLightbulb,
     number: '02',
     title: 'Solution shaping',
     description:
@@ -37,7 +90,7 @@ const steps = [
     gradient: 'from-brand-yellow to-orange-600',
   },
   {
-    icon: Code2,
+    icon: SvgCode,
     number: '03',
     title: 'Build & iterate',
     description:
@@ -45,7 +98,7 @@ const steps = [
     gradient: 'from-brand-green-bright to-brand-blue',
   },
   {
-    icon: Settings,
+    icon: SvgShield,
     number: '04',
     title: 'Hardening & QA',
     description:
@@ -53,7 +106,7 @@ const steps = [
     gradient: 'from-brand-green to-brand-green-bright',
   },
   {
-    icon: Rocket,
+    icon: SvgRocketIcon,
     number: '05',
     title: 'Launch & rollout',
     description:
@@ -61,7 +114,7 @@ const steps = [
     gradient: 'from-brand-red to-orange-600',
   },
   {
-    icon: HeadphonesIcon,
+    icon: SvgHeadset,
     number: '06',
     title: 'Support & evolution',
     description:
@@ -236,7 +289,7 @@ export function Process() {
                         }`}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
-                      <step.icon className="w-8 h-8 text-white" />
+                      <step.icon width={32} height={32} className="text-white" />
                     </motion.div>
 
                     <h3 className="text-2xl font-bold font-[var(--font-heading)] mb-4 group-hover:text-primary transition-colors">
