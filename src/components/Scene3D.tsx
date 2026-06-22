@@ -164,13 +164,6 @@ export function Scene3D() {
     window.addEventListener('mousemove', onMouse)
     window.addEventListener('touchmove', onTouch, { passive: true })
 
-    // ── Visibility ──
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (!entry.isIntersecting) cancelAnimationFrame(rafRef.current) },
-      { threshold: 0 }
-    )
-    observer.observe(container)
-
     // ── Draw mesh gradient background ──
     const drawMeshGradient = (t: number, dark: boolean) => {
       // Base
@@ -498,6 +491,20 @@ export function Scene3D() {
       drawWaveTerrain(t, dark)
       drawLabels(t, dark)
     }
+
+    // ── Visibility ──
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!rafRef.current) loop()
+        } else {
+          cancelAnimationFrame(rafRef.current)
+          rafRef.current = 0
+        }
+      },
+      { threshold: 0 }
+    )
+    observer.observe(container)
 
     loop()
 

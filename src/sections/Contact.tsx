@@ -19,7 +19,6 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { AnimatedSection } from '@/components/AnimatedSection'
 import { SectionHeader } from '@/components/SectionHeader'
 import { TiltCard } from '@/components/TiltCard'
 
@@ -158,7 +157,7 @@ function MapSection() {
       transition={{ duration: 0.6, delay: 0.6 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative h-56 rounded-2xl overflow-hidden border border-border/40 cursor-pointer"
+      className="group relative h-full min-h-[280px] rounded-2xl overflow-hidden border border-border/40 cursor-pointer"
       onClick={() => window.open(directionsUrl, '_blank', 'noopener')}
     >
       {/* Google Maps iframe */}
@@ -166,137 +165,225 @@ function MapSection() {
         src={mapUrl}
         width="100%"
         height="100%"
-        style={{ border: 0, filter: 'brightness(0.65) contrast(1.1) saturate(0.3) sepia(0.15)' }}
+        style={{
+          border: 0,
+          filter:
+            'brightness(0.5) contrast(1.15) saturate(0.15) sepia(0.2) hue-rotate(200deg)',
+        }}
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        className="absolute inset-0 w-full h-full transition-all duration-500"
+        className="absolute inset-0 w-full h-full transition-all duration-700"
         title="Softgoway Indore Office"
       />
 
-      {/* Dark gradient overlays for depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent pointer-events-none" />
+      {/* Dark theme overlay to unify with background */}
+      <div className="absolute inset-0 bg-[hsl(var(--background))]/40 pointer-events-none" />
 
-      {/* Subtle grid overlay for tech feel */}
+      {/* Gradient overlays for depth */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))]/95 via-transparent to-[hsl(var(--background))]/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--background))]/50 to-transparent pointer-events-none" />
+
+      {/* Tech grid overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
           backgroundImage:
             'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '24px 24px',
+          backgroundSize: '20px 20px',
+        }}
+      />
+
+      {/* Subtle scan-line effect */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.015]"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
         }}
       />
 
       {/* Hover brightness boost */}
       <div
         className={cn(
-          'absolute inset-0 bg-black/10 pointer-events-none transition-opacity duration-500',
+          'absolute inset-0 bg-[hsl(var(--background))]/20 pointer-events-none transition-opacity duration-500',
           isHovered ? 'opacity-0' : 'opacity-100'
         )}
       />
 
-      {/* Corner accent lines */}
-      <div className="absolute top-0 left-0 w-8 h-8 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-primary/60 to-transparent" />
-        <div className="absolute top-0 left-0 h-full w-[1px] bg-gradient-to-b from-primary/60 to-transparent" />
+      {/* Corner accent brackets */}
+      <div className="absolute top-0 left-0 w-10 h-10 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-primary/50 to-transparent" />
+        <div className="absolute top-0 left-0 h-full w-[1.5px] bg-gradient-to-b from-primary/50 to-transparent" />
+        <div className="absolute top-1 left-1 w-1.5 h-1.5 rounded-full bg-primary/40" />
       </div>
-      <div className="absolute bottom-0 right-0 w-8 h-8 pointer-events-none">
-        <div className="absolute bottom-0 right-0 w-full h-[1px] bg-gradient-to-l from-accent/60 to-transparent" />
-        <div className="absolute bottom-0 right-0 h-full w-[1px] bg-gradient-to-t from-accent/60 to-transparent" />
+      <div className="absolute top-0 right-0 w-10 h-10 pointer-events-none">
+        <div className="absolute top-0 right-0 w-full h-[1.5px] bg-gradient-to-l from-accent/40 to-transparent" />
+        <div className="absolute top-0 right-0 h-full w-[1.5px] bg-gradient-to-b from-accent/40 to-transparent" />
+      </div>
+      <div className="absolute bottom-0 left-0 w-10 h-10 pointer-events-none">
+        <div className="absolute bottom-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-primary/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 h-full w-[1.5px] bg-gradient-to-t from-primary/40 to-transparent" />
+      </div>
+      <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none">
+        <div className="absolute bottom-0 right-0 w-full h-[1.5px] bg-gradient-to-l from-accent/50 to-transparent" />
+        <div className="absolute bottom-0 right-0 h-full w-[1.5px] bg-gradient-to-t from-accent/50 to-transparent" />
+        <div className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-accent/40" />
       </div>
 
       {/* Pulsing pin marker */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] pointer-events-none">
+      <div className="absolute top-[30%] left-1/2 -translate-x-1/2 pointer-events-none">
         <motion.div
           className="relative flex flex-col items-center"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{ y: [0, -8, 0] }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
         >
-          {/* Ping rings */}
           <motion.div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border border-primary/40"
-            animate={{ scale: [1, 2.2], opacity: [0.5, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full border border-primary/30"
+            animate={{ scale: [1, 2.5], opacity: [0.4, 0] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
           />
           <motion.div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full border border-primary/25"
-            animate={{
-              scale: [1, 2.8],
-              opacity: [0.3, 0],
-            }}
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full border border-primary/15"
+            animate={{ scale: [1, 3.2], opacity: [0.25, 0] }}
             transition={{
-              duration: 2,
+              duration: 2.5,
               repeat: Infinity,
               ease: 'easeOut',
-              delay: 0.6,
+              delay: 0.8,
+            }}
+          />
+          <motion.div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full border border-accent/10"
+            animate={{ scale: [1, 4], opacity: [0.15, 0] }}
+            transition={{
+              duration: 2.5,
+              repeat: Infinity,
+              ease: 'easeOut',
+              delay: 1.6,
             }}
           />
 
-          {/* Pin dot */}
-          <div className="relative w-4 h-4 rounded-full bg-primary shadow-lg shadow-primary/50 border-2 border-white/90" />
-
-          {/* Pin tail */}
-          <div className="w-[1.5px] h-4 bg-gradient-to-b from-primary/60 to-transparent mt-0.5" />
+          <div className="absolute -inset-2 rounded-full bg-primary/20 blur-md" />
+          <div className="relative w-4 h-4 rounded-full bg-primary shadow-[0_0_16px_rgba(var(--primary),0.6)] border-2 border-white/90 z-10" />
+          <div className="w-[1.5px] h-6 bg-gradient-to-b from-primary/50 via-primary/20 to-transparent mt-0.5" />
         </motion.div>
       </div>
 
-      {/* Bottom info bar */}
-      <div className="absolute bottom-0 left-0 right-0 p-3.5 pointer-events-none">
-        <div className="flex items-end justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 mb-1">
-              <MapPin className="w-3 h-3 text-primary/80 flex-shrink-0" />
-              <span className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">
-                Office
-              </span>
-            </div>
-            <p className="text-[13px] text-white/90 font-medium leading-snug truncate">
-              Annex 1002-A, Omax City-1, Indore
-            </p>
-            <p className="text-[11px] text-white/40 mt-0.5">
-              Bypass A.B. Road, Near Shiv Mandir, MP 452016
-            </p>
-          </div>
-
-          {/* Directions button */}
-          <motion.div
-            className="pointer-events-auto flex-shrink-0"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/15 text-white text-[12px] font-medium hover:bg-white/15 transition-colors">
-              <Navigation className="w-3.5 h-3.5" />
-              Directions
-            </div>
-          </motion.div>
+      {/* Coordinate HUD - top left */}
+      <div className="absolute top-3.5 left-3.5 pointer-events-none space-y-1.5">
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-pulse" />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-primary/60 font-mono font-semibold">
+            Live
+          </span>
+        </div>
+        <div className="text-[9px] font-mono text-white/20 leading-relaxed">
+          <div>22.7196° N</div>
+          <div>75.8577° E</div>
         </div>
       </div>
 
-      {/* Top-right "Open in Maps" hint on hover */}
+      {/* "Open in Maps" hint on hover - top right */}
       <motion.div
-        className="absolute top-3 right-3 pointer-events-none"
+        className="absolute top-3.5 right-3.5 pointer-events-none"
         initial={{ opacity: 0, y: -4 }}
-        animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : -4 }}
-        transition={{ duration: 0.2 }}
+        animate={{
+          opacity: isHovered ? 1 : 0,
+          y: isHovered ? 0 : -4,
+        }}
+        transition={{ duration: 0.25 }}
       >
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-black/50 backdrop-blur-md border border-white/10 text-white/70 text-[11px] font-medium">
+        <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/60 backdrop-blur-xl border border-white/10 text-white/80 text-[11px] font-medium">
           <ExternalLink className="w-3 h-3" />
           Open in Google Maps
         </div>
       </motion.div>
 
-      {/* Bottom border glow on hover */}
+      {/* Bottom info panel */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+        <div className="h-20 bg-gradient-to-t from-[hsl(var(--background))]/95 to-transparent" />
+        <div className="px-4 pb-4">
+          <div className="p-4 rounded-xl bg-card/60 backdrop-blur-xl border border-border/30 shadow-[0_-4px_30px_rgba(0,0,0,0.3)]">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-md bg-primary/15 border border-primary/20">
+                    <MapPin className="w-3 h-3 text-primary" />
+                  </div>
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+                    Softgoway HQ
+                  </span>
+                </div>
+                <p className="text-[13px] text-foreground/90 font-medium leading-snug">
+                  Annex 1002-A, Omax City-1
+                </p>
+                <p className="text-[11px] text-muted-foreground/50 mt-0.5 leading-snug">
+                  Bypass A.B. Road, Near Shiv Mandir
+                </p>
+                <p className="text-[11px] text-muted-foreground/50">
+                  Indore, Madhya Pradesh 452016
+                </p>
+              </div>
+
+              <motion.div
+                className="pointer-events-auto flex-shrink-0 mt-5"
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
+              >
+                <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 backdrop-blur-md border border-primary/20 text-primary text-[12px] font-semibold hover:bg-primary/15 transition-colors">
+                  <Navigation className="w-3.5 h-3.5" />
+                  <span>Get Directions</span>
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border/20">
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
+                <span className="text-[10px] text-muted-foreground/40 font-medium">
+                  Office Open
+                </span>
+              </div>
+              <div className="w-[1px] h-3 bg-border/30" />
+              <span className="text-[10px] text-muted-foreground/30 font-mono">
+                IST UTC+5:30
+              </span>
+              <div className="w-[1px] h-3 bg-border/30" />
+              <span className="text-[10px] text-muted-foreground/30 font-mono">
+                Mon–Sat, 10AM–7PM
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Border glow on hover */}
       <motion.div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1px] pointer-events-none"
+        className="absolute inset-0 rounded-2xl pointer-events-none"
         animate={{
-          width: isHovered ? '80%' : '0%',
-          opacity: isHovered ? 0.6 : 0,
+          boxShadow: isHovered
+            ? 'inset 0 0 0 1px rgba(var(--primary), 0.3), 0 0 30px rgba(var(--primary), 0.08)'
+            : 'inset 0 0 0 0px transparent, 0 0 0px transparent',
         }}
         transition={{ duration: 0.4 }}
+      />
+
+      {/* Animated gradient bottom line */}
+      <motion.div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[1.5px] pointer-events-none rounded-full"
+        animate={{
+          width: isHovered ? '60%' : '0%',
+          opacity: isHovered ? 0.5 : 0,
+        }}
+        transition={{ duration: 0.5 }}
         style={{
           background:
-            'linear-gradient(90deg, transparent, var(--color-primary), transparent)',
+            'linear-gradient(90deg, transparent, var(--color-primary), var(--color-accent), transparent)',
         }}
       />
     </motion.div>
@@ -483,38 +570,54 @@ export function Contact() {
           description="Share a bit about your product, timeline, and challenges. We'll follow up with a short call proposal and a clear next step."
         />
 
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
-          {/* Left Column — Contact Info */}
-          <AnimatedSection
-            direction="left"
-            delay={0.2}
-            className="lg:col-span-2"
+        {/* 
+          KEY FIX: Use items-stretch (default) on the grid so the left column 
+          stretches to match the right column's height. The left column uses a 
+          nested CSS grid with grid-rows: auto 1fr so contact cards take their 
+          natural height and the map fills the rest.
+        */}
+        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-stretch">
+          {/* Left Column — Contact Info + Map (stretches to match form) */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-2 min-h-0"
           >
-            <div className="space-y-8 lg:sticky lg:top-32">
-              <div>
-                <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-4 tracking-tight">
-                  Contact information
-                </h3>
-                <p className="text-muted-foreground/80 text-[15px] leading-relaxed">
-                  Whether you're exploring a new build or need help stabilising
-                  an existing product, we're happy to start with a quick,
-                  practical conversation.
-                </p>
+            <div className="grid grid-rows-[auto_1fr] gap-8 h-full">
+              {/* Contact info — takes natural height */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-4 tracking-tight">
+                    Contact information
+                  </h3>
+                  <p className="text-muted-foreground/80 text-[15px] leading-relaxed">
+                    Whether you're exploring a new build or need help stabilising
+                    an existing product, we're happy to start with a quick,
+                    practical conversation.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {contactInfo.map((item, index) => (
+                    <ContactCard
+                      key={item.label}
+                      item={item}
+                      index={index}
+                    />
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-3">
-                {contactInfo.map((item, index) => (
-                  <ContactCard
-                    key={item.label}
-                    item={item}
-                    index={index}
-                  />
-                ))}
+              {/* Map — fills all remaining vertical space */}
+              <div className="min-h-[280px]">
+                <MapSection />
               </div>
             </div>
-          </AnimatedSection>
+          </motion.div>
 
-          {/* Right Column — Form */}
+          {/* Right Column — Form only */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -522,10 +625,7 @@ export function Contact() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-3"
           >
-            <TiltCard
-              glowColor="rgba(139, 92, 246, 0.12)"
-              tiltAmount={4}
-            >
+            <TiltCard glowColor="rgba(139, 92, 246, 0.12)" tiltAmount={4}>
               <form
                 onSubmit={handleSubmit}
                 className="p-7 lg:p-9 rounded-3xl bg-card/80 backdrop-blur-sm border border-border/50 space-y-7"
@@ -721,11 +821,6 @@ export function Contact() {
                 </div>
               </form>
             </TiltCard>
-
-            {/* Map */}
-            <div className="mt-8">
-              <MapSection />
-            </div>
           </motion.div>
         </div>
 

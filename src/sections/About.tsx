@@ -1,6 +1,6 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
-import { Target, Eye, Award, Users, Lightbulb, Shield } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Target, Eye, Award, Users, Lightbulb, Shield, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TiltCard } from '@/components/TiltCard'
 import {
   AnimatedSection,
@@ -46,6 +46,63 @@ const values = [
       'We treat every product as our own, obsessing over details, performance, and maintainability long after launch.',
     gradient: 'from-[var(--brand-green-light)] to-[var(--brand-blue-primary)]',
     glow: 'rgba(132,226,53,0.2)',
+  },
+]
+
+const posts = [
+  {
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop',
+    category: 'Team Offsite',
+    date: 'Mar 2026',
+    location: 'Goa, India',
+    title: 'Annual Engineering Summit 2026',
+    description:
+      'Three days of deep-dive sessions, brainstorming, and team-building by the beach.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format&fit=crop',
+    category: 'Community',
+    date: 'Feb 2026',
+    location: 'Bangalore',
+    title: 'Open Source Hackathon',
+    description:
+      'Our engineers contributed to open-source projects and mentored first-time contributors.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop',
+    category: 'Event',
+    date: 'Jan 2026',
+    location: 'Mumbai',
+    title: 'Tech Leaders Conclave',
+    description:
+      'Panel discussions on AI, scaling SaaS, and the future of remote engineering teams.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop',
+    category: 'Culture',
+    date: 'Dec 2025',
+    location: 'Pune',
+    title: 'Year-End Celebration',
+    description:
+      'Celebrating a year of shipping great products with the whole team and families.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format&fit=crop',
+    category: 'Learning',
+    date: 'Nov 2025',
+    location: 'Remote',
+    title: 'Internal Tech Talks — Season 3',
+    description:
+      'Weekly knowledge-sharing sessions covering system design, AI agents, and observability.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&auto=format&fit=crop',
+    category: 'Wellness',
+    date: 'Oct 2025',
+    location: 'Lonavala',
+    title: 'Wellness & Creativity Retreat',
+    description:
+      'A weekend focused on mindfulness, creative workshops, and stepping away from screens.',
   },
 ]
 
@@ -403,6 +460,66 @@ export function About() {
             <ValueCard key={value.title} value={value} index={index} />
           ))}
         </div>
+
+        {/* Recent Posts */}
+        <AnimatedSection delay={0.2} className="mt-24 mb-24">
+          <div className="text-center mb-14">
+            <p className="text-xs font-mono text-primary/60 tracking-[0.3em] uppercase mb-4">
+              Our culture
+            </p>
+            <h3 className="text-3xl lg:text-4xl font-bold font-[var(--font-heading)]">
+              Recent <GradientText>posts</GradientText>
+            </h3>
+            <p className="mt-4 text-muted-foreground max-w-xl mx-auto text-sm leading-relaxed">
+              A glimpse into our team culture, offsites, events, and everyday moments.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {posts.map((post, idx) => (
+              <motion.div
+                key={post.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="group relative rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 overflow-hidden hover:border-primary/30 transition-all duration-500"
+              >
+                <div className="relative h-52 overflow-hidden">
+                  <motion.img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute top-3 left-3 px-3 py-1 text-[11px] font-semibold rounded-full bg-white/20 backdrop-blur-md text-white border border-white/20">
+                    {post.category}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {post.date}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {post.location}
+                    </span>
+                  </div>
+                  <h4 className="text-base font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+                    {post.title}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                    {post.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </AnimatedSection>
 
         {/* Bottom CTA */}
         <AnimatedSection delay={0.3} className="mt-24">

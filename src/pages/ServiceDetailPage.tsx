@@ -128,7 +128,7 @@ export default function ServiceDetailPage() {
       <div className="max-w-7xl mx-auto px-4 pb-32">
         <div className="flex gap-16">
           {/* Sidebar Nav - Desktop */}
-          <nav className="hidden lg:block flex-shrink-0 w-48 sticky top-32 self-start">
+          <nav className="hidden lg:block flex-shrink-0 w-48 sticky top-32 self-start pt-6">
             <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase mb-4">
               On this page
             </p>
@@ -155,7 +155,7 @@ export default function ServiceDetailPage() {
           >
             {/* Features */}
             <motion.section variants={itemVariants} id="features">
-              <div className="mb-10">
+              <div className="mb-10 pt-10">
                 <span className="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium text-primary bg-primary/10 rounded-full mb-4 border border-primary/20">
                   <Sparkles className="w-3.5 h-3.5" />
                   What We Deliver

@@ -27,6 +27,7 @@ import { Careers } from '@/sections/Careers'
 import { Contact } from '@/sections/Contact'
 import { Footer } from '@/sections/Footer'
 import ServiceDetailPage from '@/pages/ServiceDetailPage'
+import ProjectDetailPage from '@/pages/ProjectDetailPage'
 import HirePage from '@/pages/HirePage'
 import { getLenis } from '@/hooks/useLenis'
 
@@ -215,6 +216,16 @@ function AppLayout() {
 
   useLenis()
 
+  // Scroll to top on route change
+  useEffect(() => {
+    const lenis = getLenis()
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }, [location.pathname])
+
   useEffect(() => {
     setIsLoaded(true)
   }, [])
@@ -244,6 +255,20 @@ function AppLayout() {
                     transition={{ duration: 0.25 }}
                   >
                     <ServiceDetailPage />
+                  </motion.div>
+                }
+              />
+              <Route
+                path="/projects/:id"
+                element={
+                  <motion.div
+                    key="project-detail"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <ProjectDetailPage />
                   </motion.div>
                 }
               />
