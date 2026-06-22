@@ -118,9 +118,7 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-4xl mx-auto mb-12 text-pretty leading-relaxed"
         >
-          We design and ship production-grade software for startups and
-          enterprises — platform engineering, AI features, and cloud
-          infrastructure that stays stable at 3 AM.
+          We design, build, and scale web applications, mobile apps, AI solutions, Shopify experiences, cloud infrastructure, and business automations for startups and enterprises worldwide.
         </motion.p>
 
         {/* CTA Buttons */}

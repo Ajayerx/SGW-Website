@@ -1,5 +1,5 @@
-import { motion, useInView, useScroll, useTransform, type MotionValue } from 'framer-motion'
-import { useRef, useEffect, useState, useLayoutEffect } from 'react'
+import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion'
+import { useRef, useLayoutEffect, useState } from 'react'
 import { ExternalLink, Github } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AnimatedSection } from '@/components/AnimatedSection'
@@ -9,87 +9,90 @@ const projects = [
   {
     title: 'FinTech Control Center',
     description:
-      'Real-time analytics console for finance teams to monitor risk, liquidity, and KPIs across 12+ data sources. Reduced reporting time from days to seconds.',
+      'A real-time analytics console for finance teams to monitor risk, liquidity, and key KPIs across multiple systems.',
     tags: ['React', 'Node.js', 'PostgreSQL', 'AWS'],
     image:
       'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop',
     gradient: 'from-blue-500 to-cyan-500',
-    liveUrl: undefined as string | undefined,
-    repoUrl: undefined as string | undefined,
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
     title: 'Global Telehealth Platform',
     description:
-      'HIPAA-compliant telehealth system with virtual consultations, e-prescriptions, and integrated scheduling. 2M+ patients served across 200+ clinics.',
+      'HIPAA-ready telehealth workflows with virtual consultations, prescriptions, and integrated scheduling.',
     tags: ['Next.js', 'GraphQL', 'MongoDB', 'WebRTC'],
     image:
       'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop',
     gradient: 'from-green-500 to-emerald-500',
-    liveUrl: undefined as string | undefined,
-    repoUrl: undefined as string | undefined,
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
     title: 'Multi‑vendor Commerce Suite',
     description:
-      'A marketplace engine with configurable catalogues, real-time inventory across 50+ warehouses, and ML-powered recommendations. Handles 10K+ orders/hour.',
+      'A marketplace engine with configurable catalogues, real-time inventory, and personalised recommendations.',
     tags: ['Vue.js', 'Python', 'Redis', 'Kubernetes'],
     image:
       'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&auto=format&fit=crop',
     gradient: 'from-orange-500 to-red-500',
-    liveUrl: undefined as string | undefined,
-    repoUrl: undefined as string | undefined,
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
     title: 'AI Content Studio',
     description:
-      'Content operations platform where marketing teams brief, generate, and review AI-assisted assets in one workflow. 3× content output with same team size.',
+      'A content operations hub where marketing teams brief, generate, and review AI‑assisted assets in one place.',
     tags: ['React', 'Python', 'TensorFlow', 'GCP'],
     image:
       'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&auto=format&fit=crop',
     gradient: 'from-purple-500 to-pink-500',
-    liveUrl: undefined as string | undefined,
-    repoUrl: undefined as string | undefined,
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
     title: 'Logistics Command Hub',
     description:
-      'Operations layer for fleet tracking, route optimisation, and exception handling across 8 regions. Cut last-mile delivery costs by 22% in first quarter.',
+      'An operations layer for fleet tracking, route optimisation, and exception handling across regions.',
     tags: ['Angular', 'Go', 'PostgreSQL', 'Azure'],
     image:
       'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop',
     gradient: 'from-amber-500 to-orange-500',
-    liveUrl: undefined as string | undefined,
-    repoUrl: undefined as string | undefined,
+    liveUrl: '#',
+    repoUrl: '#',
   },
   {
     title: 'Adaptive Learning Platform',
     description:
-      'AI-driven LMS with adaptive learning paths, real-time progress analytics, and content authoring tools. 98% learner completion rate across 500K+ users.',
+      'An LMS with adaptive paths, progress analytics, and content authoring tools for education providers.',
     tags: ['React', 'Node.js', 'MongoDB', 'AWS'],
     image:
       'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&auto=format&fit=crop',
     gradient: 'from-indigo-500 to-purple-500',
-    liveUrl: undefined as string | undefined,
-    repoUrl: undefined as string | undefined,
+    liveUrl: '#',
+    repoUrl: '#',
   },
 ]
 
 function ProjectCard({
   project,
-  index,
   progress,
+  index,
 }: {
   project: (typeof projects)[number]
+  progress: number
   index: number
-  progress: MotionValue<number>
 }) {
   const [isHovered, setIsHovered] = useState(false)
 
   const cardStart = index / projects.length
   const cardEnd = (index + 1) / projects.length
-  const cardProgress = useTransform(progress, [cardStart, cardEnd], [0, 1])
-  const scale = useTransform(cardProgress, [0, 1], [0.85, 1])
-  const opacity = useTransform(cardProgress, [0, 1], [0.45, 1])
+  const cardProgress = Math.max(
+    0,
+    Math.min(1, (progress - cardStart) / (cardEnd - cardStart))
+  )
+  const scale = 0.85 + cardProgress * 0.15
+  const opacity = 0.45 + cardProgress * 0.55
 
   const handleOpen = (url?: string) => {
     if (!url || url === '#') return
@@ -144,7 +147,7 @@ function ProjectCard({
               className={cn(
                 'p-4 rounded-full bg-white/90 text-black shadow-lg backdrop-blur-sm glow-primary',
                 (!project.liveUrl || project.liveUrl === '#') &&
-                'cursor-not-allowed opacity-60'
+                  'cursor-not-allowed opacity-60'
               )}
             >
               <ExternalLink className="w-5 h-5" />
@@ -158,7 +161,7 @@ function ProjectCard({
               className={cn(
                 'p-4 rounded-full bg-white/90 text-black shadow-lg backdrop-blur-sm glow-accent',
                 (!project.repoUrl || project.repoUrl === '#') &&
-                'cursor-not-allowed opacity-60'
+                  'cursor-not-allowed opacity-60'
               )}
             >
               <Github className="w-5 h-5" />
@@ -219,143 +222,167 @@ function ProjectCard({
 
 export function Portfolio() {
   const sectionRef = useRef<HTMLElement>(null)
-  const triggerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement | null>(null)
   const isInView = useInView(headerRef, { once: true, margin: '-100px' })
-  const [totalWidth, setTotalWidth] = useState(0)
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const [maxScroll, setMaxScroll] = useState(0)
+  const maxScrollMV = useMotionValue(0)
 
+  // Background parallax
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start end', 'end start'],
   })
+  const backgroundX = useTransform(scrollYProgress, [0, 1], ['-10%', '10%'])
 
-  const backgroundX = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+  // Measure horizontal distance to center the last card (CTA card)
+  useLayoutEffect(() => {
+    const update = () => {
+      const container = scrollContainerRef.current
+      if (!container) return
+      const cards = container.children
+      const lastCard = cards[cards.length - 1] as HTMLElement | undefined
+      if (lastCard) {
+        const rect = lastCard.getBoundingClientRect()
+        const cardCenter = rect.left + rect.width / 2
+        const viewportCenter = window.innerWidth / 2
+        const scrollDistance = cardCenter - viewportCenter
+        const val = Math.max(0, scrollDistance)
+        maxScrollMV.set(val)
+        setMaxScroll(val)
+      }
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [maxScrollMV])
 
-  const { scrollYProgress: triggerProgress } = useScroll({
-    target: triggerRef,
+  // Drive horizontal translation from vertical page scroll
+  // offset: ['start start', 'end start'] ensures progress=1 exactly when
+  // sticky releases (section bottom = viewport top) — no empty space.
+  const { scrollYProgress: horizProgress } = useScroll({
+    target: sectionRef,
     offset: ['start start', 'end start'],
   })
 
-  const x = useTransform(triggerProgress, [0, 1], [0, -totalWidth])
+  const x = useTransform(
+    [horizProgress, maxScrollMV],
+    ([t, ms]: number[]) => t * -ms
+  )
+
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useLayoutEffect(() => {
-    const updateWidth = () => {
-      if (scrollContainerRef.current) {
-        setTotalWidth(
-          scrollContainerRef.current.scrollWidth - window.innerWidth + 200
-        )
-      }
-    }
-    updateWidth()
-    window.addEventListener('resize', updateWidth)
-    return () => window.removeEventListener('resize', updateWidth)
-  }, [])
-
-  useEffect(() => {
-    const unsubscribe = triggerProgress.on('change', setScrollProgress)
-    return unsubscribe
-  }, [triggerProgress])
+    const unsub = horizProgress.on('change', (v) => {
+      setScrollProgress(Math.min(1, Math.max(0, v)))
+    })
+    return () => unsub()
+  }, [horizProgress])
 
   return (
-    <section ref={sectionRef} id="portfolio" className="relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      id="work"
+      className="relative"
+      style={{ height: maxScroll > 0 ? `calc(100vh + ${maxScroll}px)` : '200vh' }}
+    >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ x: backgroundX }}
           className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[1400px] h-[600px]
                      bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10
-                     rounded-full blur-[200px] portfolio-bg"
+                     rounded-full blur-[200px]"
         />
       </div>
 
-      {/* Header (before pinned area) */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 lg:pt-32 pb-12">
-        <AnimatedSection className="text-center">
-          <div ref={headerRef}>
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="inline-block px-5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full mb-6 border border-primary/20"
-            >
-              Our work
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)] mb-6 text-balance"
-            >
-              Featured <span className="gradient-text-animated">projects</span>
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed"
-            >
-              A selection of platforms, internal tools, and products we’ve helped
-              design, build, and scale for teams across finance, healthcare,
-              education, and more.
-            </motion.p>
-          </div>
-        </AnimatedSection>
-      </div>
-
-      {/* Horizontal Scroll Area */}
-      <div ref={triggerRef} className="relative min-h-screen">
-        {/* Progress indicator (desktop) */}
-        <div className="fixed top-1/2 right-8 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-2">
-          {projects.map((_, index) => {
-            const start = index / projects.length
-            const end = (index + 1) / projects.length
-            const active =
-              scrollProgress >= start - 0.02 && scrollProgress < end + 0.02
-
-            return (
-              <motion.div
-                key={index}
-                className={cn(
-                  'w-2 h-2 rounded-full transition-all duration-300',
-                  active
-                    ? 'w-2 h-8 bg-gradient-to-b from-primary to-accent'
-                    : 'bg-border'
-                )}
-              />
-            )
-          })}
+      {/* Sticky wrapper — pins during horizontal scroll */}
+      <div className="sticky top-0 h-screen overflow-hidden flex flex-col">
+        {/* Header (inside sticky so it exits with the pin) */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-16 lg:pt-20 pb-4 shrink-0">
+          <AnimatedSection className="text-center">
+            <div ref={headerRef}>
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6 }}
+                className="inline-block px-5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-full mb-4 border border-primary/20"
+              >
+                Our work
+              </motion.span>
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.1 }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold font-[var(--font-heading)] mb-3 text-balance"
+              >
+                Featured{' '}
+                <span className="gradient-text-animated">projects</span>
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto text-pretty leading-relaxed"
+              >
+                A selection of platforms, internal tools, and products we&apos;ve
+                helped design, build, and scale for teams across finance,
+                healthcare, education, and more.
+              </motion.p>
+            </div>
+          </AnimatedSection>
         </div>
 
-        {/* Scroll hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: scrollProgress < 0.12 ? 1 : 0 }}
-          className="absolute top-8 left-1/2 -translate-x-1/2 text-muted-foreground text-sm flex items-center gap-2 z-10"
-        >
-          <span>Scroll to explore</span>
-          <motion.span
-            animate={{ x: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            →
-          </motion.span>
-        </motion.div>
+        {/* Scrollable content area */}
+        <div className="flex-1 relative overflow-hidden">
+          {/* Progress indicator (desktop) */}
+          <div className="fixed top-1/2 right-8 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-2">
+            {projects.map((_, index) => {
+              const start = index / projects.length
+              const end = (index + 1) / projects.length
+              const active =
+                scrollProgress >= start - 0.02 && scrollProgress < end + 0.02
+              return (
+                <motion.div
+                  key={index}
+                  className={cn(
+                    'w-2 h-2 rounded-full transition-all duration-300',
+                    active
+                      ? 'w-2 h-8 bg-gradient-to-b from-primary to-accent'
+                      : 'bg-border'
+                  )}
+                />
+              )
+            })}
+          </div>
 
-        {/* Sticky horizontal scroll container */}
-        <div className="sticky top-0 h-screen flex items-center overflow-hidden">
+          {/* Scroll hint */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: scrollProgress < 0.1 ? 1 : 0 }}
+            className="absolute top-4 left-1/2 -translate-x-1/2 text-muted-foreground text-sm flex items-center gap-2 z-20"
+          >
+            <span>Scroll to explore</span>
+            <motion.span
+              animate={{ x: [0, 10, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              →
+            </motion.span>
+          </motion.div>
+
+          {/* Horizontal track with motion-driven translateX */}
           <motion.div
             ref={scrollContainerRef}
-            style={{ x, perspective: '1000px' }}
             className="flex gap-8 pl-[10vw] pr-[20vw] will-change-transform"
+            style={{ x, perspective: '1000px' }}
           >
             {projects.map((project, index) => (
               <ProjectCard
                 key={project.title}
                 project={project}
                 index={index}
-                progress={triggerProgress}
+                progress={scrollProgress}
               />
             ))}
 
@@ -373,8 +400,8 @@ export function Portfolio() {
                   Have a project in mind?
                 </h3>
                 <p className="text-muted-foreground mb-8 text-sm lg:text-base leading-relaxed">
-                  Share a brief, and we'll walk you through how we'd approach it—no
-                  obligation, just a practical next step.
+                  Share a brief, and we&apos;ll walk you through how we&apos;d approach
+                  it—no obligation, just a practical next step.
                 </p>
                 <motion.button
                   type="button"
@@ -383,7 +410,9 @@ export function Portfolio() {
                     if (lenis) {
                       lenis.scrollTo('#contact', { offset: -80, duration: 1.2 })
                     } else {
-                      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+                      document
+                        .getElementById('contact')
+                        ?.scrollIntoView({ behavior: 'smooth' })
                     }
                   }}
                   className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-semibold shadow-lg btn-glow"
@@ -397,9 +426,6 @@ export function Portfolio() {
           </motion.div>
         </div>
       </div>
-
-      {/* Bottom spacer */}
-      <div className="h-24" />
     </section>
   )
 }

@@ -7,23 +7,23 @@ import { Navbar } from '@/components/Navbar'
 import { ScrollProgress } from '@/components/ScrollProgress'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { Hero } from '@/sections/Hero'
-import { About } from '@/sections/About'
+import { ClientLogos } from '@/sections/ClientLogos'
+import { Industries } from '@/sections/Industries'
 import { Services } from '@/sections/Services'
+import { AILab } from '@/sections/AILab'
+import { ProductsWeBuild } from '@/sections/ProductsWeBuild'
+import { Portfolio } from '@/sections/Portfolio'
+import { WhyCTOs } from '@/sections/WhyCTOs'
+import { EngineeringExcellence } from '@/sections/EngineeringExcellence'
 import { Process } from '@/sections/Process'
 import { EngineeringEcosystem } from '@/sections/EngineeringEcosystem'
-import { Portfolio } from '@/sections/Portfolio'
-import { ProductsWeBuild } from '@/sections/ProductsWeBuild'
+import { Team } from '@/sections/Team'
 import { Testimonials } from '@/sections/Testimonials'
-import { WorkSection } from '@/sections/Worksection'
-import { EngineeringExcellence } from '@/sections/EngineeringExcellence'
-import { WhyCTOs } from '@/sections/WhyCTOs'
-import { EngineeringShowcase } from '@/sections/EngineeringShowcase'
-import { HowEngineersWork } from '@/sections/HowEngineersWork'
-import { EngineeringBeyondClientWork } from '@/sections/EngineeringBeyondClientWork'
-import { AILab } from '@/sections/AILab'
-import { ClientLogos } from '@/sections/ClientLogos'
-import { WhatWeBuildNext } from '@/sections/WhatWeBuildNext'
+import { About } from '@/sections/About'
 import { EngagementModels } from '@/sections/EngagementModels'
+import { FAQ } from '@/sections/FAQ'
+import { WhatWeBuildNext } from '@/sections/WhatWeBuildNext'
+import { Careers } from '@/sections/Careers'
 import { Contact } from '@/sections/Contact'
 import { Footer } from '@/sections/Footer'
 import ServiceDetailPage from '@/pages/ServiceDetailPage'
@@ -114,41 +114,95 @@ function HomePage() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Hero */}
       <Hero />
+
+      {/* Trust & Metrics */}
       <ClientLogos />
+
       <SectionDivider />
-      <About />
+
+      {/* Industries */}
+      <Industries />
+
       <SectionDivider />
-      <WhyCTOs />
-      <SectionDivider />
+
+      {/* Services */}
       <Services />
+
       <SectionDivider />
-      <Process />
-      <SectionDivider />
-      <EngineeringEcosystem />
-      <SectionDivider />
-      <EngineeringExcellence />
-      <SectionDivider />
+
+      {/* AI & Automation Lab */}
       <AILab />
+
       <SectionDivider />
-      <EngineeringShowcase />
-      <SectionDivider />
-      <Portfolio />
-      <SectionDivider />
+
+      {/* Products We Build */}
       <ProductsWeBuild />
+
       <SectionDivider />
+
+      {/* Featured Work */}
+      <Portfolio />
+
+      <SectionDivider />
+
+      {/* Why Companies Choose Softgoway */}
+      <WhyCTOs />
+
+      <SectionDivider />
+
+      {/* Engineering Foundations */}
+      <EngineeringExcellence />
+
+      <SectionDivider />
+
+      {/* Process */}
+      <Process />
+
+      <SectionDivider />
+
+      {/* Technology Stack */}
+      <EngineeringEcosystem />
+
+      <SectionDivider />
+
+      {/* Team */}
+      <Team />
+
+      <SectionDivider />
+
+      {/* Testimonials */}
       <Testimonials />
+
       <SectionDivider />
-      <HowEngineersWork />
+
+      {/* About Softgoway */}
+      <About />
+
       <SectionDivider />
-      <EngineeringBeyondClientWork />
-      <SectionDivider />
-      <WorkSection />
-      <SectionDivider />
-      <WhatWeBuildNext />
-      <SectionDivider />
+
+      {/* Engagement Models */}
       <EngagementModels />
+
       <SectionDivider />
+
+      {/* FAQ */}
+      <FAQ />
+
+      <SectionDivider />
+
+      {/* Future Innovation */}
+      <WhatWeBuildNext />
+
+      <SectionDivider />
+
+      {/* Careers */}
+      <Careers />
+
+      <SectionDivider />
+
+      {/* Contact CTA */}
       <Contact />
     </motion.div>
   )

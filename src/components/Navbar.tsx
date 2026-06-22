@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Menu, X, Sun, Moon } from 'lucide-react'
@@ -9,12 +9,12 @@ import { MagneticWrap } from '@/components/GlowButton'
 
 const navLinks = [
   { name: 'Home', href: '#hero' },
-  { name: 'About', href: '#about' },
+  { name: 'Industries', href: '#industries' },
   { name: 'Services', href: '#services' },
+  { name: 'Work', href: '#work' },
   { name: 'Process', href: '#process' },
-  { name: 'Ecosystem', href: '#ecosystem' },
-  { name: 'Portfolio', href: '#portfolio' },
-  { name: 'Testimonials', href: '#testimonials' },
+  { name: 'About', href: '#about' },
+  { name: 'Careers', href: '#careers' },
   { name: 'Contact', href: '#contact' },
 ]
 
@@ -22,9 +22,27 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
+  const [isHeroVisible, setIsHeroVisible] = useState(true)
   const { resolvedTheme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
+  const heroObserver = useRef<IntersectionObserver | null>(null)
+
+  useEffect(() => {
+    heroObserver.current = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeroVisible(entry.isIntersecting)
+      },
+      { threshold: 0 }
+    )
+
+    const hero = document.getElementById('hero')
+    if (hero) heroObserver.current.observe(hero)
+
+    return () => {
+      heroObserver.current?.disconnect()
+    }
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,26 +118,30 @@ export function Navbar() {
   }
 
   const handleCareersClick = () => {
-    navigate('/careers')
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: 'careers' } })
+    } else {
+      scrollToSection('#careers')
+    }
     setIsMobileMenuOpen(false)
   }
 
+  const isFloating = !isHeroVisible && isScrolled
+
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-500 will-change-transform',
-          isScrolled
-            ? 'bg-background/70 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-black/5 dark:shadow-black/20'
-            : 'bg-transparent'
-        )}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
+      <AnimatePresence mode="wait">
+        {isFloating ? (
+          <motion.nav
+            key="floating"
+            initial={{ y: -80, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -80, opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[95vw] lg:max-w-6xl"
+          >
+            <div className="flex items-center justify-between gap-2 sm:gap-4 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-background/80 backdrop-blur-2xl border border-border/40 shadow-2xl shadow-black/10 dark:shadow-black/30">
+              {/* Logo */}
               <motion.a
                 href="/"
                 onClick={(e) => {
@@ -130,121 +152,243 @@ export function Navbar() {
                     navigate('/')
                   }
                 }}
-              className="flex items-center gap-2 relative z-10"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <img
-                src={resolvedTheme === 'dark' ? '/logo_dark.png' : '/logo_light.png'}
-                alt="Softgoway"
-                className="h-9 lg:h-10 w-auto"
-              />
-            </motion.a>
+                className="relative flex items-center gap-2 shrink-0 group"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="relative rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 p-1.5 ring-1 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
+                  <img
+                    src={resolvedTheme === 'dark' ? '/logo_dark.png' : '/logo_light.png'}
+                    alt="Softgoway"
+                    className="h-7 sm:h-9 w-auto relative"
+                  />
+                </div>
+                <div className="absolute -inset-2 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </motion.a>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive = activeSection === link.href.slice(1)
-                const isServices = link.name === 'Services'
-                return (
+              {/* Desktop links */}
+              <div className="hidden lg:flex items-center gap-0.5">
+                {navLinks.map((link) => {
+                  const isActive = activeSection === link.href.slice(1)
+                  const isCareers = link.name === 'Careers'
+                  const isServices = link.name === 'Services'
+                  return (
+                    <motion.button
+                      key={link.name}
+                      onClick={() => {
+                        if (isCareers) handleCareersClick()
+                        else if (isServices) handleServicesClick()
+                        else scrollToSection(link.href)
+                      }}
+                      className={cn(
+                        'relative px-3 py-1.5 text-xs font-medium rounded-lg transition-colors duration-200 whitespace-nowrap',
+                        isActive
+                          ? 'text-primary'
+                          : 'text-muted-foreground/80 hover:text-foreground'
+                      )}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                    >
+                      {link.name}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeIndicator"
+                          className="absolute -bottom-0 left-2 right-2 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent"
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                      <div
+                        className={cn(
+                          'absolute inset-0 rounded-lg transition-opacity duration-200 -z-10',
+                          isActive
+                            ? 'bg-primary/5'
+                            : 'bg-transparent hover:bg-secondary/50'
+                        )}
+                      />
+                    </motion.button>
+                  )
+                })}
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <MagneticWrap strength={0.2}>
                   <motion.button
-                    key={link.name}
-                    onClick={() => {
-                      if (isServices) {
-                        handleServicesClick()
-                      } else {
-                        scrollToSection(link.href)
-                      }
-                    }}
-                    className={cn(
-                      'relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
-                      isActive
-                        ? 'text-primary'
-                        : 'text-muted-foreground/80 hover:text-foreground'
-                    )}
+                    onClick={toggleTheme}
+                    className="relative p-2 rounded-full border border-border/40 hover:border-primary/30 transition-all group overflow-hidden bg-background/50"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    aria-label="Toggle theme"
+                  >
+                    <motion.div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
+                    <motion.div
+                      initial={false}
+                      animate={{ rotate: resolvedTheme === 'dark' ? 0 : 180 }}
+                      transition={{ duration: 0.4, ease: 'easeInOut' }}
+                      className="relative"
+                    >
+                      {resolvedTheme === 'dark' ? (
+                        <Sun className="w-3.5 h-3.5 text-yellow-400" />
+                      ) : (
+                        <Moon className="w-3.5 h-3.5 text-primary" />
+                      )}
+                    </motion.div>
+                  </motion.button>
+                </MagneticWrap>
+
+                <motion.a
+                  href="#contact"
+                  onClick={(e) => { e.preventDefault(); scrollToSection('#contact') }}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-primary to-accent text-white rounded-full font-medium text-xs shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 whitespace-nowrap"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                >
+                  Start Your Project
+                </motion.a>
+
+                <motion.button
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  className="lg:hidden p-2 rounded-full border border-border/40 bg-background/50 hover:bg-secondary transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Menu className="w-4 h-4" />
+                </motion.button>
+              </div>
+            </div>
+          </motion.nav>
+        ) : (
+          <motion.nav
+            key="default"
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className={cn(
+              'fixed top-0 left-0 right-0 z-50 transition-all duration-500 will-change-transform',
+              isScrolled
+                ? 'bg-background/70 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-black/5 dark:shadow-black/20'
+                : 'bg-transparent'
+            )}
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16 lg:h-20">
+                {/* Logo */}
+                <motion.a
+                  href="/"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (location.pathname === '/') {
+                      scrollToSection('#hero')
+                    } else {
+                      navigate('/')
+                    }
+                  }}
+                  className="flex items-center gap-2 relative z-10"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <img
+                    src={resolvedTheme === 'dark' ? '/logo_dark.png' : '/logo_light.png'}
+                    alt="Softgoway"
+                    className="h-9 lg:h-10 w-auto"
+                  />
+                </motion.a>
+
+                {/* Desktop Navigation */}
+                <div className="hidden lg:flex items-center gap-1">
+                  {navLinks.map((link) => {
+                    const isActive = activeSection === link.href.slice(1)
+                    const isCareers = link.name === 'Careers'
+                    const isServices = link.name === 'Services'
+                    return (
+                      <motion.button
+                        key={link.name}
+                        onClick={() => {
+                          if (isCareers) handleCareersClick()
+                          else if (isServices) handleServicesClick()
+                          else scrollToSection(link.href)
+                        }}
+                        className={cn(
+                          'relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200',
+                          isActive
+                            ? 'text-primary'
+                            : 'text-muted-foreground/80 hover:text-foreground'
+                        )}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                      >
+                        {link.name}
+                        {isActive && (
+                          <motion.div
+                            layoutId="activeIndicator"
+                            className="absolute -bottom-0.5 left-3 right-3 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent"
+                            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                          />
+                        )}
+                        <div
+                          className={cn(
+                            'absolute inset-0 rounded-lg transition-opacity duration-200 -z-10',
+                            isActive
+                              ? 'bg-primary/5'
+                              : 'bg-transparent hover:bg-secondary/50'
+                          )}
+                        />
+                      </motion.button>
+                    )
+                  })}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-3">
+                  <MagneticWrap strength={0.3}>
+                    <motion.button
+                      onClick={toggleTheme}
+                      className="relative p-2.5 rounded-xl border border-border/40 hover:border-primary/30 transition-all group overflow-hidden bg-background/50 backdrop-blur-sm"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      aria-label="Toggle theme"
+                    >
+                      <motion.div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <motion.div
+                        initial={false}
+                        animate={{ rotate: resolvedTheme === 'dark' ? 0 : 180 }}
+                        transition={{ duration: 0.4, ease: 'easeInOut' }}
+                        className="relative"
+                      >
+                        {resolvedTheme === 'dark' ? (
+                          <Sun className="w-4.5 h-4.5 text-yellow-400" />
+                        ) : (
+                          <Moon className="w-4.5 h-4.5 text-primary" />
+                        )}
+                      </motion.div>
+                    </motion.button>
+                  </MagneticWrap>
+
+                  <motion.a
+                    href="#contact"
+                    onClick={(e) => { e.preventDefault(); scrollToSection('#contact') }}
+                    className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-medium text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300"
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.96 }}
                   >
-                    {link.name}
-                    {/* Active indicator - bottom underline */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeIndicator"
-                        className="absolute -bottom-0.5 left-3 right-3 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent"
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                    {/* Hover background */}
-                    <div
-                      className={cn(
-                        'absolute inset-0 rounded-lg transition-opacity duration-200 -z-10',
-                        isActive
-                          ? 'bg-primary/5'
-                          : 'bg-transparent hover:bg-secondary/50'
-                      )}
-                    />
-                  </motion.button>
-                )
-              })}
-            </div>
+                    Start Your Project
+                  </motion.a>
 
-            {/* Actions */}
-            <div className="flex items-center gap-3">
-              <MagneticWrap strength={0.3}>
-                <motion.button
-                  onClick={toggleTheme}
-                  className="relative p-2.5 rounded-xl border border-border/40 hover:border-primary/30 transition-all group overflow-hidden bg-background/50 backdrop-blur-sm"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label="Toggle theme"
-                >
-                  <motion.div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <motion.div
-                    initial={false}
-                    animate={{ rotate: resolvedTheme === 'dark' ? 0 : 180 }}
-                    transition={{ duration: 0.4, ease: 'easeInOut' }}
-                    className="relative"
+                  <motion.button
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="lg:hidden p-2.5 rounded-xl border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-secondary transition-all"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {resolvedTheme === 'dark' ? (
-                      <Sun className="w-4.5 h-4.5 text-yellow-400" />
-                    ) : (
-                      <Moon className="w-4.5 h-4.5 text-primary" />
-                    )}
-                  </motion.div>
-                </motion.button>
-              </MagneticWrap>
-
-              <motion.a
-                href="#contact"
-                onClick={(e) => { e.preventDefault(); scrollToSection('#contact') }}
-                className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-medium text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-              >
-                Get Started
-              </motion.a>
-
-              <motion.button
-                onClick={handleCareersClick}
-                className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-secondary/50 border border-border/60 text-foreground rounded-xl font-medium text-sm hover:bg-secondary transition-all duration-300"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-              >
-                Hire
-              </motion.button>
-
-              <motion.button
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="lg:hidden p-2.5 rounded-xl border border-border/40 bg-background/50 backdrop-blur-sm hover:bg-secondary transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Menu className="w-5 h-5" />
-              </motion.button>
+                    <Menu className="w-5 h-5" />
+                  </motion.button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </motion.nav>
+          </motion.nav>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -285,6 +429,7 @@ export function Navbar() {
                 {navLinks.map((link, index) => {
                   const isActive = activeSection === link.href.slice(1)
                   const isServices = link.name === 'Services'
+                  const isCareers = link.name === 'Careers'
                   return (
                     <motion.button
                       key={link.name}
@@ -292,11 +437,9 @@ export function Navbar() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05, duration: 0.3 }}
                       onClick={() => {
-                        if (isServices) {
-                          handleServicesClick()
-                        } else {
-                          scrollToSection(link.href)
-                        }
+                        if (isCareers) handleCareersClick()
+                        else if (isServices) handleServicesClick()
+                        else scrollToSection(link.href)
                       }}
                       className={cn(
                         'w-full text-left px-4 py-3.5 rounded-xl font-medium transition-all duration-200',
@@ -323,25 +466,16 @@ export function Navbar() {
               </div>
 
               {/* Bottom CTA */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/40 bg-card/80 backdrop-blur-sm space-y-2">
-                <motion.button
-                  onClick={handleCareersClick}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navLinks.length * 0.05 + 0.05 }}
-                  className="block w-full px-4 py-3.5 border border-border/60 text-foreground rounded-xl font-medium text-center hover:bg-secondary transition-all"
-                >
-                  Hire
-                </motion.button>
+              <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/40 bg-card/80 backdrop-blur-sm">
                 <motion.a
                   href="#contact"
                   onClick={(e) => { e.preventDefault(); scrollToSection('#contact') }}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navLinks.length * 0.05 + 0.1 }}
+                  transition={{ delay: navLinks.length * 0.05 + 0.05 }}
                   className="block w-full px-4 py-3.5 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-medium text-center shadow-lg shadow-primary/25"
                 >
-                  Get Started
+                  Start Your Project
                 </motion.a>
               </div>
             </motion.div>

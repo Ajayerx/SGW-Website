@@ -33,17 +33,17 @@ const footerLinks = [
     links: [
       { name: 'About Us', href: '#about' },
       { name: 'How We Work', href: '#process' },
-      { name: 'Our Work', href: '#portfolio' },
-      { name: 'Tech Stack', href: '#technologies' },
+      { name: 'Our Work', href: '#work' },
+      { name: 'Tech Stack', href: '#technology' },
       { name: 'Contact Us', href: '#contact' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { name: 'Case Studies', href: '#portfolio' },
-      { name: 'FAQs', href: '#contact' },
-      { name: 'Support', href: '#contact' },
+      { name: 'Case Studies', href: '#work' },
+      { name: 'Industries', href: '#industries' },
+      { name: 'Careers', href: '#careers' },
       { name: 'Blog', href: '#' },
       { name: 'Status', href: '#' },
     ],
