@@ -113,7 +113,7 @@ export function EngineeringExcellence() {
                 <cap.icon className="w-6 h-6 text-white" />
               </div>
 
-              <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+              <h3 className="text-xl font-bold font-[var(--font-heading)] text-foreground mb-2 group-hover:text-primary transition-colors">
                 {cap.title}
               </h3>
 

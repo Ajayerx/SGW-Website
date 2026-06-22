@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { ThemeProvider, useTheme } from '@/hooks/useTheme'
 import { useLenis } from '@/hooks/useLenis'
 import { Navbar } from '@/components/Navbar'
@@ -10,17 +10,22 @@ import { Hero } from '@/sections/Hero'
 import { About } from '@/sections/About'
 import { Services } from '@/sections/Services'
 import { Process } from '@/sections/Process'
-import { Technologies } from '@/sections/Technologies'
+import { EngineeringEcosystem } from '@/sections/EngineeringEcosystem'
 import { Portfolio } from '@/sections/Portfolio'
+import { ProductsWeBuild } from '@/sections/ProductsWeBuild'
 import { Testimonials } from '@/sections/Testimonials'
 import { WorkSection } from '@/sections/Worksection'
 import { EngineeringExcellence } from '@/sections/EngineeringExcellence'
+import { WhyCTOs } from '@/sections/WhyCTOs'
+import { EngineeringShowcase } from '@/sections/EngineeringShowcase'
+import { HowEngineersWork } from '@/sections/HowEngineersWork'
+import { EngineeringBeyondClientWork } from '@/sections/EngineeringBeyondClientWork'
 import { AILab } from '@/sections/AILab'
 import { ClientLogos } from '@/sections/ClientLogos'
+import { WhatWeBuildNext } from '@/sections/WhatWeBuildNext'
 import { EngagementModels } from '@/sections/EngagementModels'
 import { Contact } from '@/sections/Contact'
 import { Footer } from '@/sections/Footer'
-import ServicesPage from '@/pages/ServicesPage'
 import ServiceDetailPage from '@/pages/ServiceDetailPage'
 import HirePage from '@/pages/HirePage'
 import { getLenis } from '@/hooks/useLenis'
@@ -71,14 +76,33 @@ function HomePage() {
   useEffect(() => {
     if (location.state?.scrollTo) {
       const id = location.state.scrollTo as string
-      requestAnimationFrame(() => {
+      setTimeout(() => {
         const lenis = getLenis()
         if (lenis) {
-          lenis.scrollTo(`#${id}`, { offset: -80, duration: 1.2 })
+          const section = document.querySelector(`#${id}`)
+          if (section) {
+            const navbarHeight = document.querySelector('nav')?.offsetHeight ?? 80
+            if (id === 'hero') {
+              lenis.scrollTo(`#${id}`, { offset: -navbarHeight, duration: 1.2 })
+            } else {
+              const heading = section.querySelector('[class*="inline-flex"], [class*="inline-block"], h2')
+              if (heading) {
+                const sectionRect = section.getBoundingClientRect()
+                const headingRect = heading.getBoundingClientRect()
+                const headingOffset = headingRect.top - sectionRect.top
+                lenis.scrollTo(`#${id}`, {
+                  offset: headingOffset - navbarHeight - 4,
+                  duration: 1.2,
+                })
+              } else {
+                lenis.scrollTo(`#${id}`, { offset: -navbarHeight, duration: 1.2 })
+              }
+            }
+          }
         } else {
           document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
         }
-      })
+      }, 100)
     }
   }, [location.state])
 
@@ -95,21 +119,33 @@ function HomePage() {
       <SectionDivider />
       <About />
       <SectionDivider />
+      <WhyCTOs />
+      <SectionDivider />
       <Services />
       <SectionDivider />
       <Process />
       <SectionDivider />
-      <Technologies />
+      <EngineeringEcosystem />
       <SectionDivider />
       <EngineeringExcellence />
       <SectionDivider />
       <AILab />
       <SectionDivider />
+      <EngineeringShowcase />
+      <SectionDivider />
       <Portfolio />
+      <SectionDivider />
+      <ProductsWeBuild />
       <SectionDivider />
       <Testimonials />
       <SectionDivider />
+      <HowEngineersWork />
+      <SectionDivider />
+      <EngineeringBeyondClientWork />
+      <SectionDivider />
       <WorkSection />
+      <SectionDivider />
+      <WhatWeBuildNext />
       <SectionDivider />
       <EngagementModels />
       <SectionDivider />
@@ -142,20 +178,7 @@ function AppLayout() {
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
               <Route path="/" element={<HomePage />} />
-              <Route
-                path="/services"
-                element={
-                  <motion.div
-                    key="services"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25 }}
-                  >
-                    <ServicesPage />
-                  </motion.div>
-                }
-              />
+              <Route path="/services" element={<Navigate to="/" state={{ scrollTo: 'services' }} replace />} />
               <Route
                 path="/services/:id"
                 element={

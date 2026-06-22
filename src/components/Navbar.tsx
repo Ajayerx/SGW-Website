@@ -12,7 +12,7 @@ const navLinks = [
   { name: 'About', href: '#about' },
   { name: 'Services', href: '#services' },
   { name: 'Process', href: '#process' },
-  { name: 'Technologies', href: '#technologies' },
+  { name: 'Ecosystem', href: '#ecosystem' },
   { name: 'Portfolio', href: '#portfolio' },
   { name: 'Testimonials', href: '#testimonials' },
   { name: 'Contact', href: '#contact' },
@@ -50,13 +50,42 @@ export function Navbar() {
   }, [])
 
   const scrollToSection = (href: string) => {
+    const sectionId = href.replace('#', '')
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } })
+      setIsMobileMenuOpen(false)
+      return
+    }
     const lenis = getLenis()
     if (lenis) {
-      lenis.scrollTo(href, {
-        offset: -80,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      })
+      const section = document.querySelector(href)
+      if (section) {
+        const navbarHeight = document.querySelector('nav')?.offsetHeight ?? 80
+        if (sectionId === 'hero') {
+          lenis.scrollTo(href, {
+            offset: -navbarHeight,
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          })
+        } else {
+          const heading = section.querySelector('[class*="inline-flex"], [class*="inline-block"], h2')
+          if (heading) {
+            const sectionRect = section.getBoundingClientRect()
+            const headingRect = heading.getBoundingClientRect()
+            const headingOffset = headingRect.top - sectionRect.top
+            lenis.scrollTo(href, {
+              offset: headingOffset - navbarHeight - 4,
+              duration: 1.2,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            })
+          } else {
+            lenis.scrollTo(href, {
+              offset: -navbarHeight,
+              duration: 1.2,
+            })
+          }
+        }
+      }
     } else {
       const element = document.querySelector(href)
       if (element) {
@@ -67,12 +96,7 @@ export function Navbar() {
   }
 
   const handleServicesClick = () => {
-    if (location.pathname === '/') {
-      scrollToSection('#services')
-    } else {
-      navigate('/services')
-    }
-    setIsMobileMenuOpen(false)
+    scrollToSection('#services')
   }
 
   const handleCareersClick = () => {

@@ -123,7 +123,7 @@ export function Services() {
                       <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-5">
                         <IconComponent className="w-6 h-6 text-white" />
                       </div>
-                      <h3 className="text-lg font-bold text-white leading-tight">
+                      <h3 className="text-lg font-bold font-[var(--font-heading)] text-white leading-tight">
                         {service.title}
                       </h3>
                     </div>

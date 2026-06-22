@@ -98,7 +98,7 @@ export function EngagementModels() {
                 <div className="mb-1 text-xs font-bold tracking-wider text-primary uppercase">
                   {model.subtitle}
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold font-[var(--font-heading)] text-foreground mb-3 group-hover:text-primary transition-colors">
                   {model.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-6">

@@ -84,7 +84,7 @@ export function AILab() {
                 <offering.icon className="w-6 h-6 text-white" />
               </div>
 
-              <h3 className="text-lg font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+              <h3 className="text-lg font-bold font-[var(--font-heading)] text-foreground mb-3 group-hover:text-primary transition-colors">
                 {offering.title}
               </h3>
 
@@ -95,12 +95,74 @@ export function AILab() {
           ))}
         </div>
 
+        {/* AI Pipeline Visualization */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6 }}
+          className="relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden mb-6"
+        >
+          <div className="p-6 lg:p-8">
+            <h3 className="text-lg font-bold font-[var(--font-heading)] mb-6">
+              AI Pipeline Architecture
+            </h3>
+            <div className="grid grid-cols-5 gap-2 lg:gap-4">
+              {[
+                { label: 'User Query', metric: '→', color: 'bg-primary', pulse: true },
+                { label: 'RAG Pipeline', metric: '< 400ms', color: 'bg-[var(--brand-blue-light)]', pulse: false },
+                { label: 'Vector Search', metric: '99.2%', color: 'bg-[var(--brand-green-light)]', pulse: false },
+                { label: 'LLM Generation', metric: '4.5s avg', color: 'bg-purple-500', pulse: false },
+                { label: 'Response', metric: '97% sat.', color: 'bg-emerald-500', pulse: false },
+              ].map((step, i) => (
+                <div key={step.label} className="flex flex-col items-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15, type: 'spring' }}
+                    className={`relative w-full aspect-square max-w-[80px] rounded-2xl ${step.color} flex items-center justify-center mb-2 shadow-lg`}
+                  >
+                    {step.pulse && (
+                      <motion.div
+                        className="absolute inset-0 rounded-2xl bg-primary/30"
+                        animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                    )}
+                    <span className="text-white text-lg font-bold font-[var(--font-heading)]">
+                      {i + 1}
+                    </span>
+                  </motion.div>
+                  <div className="text-[10px] text-muted-foreground text-center font-medium leading-tight">
+                    {step.label}
+                  </div>
+                  {step.metric !== '→' && (
+                    <div className="text-[10px] font-mono text-primary font-semibold mt-0.5">
+                      {step.metric}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="relative h-1 mt-6 rounded-full bg-secondary overflow-hidden">
+              <motion.div
+                initial={{ width: '0%' }}
+                whileInView={{ width: '100%' }}
+                viewport={{ once: true }}
+                transition={{ duration: 2, delay: 0.5 }}
+                className="h-full rounded-full bg-gradient-to-r from-primary via-accent to-emerald-500"
+              />
+            </div>
+          </div>
+        </motion.div>
+
         {/* Bottom row: architecture visualization */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           className="relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden"
         >
           <div className="p-8 lg:p-12">
@@ -135,7 +197,7 @@ export function AILab() {
                     <div className="text-2xl font-bold gradient-text">
                       {stat.value}
                     </div>
-                    <div className="text-[11px] text-muted-foreground uppercase tracking-wider mt-1">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">
                       {stat.label}
                     </div>
                   </div>

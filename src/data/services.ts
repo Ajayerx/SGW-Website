@@ -17,8 +17,8 @@ export const services: Service[] = [
   {
     id: 'product-engineering',
     icon: Code2,
-    title: 'Product & Platform Engineering',
-    shortDescription: 'Design, build, and evolve complex web platforms and internal tools.',
+    title: 'Ship High-Performance SaaS Platforms',
+    shortDescription: 'From zero to production — platforms that handle millions of users from day one.',
     description:
       'We design, build, and evolve complex web platforms and internal tools that your team can rely on every day. From greenfield development to modernizing legacy systems, we deliver scalable, maintainable solutions.',
     features: [
@@ -42,8 +42,8 @@ export const services: Service[] = [
   {
     id: 'web-applications',
     icon: Globe,
-    title: 'Modern Web Applications',
-    shortDescription: 'Fast, accessible, and maintainable web apps with React and Next.js.',
+    title: 'Launch Products Users Love',
+    shortDescription: 'Fast, accessible, conversion-optimized web apps built with modern stacks.',
     description:
       'Fast, accessible, and maintainable web apps built with modern stacks like React and Next.js. We optimize for performance, SEO, and user experience from day one.',
     features: [
@@ -67,8 +67,8 @@ export const services: Service[] = [
   {
     id: 'mobile-development',
     icon: Smartphone,
-    title: 'Mobile App Development',
-    shortDescription: 'Cross-platform mobile apps that feel native and stay in sync.',
+    title: 'Launch Mobile Experiences Users Love',
+    shortDescription: 'Native-feel cross-platform apps that ship faster and cost less.',
     description:
       'Cross-platform mobile apps that feel native and stay in sync with your backend and product roadmap. We build for iOS and Android with shared codebases.',
     features: [
@@ -92,8 +92,8 @@ export const services: Service[] = [
   {
     id: 'cloud-devops',
     icon: Cloud,
-    title: 'Cloud & DevOps Enablement',
-    shortDescription: 'Cloud architectures and pipelines that make shipping safer and faster.',
+    title: 'Scale Without Infrastructure Bottlenecks',
+    shortDescription: 'Cloud architectures and pipelines engineered for velocity and reliability.',
     description:
       'Cloud architectures and pipelines that make shipping safer, faster, and easier to observe. We handle infrastructure as code, deployment automation, and observability.',
     features: [
@@ -117,8 +117,8 @@ export const services: Service[] = [
   {
     id: 'data-analytics',
     icon: Database,
-    title: 'Data & Analytics Engineering',
-    shortDescription: 'Foundations for trustworthy reporting, dashboards, and insights.',
+    title: 'Turn Data Into Decisions',
+    shortDescription: 'Trustworthy pipelines, real-time dashboards, and analytics at scale.',
     description:
       'We build foundations for trustworthy reporting, dashboards, and event-driven features. From data modeling to real-time analytics, we ensure data integrity.',
     features: [
@@ -142,8 +142,8 @@ export const services: Service[] = [
   {
     id: 'ai-experiences',
     icon: Brain,
-    title: 'AI-powered Experiences',
-    shortDescription: 'Practical AI features that sit on top of your product.',
+    title: 'Transform Products With Intelligent Automation',
+    shortDescription: 'AI features that ship to production — not experimental demos.',
     description:
       'Practical AI features that sit on top of your product, not experimental proofs-of-concept. We integrate LLMs, search, and recommendation engines seamlessly.',
     features: [
@@ -167,8 +167,8 @@ export const services: Service[] = [
   {
     id: 'security-reliability',
     icon: Shield,
-    title: 'Security & Reliability',
-    shortDescription: 'Guardrails and hardening that keep your platform stable.',
+    title: 'Ship With Enterprise-Grade Security',
+    shortDescription: 'Guardrails that keep your platform stable as you scale 10×.',
     description:
       'Guardrails and hardening work that keep your platform stable as usage grows. We focus on security audits, access control, and incident response.',
     features: [
@@ -192,8 +192,8 @@ export const services: Service[] = [
   {
     id: 'architecture-advisory',
     icon: Cog,
-    title: 'Architecture & Advisory',
-    shortDescription: 'Guidance to choose the right stack and patterns for your roadmap.',
+    title: 'Make Smarter Architecture Decisions',
+    shortDescription: 'Hands-on guidance to choose the stack and patterns that scale.',
     description:
       'Hands-on guidance to help you choose the right stack, patterns, and sequencing for your roadmap. We provide strategic technical advice and mentorship.',
     features: [
@@ -217,8 +217,8 @@ export const services: Service[] = [
   {
     id: 'api-design',
     icon: GitBranch,
-    title: 'API Design & Integration',
-    shortDescription: 'Well-designed APIs that integrate seamlessly with your ecosystem.',
+    title: 'Build Integration-Ready Platforms',
+    shortDescription: 'APIs designed for your ecosystem — and your developers.',
     description:
       'Well-designed APIs that integrate seamlessly with your ecosystem. We focus on REST, GraphQL, and webhook architectures that scale.',
     features: [
@@ -242,8 +242,8 @@ export const services: Service[] = [
   {
     id: 'performance-optimization',
     icon: Zap,
-    title: 'Performance Optimization',
-    shortDescription: 'Speed up your applications at every layer.',
+    title: 'Make Everything Faster',
+    shortDescription: 'Identify and eliminate bottlenecks at every layer of your stack.',
     description:
       'We identify and eliminate performance bottlenecks across your stack. From frontend rendering to database queries, we deliver measurable improvements.',
     features: [
@@ -267,8 +267,8 @@ export const services: Service[] = [
   {
     id: 'data-migration',
     icon: TrendingUp,
-    title: 'Data Migration & Transformation',
-    shortDescription: 'Seamless data migrations with zero downtime.',
+    title: 'Modernize Without Downtime',
+    shortDescription: 'Zero-downtime migrations from legacy systems to modern platforms.',
     description:
       'Seamless data migrations and transformations with minimal downtime. We handle complex migrations from legacy systems to modern platforms.',
     features: [
@@ -292,8 +292,8 @@ export const services: Service[] = [
   {
     id: 'team-enablement',
     icon: Users,
-    title: 'Team Enablement & Training',
-    shortDescription: 'Upskill your team with hands-on mentoring and workshops.',
+    title: 'Make Your Team Self-Sufficient',
+    shortDescription: 'Hands-on mentoring and workshops that build lasting capability.',
     description:
       'We upskill your team through hands-on mentoring, workshops, and pair programming. Knowledge transfer is built into every engagement.',
     features: [

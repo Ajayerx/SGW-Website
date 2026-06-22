@@ -73,7 +73,7 @@ export function Hero() {
         >
           <Sparkles className="w-4 h-4 text-primary animate-pulse" />
           <span className="text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Enterprise Product Engineering
+            Product Engineering Company
           </span>
         </motion.div>
 
@@ -92,7 +92,7 @@ export function Hero() {
             transition={{ duration: 0.5 }}
           >
             <TextReveal
-              text="Ship better software"
+              text="Engineering that"
               type="words"
               animation="slide"
               delay={0.3}
@@ -107,7 +107,7 @@ export function Hero() {
             transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
             style={{ backgroundSize: '200% auto' }}
           >
-            with fewer surprises
+            ships with precision
           </motion.span>
         </motion.h2>
 
@@ -118,9 +118,9 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-4xl mx-auto mb-12 text-pretty leading-relaxed"
         >
-          We partner with startups and enterprises to design, build, and scale
-          production-grade software — from platform engineering and AI features
-          to cloud infrastructure that doesn't wake you up at 3 AM.
+          We design and ship production-grade software for startups and
+          enterprises — platform engineering, AI features, and cloud
+          infrastructure that stays stable at 3 AM.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -170,7 +170,7 @@ export function Hero() {
                 <div className="text-4xl sm:text-5xl font-bold gradient-text font-[var(--font-heading)]">
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground mt-2">
+                <div className="text-xs text-muted-foreground uppercase tracking-wider mt-2">
                   {stat.label}
                 </div>
               </div>

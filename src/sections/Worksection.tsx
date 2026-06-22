@@ -359,7 +359,7 @@ export function WorkSection() {
                   <div className="text-xs font-bold tracking-widest text-primary mb-1">
                     PHASE {steps[activeStep].id}
                   </div>
-                  <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-2">
+                  <h3 className="text-xl lg:text-2xl font-bold font-[var(--font-heading)] text-foreground mb-2">
                     {steps[activeStep].title}
                   </h3>
                   <p className="text-sm lg:text-base text-muted-foreground leading-relaxed max-w-2xl">
@@ -455,13 +455,13 @@ export function WorkSection() {
                         >
                           <CountUp target={r.stat} />
                         </div>
-                        <div className="text-[11px] text-muted-foreground mt-1">
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mt-1">
                           {r.statLabel}
                         </div>
                       </div>
                     </div>
 
-                    <h3 className="text-base font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-base font-bold font-[var(--font-heading)] text-foreground mb-2 group-hover:text-primary transition-colors">
                       {r.title}
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed flex-1">

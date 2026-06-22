@@ -90,6 +90,7 @@
                                                                  =============================================*/
 html {
   scroll-behavior: auto;
+  scroll-padding-top: 2rem;
   background-color: var(--color-background);
   color-scheme: light;
 }

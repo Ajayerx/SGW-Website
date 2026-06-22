@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle2, Zap, Sparkles, Cpu } from 'lucide-react';
@@ -16,6 +17,10 @@ export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const service = id ? getServiceById(id) : undefined;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   const goToContact = () => {
     navigate('/', { state: { scrollTo: 'contact' } });
