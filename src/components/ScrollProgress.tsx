@@ -76,7 +76,7 @@ export function ScrollProgress() {
         <div
           className="h-full w-full"
           style={{
-            background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-neon-cyan))',
+            background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--brand-green-light))',
           }}
         />
 
@@ -84,7 +84,7 @@ export function ScrollProgress() {
         <div
           className="absolute inset-0 blur-md opacity-60"
           style={{
-            background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-neon-cyan))',
+            background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--brand-green-light))',
           }}
         />
 
@@ -99,15 +99,15 @@ export function ScrollProgress() {
         <motion.div
           className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full -mr-1"
           style={{
-            background: 'var(--color-neon-cyan)',
-            boxShadow: '0 0 6px 2px var(--color-neon-cyan)',
+            background: 'var(--brand-green-light)',
+            boxShadow: '0 0 6px 2px var(--brand-green-light)',
           }}
         />
       </motion.div>
 
       {/* ── Side indicator ── */}
       <motion.div
-        className="fixed top-20 right-4 z-[99] hidden lg:flex flex-col items-center gap-2"
+        className="fixed top-20 right-4 z-[99] hidden xl:flex flex-col items-center gap-2"
         style={{ opacity: indicatorOpacity }}
         aria-label={`Page scroll progress: ${progress}%`}
         role="progressbar"
@@ -157,7 +157,7 @@ export function ScrollProgress() {
               <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="var(--color-primary)" />
                 <stop offset="50%" stopColor="var(--color-accent)" />
-                <stop offset="100%" stopColor="var(--color-neon-cyan)" />
+                <stop offset="100%" stopColor="var(--brand-green-light)" />
               </linearGradient>
             </defs>
           </svg>
@@ -178,8 +178,8 @@ export function ScrollProgress() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          {Array.from({ length: 8 }).map((_, i) => {
-            const tickThreshold = (i + 1) / 8
+          {Array.from({ length: 6 }).map((_, i) => {
+            const tickThreshold = (i + 1) / 6
             const isActive = scrollYProgress.get() >= tickThreshold - 0.01
             return (
               <motion.div

@@ -74,12 +74,11 @@ export function GlowButton({
 
   const variantClasses = {
     primary:
-      'bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/20',
+      'bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg shadow-green-600/40 dark:shadow-green-400/20',
     secondary:
-      // light text in dark mode
-      'bg-secondary text-secondary-foreground dark:text-white border border-border hover:border-primary/40 dark:hover:border-accent/50',
+      'bg-blue-50 text-blue-600 dark:text-blue-300 border border-blue-200 hover:border-blue-400 dark:bg-blue-950 dark:border-blue-800 dark:hover:border-blue-600',
     ghost:
-      'bg-transparent text-foreground hover:bg-secondary/70 dark:hover:bg-secondary/60 border border-transparent',
+      'bg-transparent text-foreground hover:bg-green-100 dark:hover:bg-green-950 border border-transparent hover:border-green-300 dark:hover:border-green-700',
   }
 
   const motionProps = {
@@ -105,7 +104,7 @@ export function GlowButton({
           className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           style={{
             background:
-              'linear-gradient(135deg, var(--color-primary), var(--color-accent), var(--color-neon-cyan), var(--color-primary))',
+              'linear-gradient(135deg, rgb(34, 197, 94), rgb(0, 102, 255), rgb(132, 226, 53), rgb(34, 197, 94))',
             backgroundSize: '300% 300%',
             padding: '1px',
             WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -130,20 +129,20 @@ export function GlowButton({
       {variant === 'primary' && (
         <>
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-xl blur-xl"
+            className="absolute inset-0 bg-gradient-to-r from-green-600 via-blue-600 to-green-400 rounded-xl blur-xl"
             animate={{
-              opacity: isHovered ? 0.9 : 0,
-              scale: isHovered ? 1.2 : 1,
+              opacity: isHovered ? 1 : 0.7,
+              scale: isHovered ? 1.15 : 1,
             }}
             transition={{ duration: 0.3 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-green-600 to-blue-600 rounded-xl" />
         </>
       )}
 
       {variant === 'ghost' && (
         <motion.div
-          className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/8 to-accent/8"
+          className="absolute inset-0 rounded-xl bg-gradient-to-r from-green-600/10 to-blue-600/10 dark:from-green-400/8 dark:to-blue-400/8"
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         />

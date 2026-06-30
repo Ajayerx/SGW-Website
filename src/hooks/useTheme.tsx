@@ -31,9 +31,34 @@ const STORAGE_KEY = 'theme'
 const TRANSITION_DURATION = 350
 const VALID_THEMES: Theme[] = ['dark', 'light', 'system']
 
-const THEME_COLORS: Record<ResolvedTheme, { bg: string; fg: string }> = {
-  dark: { bg: '#020617', fg: '#f1f5f9' },
-  light: { bg: '#f9fafb', fg: '#0f172a' },
+// Instead of hardcoding theme colors here, read them from the centralized
+// CSS token file at runtime. This keeps a single source of truth in
+// styles/theme.css while still allowing the hook to set inline styles
+// (required to avoid FOUC).
+function getCssVar(name: string, fallback = ''): string {
+  if (typeof window === 'undefined') return fallback
+  try {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback
+  } catch {
+    return fallback
+  }
+}
+
+function getThemeColors(resolved: ResolvedTheme): { bg: string; fg: string } {
+  // Prioritize semantic tokens defined in styles/theme.css. Provide
+  // broad fallbacks to logo-inspired palette for safety.
+  if (typeof window === 'undefined') {
+    return resolved === 'dark'
+      ? { bg: '#0B1114', fg: '#E6EEF6' }  // Dark: deep blue-black with bright text
+      : { bg: '#FAFBFC', fg: '#0F161A' }  // Light: off-white with dark text
+  }
+
+  const bg =
+    getCssVar('--background') || getCssVar('--color-background') || (resolved === 'dark' ? '#0B1114' : '#FAFBFC')
+  const fg =
+    getCssVar('--text-primary') || getCssVar('--color-foreground') || (resolved === 'dark' ? '#E6EEF6' : '#0F161A')
+
+  return { bg, fg }
 }
 
 
@@ -97,7 +122,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const applyTheme = useCallback((newResolved: ResolvedTheme) => {
     const root = document.documentElement
     const body = document.body
-    const colors = THEME_COLORS[newResolved]
+  const colors = getThemeColors(newResolved)
 
     // Cancel any in-flight transition timer before starting a new one
     if (transitionTimerRef.current) {

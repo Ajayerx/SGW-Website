@@ -1,15 +1,10 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { useRef, useEffect, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef, useState } from 'react'
 import {
   AnimatedSection,
   StaggerContainer,
   StaggerItem,
 } from '@/components/AnimatedSection'
-import { Section3D } from '@/components/Section3D'
-
-gsap.registerPlugin(ScrollTrigger)
 
 const technologies = [
   { name: 'React', category: 'Frontend', color: 'from-cyan-400 to-blue-500' },
@@ -64,20 +59,7 @@ export function Technologies() {
       ? technologies
       : technologies.filter((t) => t.category === activeCategory)
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.tech-bg-blob', {
-        y: -30,
-        duration: 3,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: 0.5,
-      })
-    }, sectionRef)
 
-    return () => ctx.revert()
-  }, [])
 
   return (
     <section
@@ -85,18 +67,19 @@ export function Technologies() {
       id="technologies"
       className="relative py-24 lg:py-32 overflow-hidden"
     >
-      {/* 3D Background */}
-      <Section3D variant="technologies" />
-
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ x: backgroundX }}
-          className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-primary/5 rounded-full blur-[150px] tech-bg-blob"
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+          className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-primary/5 rounded-full blur-[150px]"
         />
         <motion.div
           style={{ x: backgroundX }}
-          className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[150px] tech-bg-blob"
+          animate={{ y: [-30, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 0.5 }}
+          className="absolute top-0 right-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[150px]"
         />
       </div>
 

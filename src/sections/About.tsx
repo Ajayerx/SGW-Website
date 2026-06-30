@@ -1,8 +1,6 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { useRef, useEffect } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Target, Eye, Award, Users, Lightbulb, Shield } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Target, Eye, Award, Users, Lightbulb, Shield, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TiltCard } from '@/components/TiltCard'
 import {
   AnimatedSection,
@@ -10,10 +8,7 @@ import {
   StaggerItem,
 } from '@/components/AnimatedSection'
 import { GradientText } from '@/components/TextReveal'
-import { Section3D } from '@/components/Section3D'
 import { getLenis } from '@/hooks/useLenis'
-
-gsap.registerPlugin(ScrollTrigger)
 
 // ─────────────────────────────────────────────
 // DATA
@@ -25,32 +20,89 @@ const values = [
     title: 'Engineering‑led innovation',
     description:
       'We prototype fast, validate early, and ship solutions that balance ambitious ideas with real‑world constraints.',
-    gradient: 'from-amber-500 to-orange-500',
-    glow: 'rgba(245,158,11,0.15)',
+    gradient: 'from-[var(--brand-yellow)] to-orange-600',
+    glow: 'rgba(255,215,0,0.2)',
   },
   {
     icon: Users,
     title: 'Long‑term partnerships',
     description:
       'We embed with your team, align on outcomes, and stay accountable from first commit to post‑launch iterations.',
-    gradient: 'from-blue-500 to-cyan-500',
-    glow: 'rgba(59,130,246,0.15)',
+    gradient: 'from-[var(--brand-blue-primary)] to-[var(--brand-blue-light)]',
+    glow: 'rgba(0,102,255,0.2)',
   },
   {
     icon: Shield,
     title: 'Reliability at scale',
     description:
       'We design for uptime, observability, and predictable releases, not just demos that look good in slides.',
-    gradient: 'from-green-500 to-emerald-500',
-    glow: 'rgba(16,185,129,0.15)',
+    gradient: 'from-[var(--brand-green-primary)] to-[var(--brand-green-light)]',
+    glow: 'rgba(34,197,94,0.2)',
   },
   {
     icon: Award,
     title: 'Craft and ownership',
     description:
       'We treat every product as our own, obsessing over details, performance, and maintainability long after launch.',
-    gradient: 'from-purple-500 to-pink-500',
-    glow: 'rgba(168,85,247,0.15)',
+    gradient: 'from-[var(--brand-green-light)] to-[var(--brand-blue-primary)]',
+    glow: 'rgba(132,226,53,0.2)',
+  },
+]
+
+const posts = [
+  {
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop',
+    category: 'Team Offsite',
+    date: 'Mar 2026',
+    location: 'Goa, India',
+    title: 'Annual Engineering Summit 2026',
+    description:
+      'Three days of deep-dive sessions, brainstorming, and team-building by the beach.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&auto=format&fit=crop',
+    category: 'Community',
+    date: 'Feb 2026',
+    location: 'Bangalore',
+    title: 'Open Source Hackathon',
+    description:
+      'Our engineers contributed to open-source projects and mentored first-time contributors.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop',
+    category: 'Event',
+    date: 'Jan 2026',
+    location: 'Mumbai',
+    title: 'Tech Leaders Conclave',
+    description:
+      'Panel discussions on AI, scaling SaaS, and the future of remote engineering teams.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop',
+    category: 'Culture',
+    date: 'Dec 2025',
+    location: 'Pune',
+    title: 'Year-End Celebration',
+    description:
+      'Celebrating a year of shipping great products with the whole team and families.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format&fit=crop',
+    category: 'Learning',
+    date: 'Nov 2025',
+    location: 'Remote',
+    title: 'Internal Tech Talks — Season 3',
+    description:
+      'Weekly knowledge-sharing sessions covering system design, AI agents, and observability.',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&auto=format&fit=crop',
+    category: 'Wellness',
+    date: 'Oct 2025',
+    location: 'Lonavala',
+    title: 'Wellness & Creativity Retreat',
+    description:
+      'A weekend focused on mindfulness, creative workshops, and stepping away from screens.',
   },
 ]
 
@@ -113,7 +165,7 @@ function ValueCard({
             )}, transparent)`,
           }}
         />
-        <value.icon className="relative w-7 h-7 text-white" />
+        <value.icon className="relative w-7 h-7 text-primary" />
       </motion.div>
 
       {/* Index decoration */}
@@ -170,53 +222,23 @@ export function About() {
   const rotate1 = useTransform(scrollYProgress, [0, 1], [-10, 10])
   const rotate2 = useTransform(scrollYProgress, [0, 1], [10, -10])
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to('.about-parallax-slow', {
-        yPercent: -20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-      gsap.to('.about-parallax-fast', {
-        yPercent: -40,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
   return (
     <section
       ref={sectionRef}
       id="about"
       className="relative py-28 lg:py-40 overflow-hidden"
     >
-      {/* 3D background */}
-      <Section3D variant="about" />
-
       {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           style={{ y: y1, rotate: rotate1 }}
           className="absolute top-1/4 -left-32 w-[600px] h-[600px]
-                     bg-primary/5 rounded-full blur-[140px] about-parallax-slow"
+                     bg-primary/5 rounded-full blur-[140px]"
         />
         <motion.div
           style={{ y: y2, rotate: rotate2 }}
           className="absolute bottom-1/4 -right-32 w-[500px] h-[500px]
-                     bg-accent/5 rounded-full blur-[120px] about-parallax-fast"
+                     bg-accent/5 rounded-full blur-[120px]"
         />
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
@@ -438,6 +460,66 @@ export function About() {
             <ValueCard key={value.title} value={value} index={index} />
           ))}
         </div>
+
+        {/* Recent Posts */}
+        <AnimatedSection delay={0.2} className="mt-24 mb-24">
+          <div className="text-center mb-14">
+            <p className="text-xs font-mono text-primary/60 tracking-[0.3em] uppercase mb-4">
+              Our culture
+            </p>
+            <h3 className="text-3xl lg:text-4xl font-bold font-[var(--font-heading)]">
+              Recent <GradientText>posts</GradientText>
+            </h3>
+            <p className="mt-4 text-muted-foreground max-w-xl mx-auto text-sm leading-relaxed">
+              A glimpse into our team culture, offsites, events, and everyday moments.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {posts.map((post, idx) => (
+              <motion.div
+                key={post.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="group relative rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 overflow-hidden hover:border-primary/30 transition-all duration-500"
+              >
+                <div className="relative h-52 overflow-hidden">
+                  <motion.img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.08 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute top-3 left-3 px-3 py-1 text-[11px] font-semibold rounded-full bg-white/20 backdrop-blur-md text-white border border-white/20">
+                    {post.category}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {post.date}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {post.location}
+                    </span>
+                  </div>
+                  <h4 className="text-base font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+                    {post.title}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                    {post.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </AnimatedSection>
 
         {/* Bottom CTA */}
         <AnimatedSection delay={0.3} className="mt-24">
